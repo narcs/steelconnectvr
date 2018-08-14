@@ -31,7 +31,6 @@ public static class LatLongUtility {
 
     // ---
 
-    private static string apiKeyParam = "&key=AIzaSyDzaxE2kdHlfAUQ4ZC6nDRDbehcQkVyKwI";
     private static string gmapsAPI = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
     // TODO: Actually implement this properly!
@@ -42,22 +41,37 @@ public static class LatLongUtility {
             url += (streetAddress.Replace(" ", "+") + ",+");
         }
 
-        url += ",+" + city.Replace(" ", "+") + ",+" + country + apiKeyParam;
+        url += ",+" + city.Replace(" ", "+") + ",+" + country;
 
         return RestClient.Get<Models.Google.Maps.ResultList>(url)
-            .Then(resultList => new LatLong(
-                resultList.results[0].geometry.location.lat, 
-                resultList.results[0].geometry.location.lng));
+            .Then(resultList => {
+                if (resultList.results.Length > 0) {
+                    return new LatLong(
+                    resultList.results[0].geometry.location.lat,
+                    resultList.results[0].geometry.location.lng);
+                } else {
+                    return new LatLong();
+                }
+            });
     }
 }
 
 public class LatLong {
     public float latitude;
     public float longitude;
+    public bool isValid;
 
     public LatLong(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+        isValid = true;
+    }
+
+    // Error case.
+    public LatLong() {
+        this.latitude = 0.0f;
+        this.longitude = 0.0f;
+        isValid = false;
     }
 
     public override string ToString() {

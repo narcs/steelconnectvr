@@ -56,7 +56,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
         // Gets the list of sites from the SteelConnect API and returns it as an array of Sites.
         var sitesPromise = steelConnect.GetSitesInOrg()
-            .Then(sites => sites.items);
+            .Then(sites => { Debug.Log($"Got {sites.items.Count()} sites"); return sites.items; });
 
         var latLongPromise = sitesPromise
             .ThenAll(sites => sites.Select(site => LatLongUtility.GetLatLongForAddress(site.street_address, site.city, site.country)));
@@ -70,7 +70,11 @@ public class GlobeSiteCreation : MonoBehaviour {
 
                 for (int i = 0; i < sites.Count(); ++i) {
                     Site site = sites[i];
-                    siteMarkers.Add(site.id, placeSiteMarker(site, latLongs.ElementAt(i)));
+                    if (latLongs.ElementAt(i).isValid) {
+                        siteMarkers.Add(site.id, placeSiteMarker(site, latLongs.ElementAt(i)));
+                    } else {
+                        Debug.LogWarning($"LatLong for site {site.id} is not valid, not adding site marker");
+                    }
                 }
 
                 return siteMarkers;
