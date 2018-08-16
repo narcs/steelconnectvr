@@ -7,6 +7,7 @@ public class LineMarker : MonoBehaviour {
     public SiteMarker StartSiteMarker;
     public SiteMarker EndSiteMarker;
     public int NumPoints;
+    public float LineWidth;
     public Color Color;
     public Vector3 SpherePosition;
     public float SphereRadius;
@@ -43,6 +44,8 @@ public class LineMarker : MonoBehaviour {
         lineRenderer.positionCount = NumPoints;
         lineRenderer.startColor = Color;
         lineRenderer.endColor = Color;
+        lineRenderer.startWidth = LineWidth;
+        lineRenderer.endWidth = LineWidth;
 
         for (int i = 0; i < NumPoints; i++) {
             float progress = ((float)i) / (NumPoints - 1);
