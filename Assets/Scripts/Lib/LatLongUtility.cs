@@ -8,6 +8,8 @@ using RSG;
 using Proyecto26;
 using Models.Google;
 
+// TODO: Somehow limit number of simultaneous requests.
+
 // We're using promises/futures here for async operations. See:
 // https://github.com/Real-Serious-Games/C-Sharp-Promise
 // https://github.com/proyecto26/RestClient/

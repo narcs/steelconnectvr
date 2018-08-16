@@ -134,6 +134,9 @@ namespace Models {
             public string remote_site;
             public string state;
             public string status;
+            public string inuse;
+            public float throughput_in;
+            public float throughput_out;
         }
     }
 
