@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Models.SteelConnect;
 
 public class LineMarker : MonoBehaviour {
-    public Vector3 StartPosition;
-    public Vector3 EndPosition;
+    public SiteMarker StartSiteMarker;
+    public SiteMarker EndSiteMarker;
     public int NumPoints;
     public Color Color;
     public Vector3 SpherePosition;
@@ -29,7 +30,7 @@ public class LineMarker : MonoBehaviour {
 
         for (int i = 0; i < NumPoints; i++) {
             float progress = ((float)i) / (NumPoints - 1);
-            Vector3 result = Vector3.Slerp(StartPosition, EndPosition, progress);
+            Vector3 result = Vector3.Slerp(StartSiteMarker.gameObject.transform.position, EndSiteMarker.gameObject.transform.position, progress);
             float radius = Vector3.Distance(SpherePosition, result);
 
             if (radius < SphereRadius) {

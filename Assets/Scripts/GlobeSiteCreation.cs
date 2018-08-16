@@ -66,7 +66,7 @@ public class GlobeSiteCreation : MonoBehaviour {
             .Then(tup => {
                 Site[] sites = tup.Item1;
                 IEnumerable<LatLong> latLongs = tup.Item2;
-                Dictionary<SiteID, SiteMarker> siteMarkers = new Dictionary<string, SiteMarker>();
+                Dictionary<SiteID, SiteMarker> siteMarkers = new Dictionary<SiteID, SiteMarker>();
 
                 for (int i = 0; i < sites.Count(); ++i) {
                     Site site = sites[i];
@@ -80,17 +80,36 @@ public class GlobeSiteCreation : MonoBehaviour {
                 return siteMarkers;
             });
 
+        var sitelinksPromise = sitesPromise
+            .ThenAll(sites => sites.Select(site => steelConnect.GetSitelinks(site.id)))
+            .Then(sitelinksList => sitelinksList.Select(sitelinks => sitelinks.items));
+
+        var sitelinksDictPromise = PromiseHelpers.All(sitesPromise, sitelinksPromise)
+            .Then(tup => {
+                Site[] sites = tup.Item1;
+                IEnumerable<Sitelink[]> sitelinks = tup.Item2;
+                Dictionary<SiteID, Sitelink[]> sitelinksDict = new Dictionary<SiteID, Sitelink[]>();
+
+                for (int i = 0; i < sites.Count(); ++i) {
+                    sitelinksDict.Add(sites[i].id, sitelinks.ElementAt(i));
+                }
+
+                return sitelinksDict;
+            });
+
         // Connect random pairs of sites, just for something to show.
-        var arbitraryLineMarkersPromise = siteMarkersPromise
-            .Then(siteMarkers => {
-                List<SiteMarker> siteMarkersList = new List<SiteMarker>(siteMarkers.Values);
-                List<SiteMarker> shuffledSiteMarkers = siteMarkersList.OrderBy(a => Random.value).ToList();
+        var arbitraryLineMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
+            .Then(tup => {
+                Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
+                Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
 
-                for (int i = 0; i < shuffledSiteMarkers.Count; i += 2) {
-                    SiteMarker site1 = shuffledSiteMarkers[i];
-                    SiteMarker site2 = shuffledSiteMarkers[i + 1];
+                foreach (var siteMarkerEntry in siteMarkers) {
+                    SiteID siteId = siteMarkerEntry.Key;
+                    SiteMarker siteMarker = siteMarkerEntry.Value;
 
-                    drawLineBetweenSites(site1, site2, Random.ColorHSV(0f,1f, 1f,1f, 1f,1f));
+                    foreach (Sitelink sitelink in sitelinks[siteId]) {
+                        drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], Color.green);
+                    }
                 }
             })
             .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
@@ -122,8 +141,8 @@ public class GlobeSiteCreation : MonoBehaviour {
         GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
         LineMarker lineMarker = lineMarkerObject.GetComponent<LineMarker>();
 
-        lineMarker.StartPosition = site1.transform.position;
-        lineMarker.EndPosition = site2.transform.position;
+        lineMarker.StartSiteMarker = site1;
+        lineMarker.EndSiteMarker = site2;
         lineMarker.SpherePosition = transform.position;
         lineMarker.SphereRadius = globeRadius * 1.03f;
         lineMarker.Color = color;

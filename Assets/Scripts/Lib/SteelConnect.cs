@@ -81,9 +81,26 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
-    // TODO: How to deal with 404 being a legitimate response (for no sitelinks)?
     public IPromise<Sitelinks> GetSitelinks(string siteId) {
-        return RestClient.Get<Sitelinks>(newReportingRequest("/site/" + siteId + "/sitelinks"));
+        // Since using standard RestClient with returning a promise counts any non-200
+        // status code as an error, but 404 is a potentially valid response for no sitelinks,
+        // we need to build the promise manually ourselves.
+        var sitelinksPromise = new Promise<Sitelinks>();
+        
+        RestClient.Get<Sitelinks>(newReportingRequest("/site/" + siteId + "/sitelinks"), (err, resp, sitelinks) => {
+            if (err == null) {
+                Debug.Log($"Site {siteId} has {sitelinks.items.Length} sitelink(s)");
+                sitelinksPromise.Resolve(sitelinks);
+            } else if (err.StatusCode == 404) {
+                // No sitelinks, return empty list.
+                Debug.Log($"Site {siteId} has no sitelinks");
+                sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
+            } else {
+                sitelinksPromise.Reject(err);
+            }
+        });
+
+        return sitelinksPromise;
     }
 }
 
