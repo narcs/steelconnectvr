@@ -52,12 +52,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58a45ef9bd34894090879e42f66a4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartPosition: {x: 0, y: 0, z: 0}
-  EndPosition: {x: 0, y: 0, z: 0}
+  StartSiteMarker: {fileID: 0}
+  EndSiteMarker: {fileID: 0}
   NumPoints: 0
+  LineWidth: 0
   Color: {r: 0, g: 0, b: 0, a: 0}
   SpherePosition: {x: 0, y: 0, z: 0}
   SphereRadius: 0
+  BlinkPeriodSeconds: 0
 --- !u!120 &120762477117276932
 LineRenderer:
   m_ObjectHideFlags: 1
