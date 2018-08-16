@@ -43,6 +43,8 @@ public class SitelinkMarker : MonoBehaviour {
 
         if (sitelink.state == "up") {
             lineColor = Color.green;
+
+            lineWidth = 1.0f + sitelink.throughput_out / 20.0f;
         } else {
             lineColor = Color.red;
             blinkPeriodSeconds = 2.0f;

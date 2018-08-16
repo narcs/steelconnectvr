@@ -103,7 +103,7 @@ public class GlobeSiteCreation : MonoBehaviour {
             });
 
         // Connects sites by sitelinks.
-        var sitelinksSitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
+        var sitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
             .Then(tup => {
                 Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
                 Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
