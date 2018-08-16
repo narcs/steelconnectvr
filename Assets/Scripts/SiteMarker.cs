@@ -35,6 +35,9 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        Debug.Log("Click " + Site.id);
+        // Show site information
+        Transform information = transform.Find("Information");
+        MeshRenderer meshRenderer = information.GetComponent<MeshRenderer>();
+        meshRenderer.enabled = !meshRenderer.enabled;
     }
 }
