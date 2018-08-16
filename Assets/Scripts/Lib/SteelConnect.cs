@@ -132,6 +132,8 @@ namespace Models {
         public class Sitelink {
             public string id;
             public string remote_site;
+            public string state;
+            public string status;
         }
     }
 

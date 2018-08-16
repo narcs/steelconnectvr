@@ -103,12 +103,33 @@ public class GlobeSiteCreation : MonoBehaviour {
                 Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
                 Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
 
+                // NOTE: Iterating through the sitemarkers dictionary means that if a site didn't
+                // have a sitemarker, that site will be skipped. The same check is done later for the
+                // remote site (because we get sitelinks for all sites regardless of if they hasd a sitemarker
+                // created).
                 foreach (var siteMarkerEntry in siteMarkers) {
                     SiteID siteId = siteMarkerEntry.Key;
                     SiteMarker siteMarker = siteMarkerEntry.Value;
 
                     foreach (Sitelink sitelink in sitelinks[siteId]) {
-                        drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], Color.green);
+                        Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
+
+                        if (siteMarkers.ContainsKey(sitelink.remote_site)) {
+                            Color lineColor;
+                            float blinkPeriodSeconds;
+
+                            if (sitelink.state == "up") {
+                                lineColor = Color.green;
+                                blinkPeriodSeconds = 0.0f;
+                            } else {
+                                lineColor = Color.red;
+                                blinkPeriodSeconds = 2.0f;
+                            }
+
+                            drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], lineColor, blinkPeriodSeconds);
+                        } else {
+                            Debug.LogWarning($"Remote site {sitelink.remote_site} has no site marker, not drawing sitelink");
+                        }
                     }
                 }
             })
@@ -124,7 +145,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         Quaternion upToForward = Quaternion.Euler(90.0f, 0.0f, 0.0f);
         Quaternion siteOrientation = Quaternion.LookRotation(sitePosition.normalized) * upToForward;
 
-        Debug.Log($"Site {site.id} is at {sitePosition}");
+        Debug.Log($"Site {site.id} is at world position {sitePosition}");
 
         GameObject newSiteMarkerObject = Instantiate(siteMarkerPrefab, sitePosition, siteOrientation, this.transform);
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
@@ -135,7 +156,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color) {
+    LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
         Debug.Log($"Drawing line between {site1.Site.name} and {site2.Site.name}");
 
         GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
@@ -146,9 +167,8 @@ public class GlobeSiteCreation : MonoBehaviour {
         lineMarker.SpherePosition = transform.position;
         lineMarker.SphereRadius = globeRadius * 1.03f;
         lineMarker.Color = color;
+        lineMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
         lineMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
-
-        lineMarker.Redraw();
 
         currentLineMarkers.Add(lineMarker);
 
