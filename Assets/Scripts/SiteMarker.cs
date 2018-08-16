@@ -6,16 +6,22 @@ using UnityEngine.EventSystems;
 using Proyecto26;
 using Models.SteelConnect;
 
-public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler{
+public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler{
     public Site Site;
     public float hoverIncreaseScale = 0.5f;
 
-    private string rendererObjectName = "Pillar";
-    private string informationObjectName = "Information";
+    private string _rendererObjectName = "Pillar";
+    private Transform _rendererTransform;
+
+    private string _informationObjectName = "Information";
+    private Transform _information;
+    private MeshRenderer _meshRenderer;
 
     // Use this for initialization
     void Start() {
-
+        _rendererTransform = transform.Find(_rendererObjectName);
+        _information = transform.Find(_informationObjectName);
+        _meshRenderer = _information.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -25,24 +31,26 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData) {
         // Make size larger
-        Transform rendererTransform = transform.Find(rendererObjectName);
-        rendererTransform.localScale += new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
+        _rendererTransform.localScale += new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         // Revert to original size
-        Transform rendererTransform = transform.Find(rendererObjectName);
-        rendererTransform.localScale -= new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
+        _rendererTransform.localScale -= new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
     }
 
     // Need this event for PointerClick
     public void OnPointerDown(PointerEventData eventData) {
+        // Show site information
+        //_meshRenderer.enabled = true;
+    }
+
+    public void OnPointerUp(PointerEventData eventData) {
+        // Hide site information
+        //_meshRenderer.enabled = false;
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        // Show site information
-        Transform information = transform.Find(informationObjectName);
-        MeshRenderer meshRenderer = information.GetComponent<MeshRenderer>();
-        meshRenderer.enabled = !meshRenderer.enabled;
+        _meshRenderer.enabled = !_meshRenderer.enabled;
     }
 }
