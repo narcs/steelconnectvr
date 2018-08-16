@@ -232,7 +232,7 @@ MonoBehaviour:
     country: 
     city: 
     street_address: 
-  hoverIncreaseScale: 0.02
+  hoverIncreaseScale: 0.5
 --- !u!136 &136582773827888568
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -8,7 +8,10 @@ using Models.SteelConnect;
 
 public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler{
     public Site Site;
-    public float hoverIncreaseScale = 0.02f;
+    public float hoverIncreaseScale = 0.5f;
+
+    private string rendererObjectName = "Pillar";
+    private string informationObjectName = "Information";
 
     // Use this for initialization
     void Start() {
@@ -22,12 +25,14 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData) {
         // Make size larger
-        transform.localScale += new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
+        Transform rendererTransform = transform.Find(rendererObjectName);
+        rendererTransform.localScale += new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         // Revert to original size
-        transform.localScale -= new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
+        Transform rendererTransform = transform.Find(rendererObjectName);
+        rendererTransform.localScale -= new Vector3(hoverIncreaseScale, hoverIncreaseScale, hoverIncreaseScale);
     }
 
     // Need this event for PointerClick
@@ -36,7 +41,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerClick(PointerEventData eventData) {
         // Show site information
-        Transform information = transform.Find("Information");
+        Transform information = transform.Find(informationObjectName);
         MeshRenderer meshRenderer = information.GetComponent<MeshRenderer>();
         meshRenderer.enabled = !meshRenderer.enabled;
     }
