@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114352516001778234}
   - component: {fileID: 120762477117276932}
   m_Layer: 0
-  m_Name: LineMarker
+  m_Name: SitelinkMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,14 +52,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58a45ef9bd34894090879e42f66a4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartSiteMarker: {fileID: 0}
-  EndSiteMarker: {fileID: 0}
-  NumPoints: 0
-  LineWidth: 0
-  Color: {r: 0, g: 0, b: 0, a: 0}
-  SpherePosition: {x: 0, y: 0, z: 0}
-  SphereRadius: 0
-  BlinkPeriodSeconds: 0
 --- !u!120 &120762477117276932
 LineRenderer:
   m_ObjectHideFlags: 1

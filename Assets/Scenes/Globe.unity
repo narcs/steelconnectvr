@@ -554,9 +554,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fefa6821d3f31b147898daefa4674cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  siteMarkerPrefab: {fileID: 1252215799384428, guid: 91d4b159c82d717458abef9f7e219135,
+  SiteMarkerPrefab: {fileID: 1252215799384428, guid: 91d4b159c82d717458abef9f7e219135,
     type: 2}
-  lineMarkerPrefab: {fileID: 1105123534481834, guid: 74e977c6bf8d20c4eb653adee6ad0c96,
+  SitelinkMarkerPrefab: {fileID: 1105123534481834, guid: 74e977c6bf8d20c4eb653adee6ad0c96,
     type: 2}
 --- !u!114 &299656879
 MonoBehaviour:
