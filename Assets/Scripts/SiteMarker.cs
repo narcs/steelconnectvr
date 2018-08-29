@@ -15,13 +15,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private string _informationObjectName = "Information";
     private Transform _information;
-    private MeshRenderer _meshRenderer;
+    private MeshRenderer _informationMeshRenderer;
 
     // Use this for initialization
     void Start() {
         _rendererTransform = transform.Find(_rendererObjectName);
         _information = transform.Find(_informationObjectName);
-        _meshRenderer = _information.GetComponent<MeshRenderer>();
+        _informationMeshRenderer = _information.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -51,6 +51,8 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        _meshRenderer.enabled = !_meshRenderer.enabled;
+        _informationMeshRenderer.enabled = !_informationMeshRenderer.enabled;
     }
+
+    
 }

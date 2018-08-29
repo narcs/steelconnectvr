@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.04345821, g: 0.041858047, b: 0.044895597, a: 1}
+  m_IndirectSpecularColor: {r: 0.044414505, g: 0.0418735, b: 0.045859963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -511,6 +511,7 @@ GameObject:
   - component: {fileID: 299656874}
   - component: {fileID: 299656879}
   - component: {fileID: 299656878}
+  - component: {fileID: 299656880}
   m_Layer: 0
   m_Name: EarthSphere
   m_TagString: Untagged
@@ -613,6 +614,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivotObject: {fileID: 1325067837}
   globeDragEnabled: 1
+--- !u!114 &299656880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 299656873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1600e50e35be0674faaa229509cad27b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laser: {fileID: 1762843434}
 --- !u!224 &395244403 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224645823356503518, guid: a9efa769f06ba364abf33637b3c7635e,
@@ -1135,7 +1148,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button 2
+  m_Text: Delete Sites
 --- !u!222 &1052707929
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1470,7 +1483,7 @@ GameObject:
   - component: {fileID: 1443036545}
   - component: {fileID: 1443036544}
   m_Layer: 5
-  m_Name: Button2
+  m_Name: DeleteSitesButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1534,8 +1547,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnButton2Click
+      - m_Target: {fileID: 299656880}
+        m_MethodName: EnableSiteDeletion
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1584,6 +1597,11 @@ CanvasRenderer:
 --- !u!4 &1546513617 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1820761120, guid: 34c21f523e72f45509a4e37ed0293c3b,
+    type: 2}
+  m_PrefabInternal: {fileID: 1964602097}
+--- !u!1 &1762843434 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 771218441, guid: 34c21f523e72f45509a4e37ed0293c3b,
     type: 2}
   m_PrefabInternal: {fileID: 1964602097}
 --- !u!1 &1785028454
@@ -1707,7 +1725,7 @@ Prefab:
     - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
         type: 2}
       propertyPath: maxLaserDistance
-      value: 1
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
         type: 2}
@@ -1722,9 +1740,71 @@ Prefab:
       propertyPath: maxPointerDistance
       value: 300
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
+        type: 2}
+      propertyPath: laserColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
+        type: 2}
+      propertyPath: laserColorEnd.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
+        type: 2}
+      propertyPath: laserColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
+        type: 2}
+      propertyPath: laserColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010349995660, guid: 34c21f523e72f45509a4e37ed0293c3b,
+        type: 2}
+      propertyPath: laserColor.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34c21f523e72f45509a4e37ed0293c3b, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &2055622700 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 555767533, guid: 34c21f523e72f45509a4e37ed0293c3b,
+    type: 2}
+  m_PrefabInternal: {fileID: 1964602097}
+--- !u!114 &2055622701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2055622700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e216f327e132794b8e02093522ae84c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnAppUp:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: GoogleVR.VideoDemo.ButtonEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnAppDown:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 299656880}
+        m_MethodName: DisableSiteDeletion
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: GoogleVR.VideoDemo.ButtonEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &2130075565
 GameObject:
   m_ObjectHideFlags: 0
