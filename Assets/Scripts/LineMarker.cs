@@ -38,6 +38,9 @@ public class LineMarker : MonoBehaviour {
         Color.a = blinkLevel;
 
         //Draw();
+        if (!(StartSiteMarker && EndSiteMarker)) { //TODO: Optimise
+            Destroy(gameObject);
+        }
     }
 
     public void Draw() {
