@@ -53,10 +53,10 @@ public class StateManager : MonoBehaviour {
 
     public void DeleteGameObject() {
         if (_tempObject) {
+            confirm.SetActive(false);
             Destroy(_tempObject);
             // Delete API here
             Debug.Log($"Deleted: {_tempObject}");
-            confirm.SetActive(false);
             _tempObject = null;
         } else {
             Debug.LogError("No object to delete");
