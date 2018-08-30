@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e072090f00f2947aeebe71a63b3b71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Site:
+  site:
     id: 
     name: 
     longname: 
@@ -233,6 +233,8 @@ MonoBehaviour:
     city: 
     street_address: 
   hoverIncreaseScale: 0.5
+  stateManager: {fileID: 1954405489473518, guid: ad721e0c514336e4380bd370dca394ff,
+    type: 2}
 --- !u!136 &136582773827888568
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -10,7 +10,7 @@ public class SiteInformation : MonoBehaviour {
 	void Start () {
         _siteObject = transform.parent.gameObject;
         SiteMarker siteMarker = _siteObject.GetComponent<SiteMarker>();
-        Site site = siteMarker.Site;
+        Site site = siteMarker.site;
         string text = $"Id: {site.id}\n" +
                       $"Name: {site.name}\n" +
                       $"Longname: {site.longname}\n" +
