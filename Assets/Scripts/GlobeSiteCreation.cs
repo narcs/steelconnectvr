@@ -7,6 +7,8 @@ using RSG;
 using Proyecto26;
 using Models.SteelConnect;
 
+// TODO: Figure out how to refresh sitelinks without regetting all sites.
+
 // Type alias for clarity.
 using SiteID = System.String;
 
