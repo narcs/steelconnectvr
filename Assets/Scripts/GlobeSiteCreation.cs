@@ -40,7 +40,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
     public void UpdateSites() {
         foreach (var entry in currentSiteMarkers) {
-            Destroy(entry.Value.gameObject);
+            if (entry.Value) Destroy(entry.Value.gameObject);
         }
         currentSiteMarkers.Clear();
 
@@ -149,7 +149,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
         GameObject newSiteMarkerObject = Instantiate(siteMarkerPrefab, sitePosition, siteOrientation, this.transform);
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
-        newSiteMarker.Site = site;
+        newSiteMarker.site = site;
 
         currentSiteMarkers.Add(site.id, newSiteMarker);
 
@@ -157,7 +157,7 @@ public class GlobeSiteCreation : MonoBehaviour {
     }
 
     LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
-        Debug.Log($"Drawing line between {site1.Site.name} and {site2.Site.name}");
+        Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
 
         GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
         LineMarker lineMarker = lineMarkerObject.GetComponent<LineMarker>();

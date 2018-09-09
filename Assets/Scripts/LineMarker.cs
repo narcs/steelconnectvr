@@ -20,6 +20,7 @@ public class LineMarker : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         lineRenderer = GetComponent<LineRenderer>();
+        Draw();
     }
 	
 	// Update is called once per frame
@@ -36,10 +37,13 @@ public class LineMarker : MonoBehaviour {
 
         Color.a = blinkLevel;
 
-        Redraw();
+        //Draw();
+        if (!(StartSiteMarker && EndSiteMarker)) { //TODO: Optimise
+            Destroy(gameObject);
+        }
     }
 
-    public void Redraw() {
+    public void Draw() {
         lineRenderer.positionCount = NumPoints;
         lineRenderer.startColor = Color;
         lineRenderer.endColor = Color;

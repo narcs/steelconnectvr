@@ -81,6 +81,14 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
+    public IPromise<Wans> GetWansInOrg() {
+        return RestClient.Get<Wans>(newConfigRequest("/org/" + orgId + "/wans"));
+    }
+
+    public IPromise<Uplinks> GetUplinksInOrg() {
+        return RestClient.Get<Uplinks>(newConfigRequest("/org/" + orgId + "/uplinks"));
+    }
+
     public IPromise<Sitelinks> GetSitelinks(string siteId) {
         // Since using standard RestClient with returning a promise counts any non-200
         // status code as an error, but 404 is a potentially valid response for no sitelinks,
@@ -134,6 +142,35 @@ namespace Models {
             public string remote_site;
             public string state;
             public string status;
+        }
+
+        [Serializable]
+        public class Wans {
+            public Wan[] items;
+        }
+
+        [Serializable]
+        public class Wan {
+            public string id;
+            public string name;
+            public string longname;
+            public string org;
+            public string[] uplinks;
+        }
+
+        [Serializable]
+        public class Uplinks {
+            public Uplink[] items;
+        }
+
+        [Serializable]
+        public class Uplink {
+            public string id;
+            public string name;
+            public string org;
+            public string site;
+            public string wan;
+            public string node;
         }
     }
 
