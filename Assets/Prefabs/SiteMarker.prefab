@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33834548960971266}
   - component: {fileID: 23973696660499488}
   - component: {fileID: 136582773827888568}
+  - component: {fileID: 122836733091370754}
   m_Layer: 0
   m_Name: Pillar
   m_TagString: Untagged
@@ -232,9 +233,19 @@ MonoBehaviour:
     country: 
     city: 
     street_address: 
-  hoverIncreaseScale: 0.5
-  stateManager: {fileID: 1954405489473518, guid: ad721e0c514336e4380bd370dca394ff,
-    type: 2}
+  pillar: {fileID: 1138336595546270}
+  information: {fileID: 1423445757195928}
+--- !u!122 &122836733091370754
+Halo:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138336595546270}
+  m_Enabled: 1
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_Size: 5
 --- !u!136 &136582773827888568
 CapsuleCollider:
   m_ObjectHideFlags: 1

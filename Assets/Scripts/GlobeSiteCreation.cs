@@ -40,7 +40,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
     public void UpdateSites() {
         foreach (var entry in currentSiteMarkers) {
-            Destroy(entry.Value.gameObject);
+            if (entry.Value) Destroy(entry.Value.gameObject);
         }
         currentSiteMarkers.Clear();
 
