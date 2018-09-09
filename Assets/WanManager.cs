@@ -7,10 +7,11 @@ using RSG;
 using Proyecto26;
 using Models.SteelConnect;
 
-// Type alias for clarity.
-using WanID = System.String;
 
 public class WanManager : MonoBehaviour {
+
+    public GameObject panel;
+    public GameObject wanPrefab;
 
     private List<Wan> _wans = new List<Wan>();
     private Dictionary<string, Uplink> _uplinks = new Dictionary<string, Uplink>();
@@ -20,10 +21,6 @@ public class WanManager : MonoBehaviour {
         _steelConnect = new SteelConnect();
 		
 	}
-
-    private void hello(string s) {
-        Debug.Log(s);
-    }
 
     public void UpdateWans() {
         _wans.Clear();
@@ -42,7 +39,10 @@ public class WanManager : MonoBehaviour {
             .Then(() => {
                 // Create WAN gameObjects
                 foreach (Wan wan in _wans) {
-                    Debug.Log($"{wan.id}");
+                    GameObject newWanMarkerObject = Instantiate(wanPrefab, panel.transform);
+                    WanMarker newWanMarker = newWanMarkerObject.GetComponent<WanMarker>();
+                    newWanMarker.wan = wan;
+                    Debug.Log($"Created {wan.id}");
                 }
             });
 
