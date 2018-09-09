@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-using Proyecto26;
 using Models.SteelConnect;
 
 public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler{
@@ -46,7 +45,6 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _informationMeshRenderer.enabled = false;
     }
 
-    // Need this event for PointerClick
     public void OnPointerDown(PointerEventData eventData) {
         // Show site information
         //_meshRenderer.enabled = true;

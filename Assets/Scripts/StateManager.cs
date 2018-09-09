@@ -20,6 +20,9 @@ public class StateManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (Input.GetKeyDown("s")) {
+            GetComponent<WanManager>().UpdateWans();
+        }
 		
 	}
 
