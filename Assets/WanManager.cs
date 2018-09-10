@@ -24,9 +24,8 @@ public class WanManager : MonoBehaviour {
 	}
 
     public void ShowHideWans() {
-        panel.transform.parent.transform.gameObject.SetActive(!_showWans);
         _showWans = !_showWans;
-        Debug.Log("show hide");
+        panel.transform.parent.transform.gameObject.SetActive(_showWans);
     }
 
     public void UpdateWans() {
