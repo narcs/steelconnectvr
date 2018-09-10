@@ -206,6 +206,8 @@ MonoBehaviour:
     uplinks: []
   cloud: {fileID: 1914066225850392}
   information: {fileID: 1145352307441112}
+  uplinkPrefab: {fileID: 0}
+  reticle: {fileID: 0}
 --- !u!114 &114622552663243292
 MonoBehaviour:
   m_ObjectHideFlags: 1

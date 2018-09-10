@@ -273,7 +273,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4993637438577290, guid: 91d4b159c82d717458abef9f7e219135, type: 2}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91d4b159c82d717458abef9f7e219135, type: 2}
@@ -1430,6 +1430,48 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce7abbbeb276a1547bd8ce1069fdabb7, type: 2}
+  m_IsPrefabAsset: 0
+--- !u!1001 &827116331
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1.102
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4414230628417324, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ec8d81c2546505546b3217936092ed0b, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1001 &864031577
 Prefab:
@@ -2638,6 +2680,16 @@ Prefab:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114454790444845394, guid: 5d8f80af7a7bc9945ad47f1f63490b2b,
+        type: 2}
+      propertyPath: reticle
+      value: 
+      objectReference: {fileID: 1985403227}
+    - target: {fileID: 114454790444845394, guid: 5d8f80af7a7bc9945ad47f1f63490b2b,
+        type: 2}
+      propertyPath: uplinkPrefab
+      value: 
+      objectReference: {fileID: 2108942772}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d8f80af7a7bc9945ad47f1f63490b2b, type: 2}
   m_IsPrefabAsset: 0
@@ -2978,6 +3030,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34c21f523e72f45509a4e37ed0293c3b, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &1985403227 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1225896218, guid: 34c21f523e72f45509a4e37ed0293c3b,
+    type: 2}
+  m_PrefabInternal: {fileID: 1964602097}
 --- !u!1 &2055622700 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 555767533, guid: 34c21f523e72f45509a4e37ed0293c3b,
@@ -3015,6 +3072,11 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: GoogleVR.VideoDemo.ButtonEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &2108942772 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1221943760286042, guid: ec8d81c2546505546b3217936092ed0b,
+    type: 2}
+  m_PrefabInternal: {fileID: 827116331}
 --- !u!1 &2130075565
 GameObject:
   m_ObjectHideFlags: 0
