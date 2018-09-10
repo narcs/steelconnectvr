@@ -29,6 +29,9 @@ public class WanManager : MonoBehaviour {
     }
 
     public void UpdateWans() {
+        foreach (Transform child in panel.transform) {
+            Destroy(child.gameObject);
+        }
         _wans.Clear();
         _uplinks.Clear();
         // Get WANs from SteelConnect API
