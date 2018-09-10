@@ -7,11 +7,10 @@ public class StateManager : MonoBehaviour {
 
     public GameObject laser;
     public GameObject confirm;
+    public bool deleteMode = false;
+    public GameObject currentObjectHover;
 
     private GameObject _tempObject;
-
-    public bool deleteMode = false;
-
 
 	// Use this for initialization
 	void Start () {
@@ -23,7 +22,6 @@ public class StateManager : MonoBehaviour {
         if (Input.GetKeyDown("s")) {
             GetComponent<WanManager>().UpdateWans();
         }
-		
 	}
 
     public void EnableDeleteMode() {

@@ -11,18 +11,21 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject cloud;
     public GameObject information;
     public GameObject uplinkPrefab;
-    public GameObject reticle;
 
     private Behaviour _halo;
     private MeshRenderer _informationMeshRenderer;
     private GameObject _currentUplinkCreation = null;
     private List<GameObject> _uplinks = new List<GameObject>();
+    private StateManager _stateManager;
+    private GameObject _reticle;
 
 	void Start () {
         _halo = (Behaviour)cloud.GetComponent("Halo");
         _halo.enabled = false;
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _informationMeshRenderer.enabled = false;
+        _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
+        _reticle = GameObject.Find("Reticle");
 	}
 	
 	void Update () {
@@ -32,7 +35,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             lineRenderer.positionCount = 2;
             Vector3[] points = new Vector3[2] {
                 transform.position,
-                reticle.transform.position
+                _reticle.transform.position
             };
             lineRenderer.SetPositions(points);
         }
@@ -62,8 +65,11 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerUp(PointerEventData eventData) {
         // Create uplink if selecting site
-        _uplinks.Add(_currentUplinkCreation);
+        if (_stateManager.currentObjectHover) {
+            _uplinks.Add(_currentUplinkCreation);
+            Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
+            // Create uplink API call
+        }
         _currentUplinkCreation = null;
-        // Create uplink API call
     }
 }

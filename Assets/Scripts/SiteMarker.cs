@@ -30,11 +30,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
         _informationMeshRenderer.enabled = true;
+        _stateManager.currentObjectHover = gameObject;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         _halo.enabled = false;
         _informationMeshRenderer.enabled = false;
+        _stateManager.currentObjectHover = null;
     }
 
     // Need this event for PointerClick
