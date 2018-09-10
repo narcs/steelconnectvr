@@ -59,17 +59,26 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerDown(PointerEventData eventData) {
-        // Create uplink GameObject
-        _currentUplinkCreation = Instantiate(uplinkPrefab, transform);
+        // Delete WAN
+        if (_stateManager.deleteMode) {
+            // Confirmation panel
+            _stateManager.ShowConfirm();
+            _stateManager.SetDeleteConfirmText(gameObject, wan.name);
+        } else {
+            // Create uplink GameObject
+            _currentUplinkCreation = Instantiate(uplinkPrefab, transform);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData) {
         // Create uplink if selecting site
-        if (_stateManager.currentObjectHover) {
-            _uplinks.Add(_currentUplinkCreation);
-            Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
-            // Create uplink API call
+        if (!_stateManager.deleteMode) {
+            if (_stateManager.currentObjectHover) {
+                _uplinks.Add(_currentUplinkCreation);
+                Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
+                // Create uplink API call
+            }
+            _currentUplinkCreation = null;
         }
-        _currentUplinkCreation = null;
     }
 }
