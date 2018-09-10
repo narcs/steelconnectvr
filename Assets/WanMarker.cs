@@ -77,6 +77,8 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 _uplinks.Add(_currentUplinkCreation);
                 Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
                 // Create uplink API call
+            } else {
+                Destroy(_currentUplinkCreation);
             }
             _currentUplinkCreation = null;
         }
