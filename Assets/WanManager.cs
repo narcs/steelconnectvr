@@ -16,11 +16,18 @@ public class WanManager : MonoBehaviour {
     private List<Wan> _wans = new List<Wan>();
     private Dictionary<string, Uplink> _uplinks = new Dictionary<string, Uplink>();
     private SteelConnect _steelConnect;
+    private bool _showWans = false;
 
 	void Start () {
         _steelConnect = new SteelConnect();
 		
 	}
+
+    public void ShowHideWans() {
+        panel.transform.parent.transform.gameObject.SetActive(!_showWans);
+        _showWans = !_showWans;
+        Debug.Log("show hide");
+    }
 
     public void UpdateWans() {
         _wans.Clear();

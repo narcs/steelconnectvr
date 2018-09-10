@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 using Models.SteelConnect;
 
-public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler{
+public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler {
 
     public Wan wan;
     public GameObject cloud;
@@ -36,5 +36,14 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     public void OnPointerDown(PointerEventData eventData) {
+        // Render uplink line from WAN to pointer
+    }
+
+    public void OnPointerUp(PointerEventData eventData) {
+        // Create uplink if finish on site
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        // Create uplink
     }
 }
