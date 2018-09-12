@@ -41,10 +41,10 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
         // Position uplink line to follow WANs
         // TODO: Optimise
-        foreach (GameObject uplink in _uplinks) {
-            LineRenderer lineRenderer = uplink.GetComponent<LineRenderer>();
-            lineRenderer.SetPosition(0, transform.position);
-        }
+        //foreach (GameObject uplink in _uplinks) {
+        //    LineRenderer lineRenderer = uplink.GetComponent<LineRenderer>();
+        //    lineRenderer.SetPosition(0, transform.position);
+        //}
 		
 	}
 
@@ -76,6 +76,8 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             if (_stateManager.currentObjectHover) {
                 _uplinks.Add(_currentUplinkCreation);
                 Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
+                _currentUplinkCreation.GetComponent<UplinkMarker>().wan = gameObject;
+                _currentUplinkCreation.GetComponent<UplinkMarker>().site = _stateManager.currentObjectHover;
                 // Create uplink API call
             } else {
                 Destroy(_currentUplinkCreation);
