@@ -17,6 +17,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
     // The prefab that represents a line connecting sites.
     public GameObject lineMarkerPrefab;
+    public Dictionary<SiteID, GameObject> currentSiteMarkerObjects = new Dictionary<SiteID, GameObject>();
 
     private float globeRadius;
 
@@ -43,6 +44,7 @@ public class GlobeSiteCreation : MonoBehaviour {
             if (entry.Value) Destroy(entry.Value.gameObject);
         }
         currentSiteMarkers.Clear();
+        currentSiteMarkerObjects.Clear();
 
         foreach (LineMarker lineMarker in currentLineMarkers) {
             Destroy(lineMarker.gameObject);
@@ -152,6 +154,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         newSiteMarker.site = site;
 
         currentSiteMarkers.Add(site.id, newSiteMarker);
+        currentSiteMarkerObjects[site.id] = newSiteMarkerObject;
 
         return newSiteMarker;
     }

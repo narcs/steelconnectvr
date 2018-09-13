@@ -13,16 +13,17 @@ public class WanManager : MonoBehaviour {
     public GameObject panel;
     public GameObject wanPrefab;
     public GameObject uplinkPrefab;
+    public GameObject earthSphere;
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
-    public Dictionary<string, Site> sites = new Dictionary<string, Site>();
 
     private List<Wan> _wans = new List<Wan>();
     private SteelConnect _steelConnect;
     private bool _showWans = false;
+    private GlobeSiteCreation _globeSiteCreation;
 
 	void Start () {
         _steelConnect = new SteelConnect();
-		
+        _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
 
     public void ShowHideWans() {
@@ -60,7 +61,12 @@ public class WanManager : MonoBehaviour {
                         UplinkMarker newUplinkMarker = newUplinkMarkerObject.GetComponent<UplinkMarker>();
                         newUplinkMarker.uplink = uplinks[uplinkID];
                         newUplinkMarker.wan = newWanMarkerObject;
-                        newUplinkMarker.site = GameObject.Find("SiteTest");
+                        string uplinkSiteID = newUplinkMarker.uplink.site;
+                        if (_globeSiteCreation.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
+                            newUplinkMarker.site = _globeSiteCreation.currentSiteMarkerObjects[uplinkSiteID];
+                        } else {
+                            Debug.LogError($"SiteMarker does not exist: {uplinkSiteID}");
+                        }
                     }
                 }
             });
