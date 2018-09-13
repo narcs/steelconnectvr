@@ -2687,11 +2687,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114454790444845394, guid: 5d8f80af7a7bc9945ad47f1f63490b2b,
-        type: 2}
-      propertyPath: reticle
-      value: 
-      objectReference: {fileID: 1407956132}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d8f80af7a7bc9945ad47f1f63490b2b, type: 2}
   m_IsPrefabAsset: 0
