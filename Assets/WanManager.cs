@@ -12,7 +12,9 @@ public class WanManager : MonoBehaviour {
 
     public GameObject panel;
     public GameObject wanPrefab;
+    public GameObject uplinkPrefab;
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
+    public Dictionary<string, Site> sites = new Dictionary<string, Site>();
 
     private List<Wan> _wans = new List<Wan>();
     private SteelConnect _steelConnect;
@@ -52,6 +54,14 @@ public class WanManager : MonoBehaviour {
                     WanMarker newWanMarker = newWanMarkerObject.GetComponent<WanMarker>();
                     newWanMarker.wan = wan;
                     Debug.Log($"Created {wan.id}");
+                    // Create Uplink Marker Objects for each WAN
+                    foreach (string uplinkID in wan.uplinks) {
+                        GameObject newUplinkMarkerObject = Instantiate(uplinkPrefab, newWanMarkerObject.transform);
+                        UplinkMarker newUplinkMarker = newUplinkMarkerObject.GetComponent<UplinkMarker>();
+                        newUplinkMarker.uplink = uplinks[uplinkID];
+                        newUplinkMarker.wan = newWanMarkerObject;
+                        newUplinkMarker.site = GameObject.Find("SiteTest");
+                    }
                 }
             });
 
