@@ -31,7 +31,8 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 	void Update () {
         // Position uplink line from WAN to pointer
         if (_currentUplinkCreation) {
-            LineRenderer lineRenderer = _currentUplinkCreation.GetComponent<LineRenderer>();
+            UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
+            LineRenderer lineRenderer = uplinkMarker.line.GetComponent<LineRenderer>();
             lineRenderer.positionCount = 2;
             Vector3[] points = new Vector3[2] {
                 transform.position,
@@ -76,8 +77,9 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             if (_stateManager.currentObjectHover) {
                 _uplinks.Add(_currentUplinkCreation);
                 Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
-                _currentUplinkCreation.GetComponent<UplinkMarker>().wan = gameObject;
-                _currentUplinkCreation.GetComponent<UplinkMarker>().site = _stateManager.currentObjectHover;
+                UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
+                uplinkMarker.wan = gameObject;
+                uplinkMarker.site = _stateManager.currentObjectHover;
                 // Create uplink API call
             } else {
                 Destroy(_currentUplinkCreation);

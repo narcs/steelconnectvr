@@ -12,9 +12,9 @@ public class WanManager : MonoBehaviour {
 
     public GameObject panel;
     public GameObject wanPrefab;
+    public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
 
     private List<Wan> _wans = new List<Wan>();
-    private Dictionary<string, Uplink> _uplinks = new Dictionary<string, Uplink>();
     private SteelConnect _steelConnect;
     private bool _showWans = false;
 
@@ -33,7 +33,7 @@ public class WanManager : MonoBehaviour {
             Destroy(child.gameObject);
         }
         _wans.Clear();
-        _uplinks.Clear();
+        uplinks.Clear();
         // Get WANs from SteelConnect API
         _steelConnect.GetWansInOrg()
             .Then(wans => wans.items.ToList().ForEach(wan => {
@@ -43,7 +43,7 @@ public class WanManager : MonoBehaviour {
                 // Get uplinks from SteelConnect API
                 _steelConnect.GetUplinksInOrg()
                     .Then(uplinks => uplinks.items.ToList().ForEach(uplink => {
-                        _uplinks[uplink.id] = uplink;
+                        this.uplinks[uplink.id] = uplink;
                     })))
             .Then(() => {
                 // Create WAN gameObjects
