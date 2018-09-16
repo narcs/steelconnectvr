@@ -9,6 +9,7 @@ public class StateManager : MonoBehaviour {
     public GameObject confirm;
     public bool deleteMode = false;
     public GameObject currentObjectHover;
+    public GameObject earthSphere;
 
     private GameObject _tempObject;
 
@@ -21,6 +22,8 @@ public class StateManager : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown("s")) {
             GetComponent<WanManager>().UpdateWans();
+        } else if (Input.GetKeyDown("a")) {
+            earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
         }
 	}
 

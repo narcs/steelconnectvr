@@ -10,53 +10,55 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public Uplink uplink;
     public GameObject wan;
     public GameObject site;
-    public GameObject line;
     public GameObject information;
+    public GameObject line;
 
     private StateManager _stateManager;
     private MeshRenderer _informationMeshRenderer;
-    private LineRenderer _lineRenderer;
     private Color _startColour;
-    private CapsuleCollider _capsule;
 
+    private void SetGlobalScale(Transform transform, Vector3 globalScale) {
+        transform.localScale = Vector3.one;
+        transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y,
+            globalScale.z / transform.lossyScale.z);
+    }
+
+    private void SetLine() {
+        Vector3 heading = wan.transform.position - site.transform.position;
+        float distance = heading.magnitude;
+        Vector3 direction = heading / distance;
+        Vector3 midPoint = (wan.transform.position + site.transform.position) / 2;
+        line.transform.parent = transform;
+        line.transform.position = midPoint;
+        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+        line.transform.rotation = Quaternion.LookRotation(direction);
+    }
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
-        _lineRenderer = line.GetComponent<LineRenderer>();
-        _startColour = _lineRenderer.startColor;
-        _capsule = gameObject.AddComponent(typeof(CapsuleCollider)) as CapsuleCollider;
-        _capsule.radius = _lineRenderer.startWidth / 2;
-        _capsule.center = Vector3.zero;
-        _capsule.direction = 2; // Z-axis for easier "LookAt" orientation
-
+        if (wan && site) {
+            SetLine();
+            line.GetComponent<Renderer>().material.color = Color.yellow;
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (wan && site) {
-            Vector3[] points = new Vector3[2] {
-                wan.transform.position,
-                site.transform.position
-            };
-            _lineRenderer.SetPositions(points);
-
-            _capsule.transform.position = wan.transform.position + (site.transform.position - wan.transform.position) / 2;
-            _capsule.transform.LookAt(wan.transform.position);
-            _capsule.height = (site.transform.position - wan.transform.position).magnitude;
+            SetLine();
         }
 	}
 
     public void OnPointerEnter(PointerEventData eventData) {
-        Color hoverColour = new Color(1, 0.65f, 0, 1);
-        Debug.Log("hello");
-        _lineRenderer.startColor = hoverColour;
+        line.GetComponent<MeshRenderer>().material.color = new Color(1, 0.65f, 0, 1); // Orange
         _informationMeshRenderer.enabled = true;
         _stateManager.currentObjectHover = gameObject;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        _lineRenderer.startColor = _startColour;
+        line.GetComponent<MeshRenderer>().material.color = Color.yellow;
         _informationMeshRenderer.enabled = false;
         _stateManager.currentObjectHover = null;
     }

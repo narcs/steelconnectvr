@@ -8,6 +8,7 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     public GameObject pivotObject;
 
     public bool globeDragEnabled = true;
+    public bool isRotating = false;
     private bool isCurrentlyDragging = false;
 
     private GvrControllerInputDevice dominantController;
@@ -25,8 +26,9 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
         previousOrientation = dominantController.Orientation * Vector3.forward;
     }
 
-    void LateUpdate() {
+    void Update() {
         if (isCurrentlyDragging) {
+            isRotating = true;
             Vector3 orientationDelta = (dominantController.Orientation * Vector3.forward) - previousOrientation;
 
             localRotation.x += orientationDelta.x * panFactor;
