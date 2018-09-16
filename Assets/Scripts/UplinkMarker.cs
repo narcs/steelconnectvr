@@ -38,12 +38,16 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         line.GetComponent<MeshRenderer>().material.color = new Color(1, 0.65f, 0, 1); // Orange
         _informationMeshRenderer.enabled = true;
         _stateManager.currentObjectHover = gameObject;
+        // Don't show WAN information
+        transform.parent.Find("Information").gameObject.SetActive(false);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         line.GetComponent<MeshRenderer>().material.color = Color.yellow;
         _informationMeshRenderer.enabled = false;
         _stateManager.currentObjectHover = null;
+        // Re-enable WAN information
+        transform.parent.Find("Information").gameObject.SetActive(true);
     }
 
     // Need this event for PointerClick
