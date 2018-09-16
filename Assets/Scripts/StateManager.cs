@@ -7,6 +7,7 @@ public class StateManager : MonoBehaviour {
 
     public GameObject laser;
     public GameObject confirm;
+    public GameObject keyboardManager;
 
     private GameObject _tempObject;
 
@@ -36,6 +37,8 @@ public class StateManager : MonoBehaviour {
     public void SwitchToNormalMode() {
         currentMode = Mode.Normal;
         SetLaserColorForMode(currentMode);
+
+        keyboardManager.GetComponent<GvrKeyboard>().Hide();
     }
 
     public void SwitchToDeleteSiteMode() {
@@ -46,6 +49,8 @@ public class StateManager : MonoBehaviour {
     public void SwitchToCreateSiteMode() {
         currentMode = Mode.CreateSite;
         SetLaserColorForMode(currentMode);
+
+        keyboardManager.GetComponent<GvrKeyboard>().Show();
     }
 
     void SetLaserColorForMode(Mode mode) {
