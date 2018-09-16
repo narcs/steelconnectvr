@@ -31,14 +31,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 	void Update () {
         // Position uplink line from WAN to pointer
         if (_currentUplinkCreation) {
-            UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
-            LineRenderer lineRenderer = uplinkMarker.line.GetComponent<LineRenderer>();
-            lineRenderer.positionCount = 2;
-            Vector3[] points = new Vector3[2] {
-                transform.position,
-                _reticle.transform.position
-            };
-            lineRenderer.SetPositions(points);
+            SetLine();
         }
         // Position uplink line to follow WANs
         // TODO: Optimise
@@ -78,6 +71,8 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 _uplinks.Add(_currentUplinkCreation);
                 Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
                 UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
+                GameObject line = _currentUplinkCreation.transform.Find("Line").gameObject;
+                line.GetComponent<BoxCollider>().enabled = true;
                 uplinkMarker.wan = gameObject;
                 uplinkMarker.site = _stateManager.currentObjectHover;
                 // Create uplink API call
@@ -86,5 +81,26 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             }
             _currentUplinkCreation = null;
         }
+    }
+    private void SetGlobalScale(Transform transform, Vector3 globalScale) {
+        transform.localScale = Vector3.one;
+        transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y,
+            globalScale.z / transform.lossyScale.z);
+    }
+
+    private void SetLine() {
+        Vector3 heading = transform.position - _reticle.transform.position;
+        float distance = heading.magnitude;
+        Vector3 direction = heading / distance;
+        Vector3 midPoint = (transform.position + _reticle.transform.position) / 2;
+        GameObject line = _currentUplinkCreation.transform.Find("Line").gameObject;
+        line.SetActive(true);
+        // Disable so we don't get hover information
+        line.GetComponent<BoxCollider>().enabled = false;
+        line.transform.position = midPoint;
+        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+        // Set X and Y localscale so cube appears to be a line
+        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+        line.transform.rotation = Quaternion.LookRotation(direction);
     }
 }
