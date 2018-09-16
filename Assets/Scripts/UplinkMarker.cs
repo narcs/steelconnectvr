@@ -15,7 +15,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     private StateManager _stateManager;
     private MeshRenderer _informationMeshRenderer;
-    private Color _startColour;
+    private int _lineLayerMask;
 
     private void SetGlobalScale(Transform transform, Vector3 globalScale) {
         transform.localScale = Vector3.one;
@@ -28,19 +28,31 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         float distance = heading.magnitude;
         Vector3 direction = heading / distance;
         Vector3 midPoint = (wan.transform.position + site.transform.position) / 2;
-        line.transform.parent = transform;
-        line.transform.position = midPoint;
-        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
-        // Set X and Y localscale so cube appears to be a line
-        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
-        line.transform.rotation = Quaternion.LookRotation(direction);
+        // Linecast and see if Earth is in between WAN and site. If so, don't enable
+        RaycastHit hit;
+        if (Physics.Linecast(wan.transform.position, site.transform.position, out hit, _lineLayerMask)) {
+            if (hit.collider != null) {
+                if (hit.collider.tag == "Site") {
+                    line.SetActive(true);
+                    line.transform.parent = transform;
+                    line.transform.position = midPoint;
+                    SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+                    // Set X and Y localscale so cube appears to be a line
+                    line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+                    line.transform.rotation = Quaternion.LookRotation(direction);
 
-        _informationMeshRenderer.transform.position = midPoint;
+                    _informationMeshRenderer.transform.position = midPoint;
+                } else {
+                    line.SetActive(false);
+                }
+            }
+        }
     }
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
+        _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
         if (wan && site) {
             SetLine();
             line.GetComponent<Renderer>().material.color = Color.yellow;
