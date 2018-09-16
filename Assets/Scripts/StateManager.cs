@@ -69,7 +69,7 @@ public class StateManager : MonoBehaviour {
         laser.GetComponent<GvrLaserVisual>().laserColor = color;
         laser.GetComponent<GvrLaserVisual>().laserColorEnd = color;
 
-        Debug.Log($"Set laser color for {mode.ToString()}");
+        Debug.Log($"Set laser color for {mode.ToString()} mode");
     }
 
     public void ShowConfirm() {
