@@ -85,7 +85,7 @@ Transform:
   m_GameObject: {fileID: 1423445757195928}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.015, y: 0.015, z: 0.015}
   m_Children: []
   m_Father: {fileID: 4993637438577290}
   m_RootOrder: 1
@@ -120,7 +120,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: c0674203e18089245a5dc3132fd42b42, type: 2}
+  - {fileID: 2100000, guid: e05e9ce181a04da448bc5b924596c625, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -190,13 +190,13 @@ TextMesh:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1423445757195928}
   m_Text: "Id: \nName: \nLongname: \nOrg: \nCountry: \nCity: \nStreet Address: "
-  m_OffsetZ: -10
-  m_CharacterSize: 1
+  m_OffsetZ: 0
+  m_CharacterSize: 8
   m_LineSpacing: 1
-  m_Anchor: 7
+  m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 10
+  m_FontSize: 100
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: e05e9ce181a04da448bc5b924596c625, type: 3}

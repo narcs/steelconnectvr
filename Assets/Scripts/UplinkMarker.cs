@@ -31,8 +31,11 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         line.transform.parent = transform;
         line.transform.position = midPoint;
         SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+        // Set X and Y localscale so cube appears to be a line
         line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
         line.transform.rotation = Quaternion.LookRotation(direction);
+
+        _informationMeshRenderer.transform.position = midPoint;
     }
 
 	void Start () {
