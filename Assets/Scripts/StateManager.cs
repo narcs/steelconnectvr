@@ -10,34 +10,66 @@ public class StateManager : MonoBehaviour {
 
     private GameObject _tempObject;
 
-    public bool deleteMode = false;
+    public enum Mode {
+        // Default mode where the user just can spin the globe.
+        Normal,
 
+        DeleteSite,
+        CreateSite,
+    }
+
+    public Mode currentMode;
 
 	// Use this for initialization
 	void Start () {
-        confirm.SetActive(false);
-	}
+        CloseConfirm();
+        SwitchToNormalMode();
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown("s")) {
             GetComponent<WanManager>().UpdateWans();
         }
-		
 	}
 
-    public void EnableDeleteMode() {
-        // Change to red
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        deleteMode = true;
+    public void SwitchToNormalMode() {
+        currentMode = Mode.Normal;
+        SetLaserColorForMode(currentMode);
     }
 
-    public void DisableDeleteMode() {
-        // Change back to white
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        deleteMode = false;
+    public void SwitchToDeleteSiteMode() {
+        currentMode = Mode.DeleteSite;
+        SetLaserColorForMode(currentMode);
+    }
+
+    public void SwitchToCreateSiteMode() {
+        currentMode = Mode.CreateSite;
+        SetLaserColorForMode(currentMode);
+    }
+
+    void SetLaserColorForMode(Mode mode) {
+        Color color;
+
+        switch (mode) {
+            case Mode.Normal:
+                color = Color.white;
+                break;
+            case Mode.DeleteSite:
+                color = Color.red;
+                break;
+            case Mode.CreateSite:
+                color = Color.green;
+                break;
+            default:
+                color = Color.white;
+                break;
+        }
+
+        laser.GetComponent<GvrLaserVisual>().laserColor = color;
+        laser.GetComponent<GvrLaserVisual>().laserColorEnd = color;
+
+        Debug.Log($"Set laser color for {mode.ToString()}");
     }
 
     public void ShowConfirm() {
@@ -48,17 +80,24 @@ public class StateManager : MonoBehaviour {
         confirm.SetActive(false);
     }
 
-    public void SetDeleteConfirmText(GameObject gameObject, string element) {
-        _tempObject = gameObject;
+    public void SetConfirmText(string text) {
         TextMesh message = confirm.GetComponentInChildren<TextMesh>();
-        message.text = $"Delete {element}?";
+        message.text = text;
+    }
+
+    public void SetGameObjectToDelete(GameObject gameObject, string element) {
+        _tempObject = gameObject;
+        SetConfirmText($"Delete {element}?");
+        ShowConfirm();
     }
 
     public void DeleteGameObject() {
         if (_tempObject) {
-            confirm.SetActive(false);
+            CloseConfirm();
             Destroy(_tempObject);
+
             // Delete API here
+
             Debug.Log($"Deleted: {_tempObject}");
             _tempObject = null;
         } else {

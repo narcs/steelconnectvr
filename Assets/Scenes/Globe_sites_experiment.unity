@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.04345821, g: 0.041858047, b: 0.044895597, a: 1}
+  m_IndirectSpecularColor: {r: 0.041155145, g: 0.03930273, b: 0.04175833, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1496,7 +1496,7 @@ GameObject:
   - component: {fileID: 919323615}
   - component: {fileID: 919323614}
   m_Layer: 5
-  m_Name: Button4
+  m_Name: CreateSiteButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1559,7 +1559,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 919323615}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1407956135}
+        m_MethodName: SwitchToCreateSiteMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &919323615
@@ -2055,7 +2066,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button 4
+  m_Text: Create Site
 --- !u!222 &1120853670
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2389,7 +2400,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   laser: {fileID: 1762843434}
   confirm: {fileID: 1104256861}
-  deleteMode: 0
+  currentMode: 0
 --- !u!1 &1443036542
 GameObject:
   m_ObjectHideFlags: 0
@@ -2467,7 +2478,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1407956135}
-        m_MethodName: EnableDeleteMode
+        m_MethodName: SwitchToDeleteSiteMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
