@@ -62,7 +62,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (_stateManager.deleteMode) {
             // Confirmation panel
             _stateManager.ShowConfirm();
-            _stateManager.SetDeleteConfirmText(gameObject, site.name);
+            _stateManager.SetDeleteConfirmText(gameObject, uplink.id);
         }
     }
 
