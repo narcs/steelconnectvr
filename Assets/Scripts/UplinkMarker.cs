@@ -31,6 +31,8 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	void Update () {
         if (wan && site) {
             SetLine();
+        } else {
+            line.SetActive(false);
         }
 	}
 

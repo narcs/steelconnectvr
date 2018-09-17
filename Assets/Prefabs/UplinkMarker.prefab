@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114651043186445952}
   m_Layer: 0
   m_Name: UplinkMarker
-  m_TagString: Untagged
+  m_TagString: Uplink
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 65343967943739946}
   m_Layer: 9
   m_Name: Line
-  m_TagString: Untagged
+  m_TagString: Uplink
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
