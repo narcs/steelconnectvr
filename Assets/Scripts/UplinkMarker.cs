@@ -12,6 +12,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public GameObject site;
     public GameObject information;
     public GameObject line;
+    public bool created = true;
 
     private StateManager _stateManager;
     private MeshRenderer _informationMeshRenderer;
@@ -29,10 +30,8 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	
 	// Update is called once per frame
 	void Update () {
-        if (wan && site) {
+        if (wan && site && created) {
             SetLine();
-        } else {
-            line.SetActive(false);
         }
 	}
 

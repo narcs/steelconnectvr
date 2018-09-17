@@ -61,6 +61,8 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         } else {
             // Create uplink GameObject
             _currentUplinkCreation = Instantiate(uplinkPrefab, transform);
+            UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
+            uplinkMarker.created = false;
         }
     }
 
@@ -73,6 +75,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
                 GameObject line = _currentUplinkCreation.transform.Find("Line").gameObject;
                 line.GetComponent<BoxCollider>().enabled = true;
+                uplinkMarker.created = true;
                 uplinkMarker.wan = gameObject;
                 uplinkMarker.site = _stateManager.currentObjectHover;
                 // Create uplink API call
@@ -94,9 +97,9 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         Vector3 direction = heading / distance;
         Vector3 midPoint = (transform.position + _reticle.transform.position) / 2;
         GameObject line = _currentUplinkCreation.transform.Find("Line").gameObject;
-        line.SetActive(true);
         // Disable so we don't get hover information
         line.GetComponent<BoxCollider>().enabled = false;
+        line.SetActive(true);
         line.transform.position = midPoint;
         SetGlobalScale(line.transform, new Vector3(1, 1, distance));
         // Set X and Y localscale so cube appears to be a line
