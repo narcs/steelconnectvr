@@ -49,16 +49,27 @@ public class StateManager : MonoBehaviour {
         confirm.SetActive(false);
     }
 
-    public void SetDeleteConfirmText(GameObject gameObject, string element) {
-        _tempObject = gameObject;
+    public void SetDeleteConfirmText(GameObject gameObjectToDelete, string element) {
+        _tempObject = gameObjectToDelete;
         TextMesh message = confirm.GetComponentInChildren<TextMesh>();
         message.text = $"Delete {element}?";
+    }
+
+    private void DeleteSite(GameObject gameObjectSite) {
+        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
+        ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
+        particleSystem.Play();
+        siteMarker.model.SetActive(false);
+        Destroy(_tempObject, particleSystem.main.duration);
+        Debug.Log("Site deletion");
     }
 
     public void DeleteGameObject() {
         if (_tempObject) {
             confirm.SetActive(false);
-            Destroy(_tempObject);
+            if (_tempObject.tag == "Site") {
+                DeleteSite(_tempObject);
+            }
             // Delete API here
             Debug.Log($"Deleted: {_tempObject}");
             _tempObject = null;

@@ -9,6 +9,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Site site;
     public GameObject model;
     public GameObject information;
+    public GameObject explosion;
 
     private StateManager _stateManager;
     private Behaviour _halo;
