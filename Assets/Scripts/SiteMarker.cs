@@ -7,7 +7,7 @@ using Models.SteelConnect;
 
 public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler{
     public Site site;
-    public GameObject pillar;
+    public GameObject model;
     public GameObject information;
 
     private StateManager _stateManager;
@@ -16,7 +16,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     void Start() {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        _halo = (Behaviour)pillar.GetComponent("Halo");
+        _halo = (Behaviour)model.GetComponent("Halo");
         _halo.enabled = false;
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
     }
