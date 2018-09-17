@@ -69,6 +69,8 @@ public class StateManager : MonoBehaviour {
             confirm.SetActive(false);
             if (_tempObject.tag == "Site") {
                 DeleteSite(_tempObject);
+            } else {
+                Destroy(_tempObject);
             }
             // Delete API here
             Debug.Log($"Deleted: {_tempObject}");
