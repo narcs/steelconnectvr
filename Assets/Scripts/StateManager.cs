@@ -7,11 +7,11 @@ public class StateManager : MonoBehaviour {
 
     public GameObject laser;
     public GameObject confirm;
+    public bool deleteMode = false;
+    public GameObject currentObjectHover;
+    public GameObject earthSphere;
 
     private GameObject _tempObject;
-
-    public bool deleteMode = false;
-
 
 	// Use this for initialization
 	void Start () {
@@ -22,8 +22,9 @@ public class StateManager : MonoBehaviour {
 	void Update () {
         if (Input.GetKeyDown("s")) {
             GetComponent<WanManager>().UpdateWans();
+        } else if (Input.GetKeyDown("a")) {
+            earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
         }
-		
 	}
 
     public void EnableDeleteMode() {

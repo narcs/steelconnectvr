@@ -25,7 +25,7 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
         previousOrientation = dominantController.Orientation * Vector3.forward;
     }
 
-    void LateUpdate() {
+    void Update() {
         if (isCurrentlyDragging) {
             Vector3 orientationDelta = (dominantController.Orientation * Vector3.forward) - previousOrientation;
 

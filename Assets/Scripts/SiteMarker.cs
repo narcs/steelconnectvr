@@ -14,7 +14,6 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private Behaviour _halo;
     private MeshRenderer _informationMeshRenderer;
 
-    // Use this for initialization
     void Start() {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _halo = (Behaviour)pillar.GetComponent("Halo");
@@ -22,7 +21,6 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
     }
 
-    // Update is called once per frame
     void Update() {
 
     }
@@ -30,11 +28,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
         _informationMeshRenderer.enabled = true;
+        _stateManager.currentObjectHover = gameObject;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         _halo.enabled = false;
         _informationMeshRenderer.enabled = false;
+        _stateManager.currentObjectHover = null;
     }
 
     // Need this event for PointerClick

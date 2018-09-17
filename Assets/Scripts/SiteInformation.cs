@@ -6,7 +6,6 @@ public class SiteInformation : MonoBehaviour {
     private GameObject _siteObject;
     private Camera _camera;
 
-	// Use this for initialization
 	void Start () {
         _siteObject = transform.parent.gameObject;
         SiteMarker siteMarker = _siteObject.GetComponent<SiteMarker>();
