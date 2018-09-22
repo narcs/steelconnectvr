@@ -22,13 +22,13 @@ public class GlobeSiteCreation : MonoBehaviour {
     private float globeRadius;
 
     private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private List<SitelinkMarker> currentSitelinkMarkers;
+    private Dictionary<SiteID, SitelinkMarker> currentSitelinkMarkers;
 
     private SteelConnect steelConnect;
 
     void Start() {
         currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentSitelinkMarkers = new List<SitelinkMarker>();
+        currentSitelinkMarkers = new Dictionary<SiteID, SitelinkMarker>();
 
         steelConnect = new SteelConnect();
         updateGlobeRadius();
@@ -46,8 +46,8 @@ public class GlobeSiteCreation : MonoBehaviour {
         currentSiteMarkers.Clear();
         currentSiteMarkerObjects.Clear();
 
-        foreach (SitelinkMarker sitelinkMarker in currentSitelinkMarkers) {
-            Destroy(sitelinkMarker.gameObject);
+        foreach (var entry in currentSitelinkMarkers) {
+            Destroy(entry.Value.gameObject);
         }
         currentSitelinkMarkers.Clear();
 
@@ -117,25 +117,14 @@ public class GlobeSiteCreation : MonoBehaviour {
                         Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
 
                         if (siteMarkers.ContainsKey(sitelink.remote_site)) {
-                            Color lineColor;
-                            float blinkPeriodSeconds;
-
-                            if (sitelink.state == "up") {
-                                lineColor = Color.green;
-                                blinkPeriodSeconds = 0.0f;
-                            } else {
-                                lineColor = Color.red;
-                                blinkPeriodSeconds = 2.0f;
-                            }
-
-                            drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], lineColor, blinkPeriodSeconds);
+                            placeSitelinkMarker(siteId, sitelink);
                         } else {
                             Debug.LogWarning($"Remote site {sitelink.remote_site} has no site marker, not drawing sitelink");
                         }
                     }
                 }
             })
-            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
+            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
     }
 
     SiteMarker placeSiteMarker(Site site, LatLong latLong) {
@@ -159,21 +148,15 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    SitelinkMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
-        Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
+    SitelinkMarker placeSitelinkMarker(SiteID siteId, Sitelink sitelink) {
+        SiteMarker fromSite = currentSiteMarkers[siteId];
+        SiteMarker toSite = currentSiteMarkers[sitelink.remote_site];
+        Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
         GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
         SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
-
-        sitelinkMarker.StartSiteMarker = site1;
-        sitelinkMarker.EndSiteMarker = site2;
-        sitelinkMarker.SpherePosition = transform.position;
-        sitelinkMarker.SphereRadius = globeRadius * 1.03f;
-        sitelinkMarker.Color = color;
-        sitelinkMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
-        sitelinkMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
-
-        currentSitelinkMarkers.Add(sitelinkMarker);
+        sitelinkMarker.Set(fromSite, toSite, sitelink, transform.position, globeRadius * 1.03f);
+        currentSitelinkMarkers.Add(siteId, sitelinkMarker);
 
         return sitelinkMarker;
     }

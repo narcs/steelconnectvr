@@ -4,14 +4,19 @@ using UnityEngine;
 using Models.SteelConnect;
 
 public class SitelinkMarker : MonoBehaviour {
-    public SiteMarker StartSiteMarker;
-    public SiteMarker EndSiteMarker;
-    public int NumPoints;
-    public Color Color;
-    public Vector3 SpherePosition;
-    public float SphereRadius;
+    private SiteMarker fromSiteMarker;
+    private SiteMarker toSiteMarker;
+    private Sitelink sitelink;
+    public string SitelinkId; // Viewable in the editor for debugging.
 
-    public float BlinkPeriodSeconds = 0.0f;
+    private Vector3 globePosition;
+    private float globeRadius;
+
+    private int numPoints = 32; // TODO: Calculate based on sphere surface distance.
+    private float lineWidth;
+    private Color lineColor;
+
+    private float blinkPeriodSeconds = 0.0f;
     private float blinkLevel = 0.0f;
     private float blinkDirection = 1.0f;
 
@@ -19,14 +24,44 @@ public class SitelinkMarker : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        lineRenderer = GetComponent<LineRenderer>();
+        
+    }
+
+    public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, Sitelink sitelink, Vector3 globePosition, float globeRadius) {
+        this.fromSiteMarker = fromSiteMarker;
+        this.toSiteMarker = toSiteMarker;
+        this.sitelink = sitelink;
+        SitelinkId = sitelink.id;
+        lineRenderer = gameObject.GetComponent<LineRenderer>();
+
+        // TODO: Get these values in a better way, eg. link the globe object here with a public member variable.
+        this.globePosition = globePosition;
+        this.globeRadius = globeRadius;
+
+        // ---
+
+        lineColor = Color.green;
+        lineWidth = 0.1f;
+        blinkPeriodSeconds = 0.0f;
+
+        if (sitelink.state == "up") {
+            lineColor = Color.green;
+
+            lineWidth = 0.05f + sitelink.throughput_out * 0.01f;
+        } else {
+            lineColor = Color.red;
+            blinkPeriodSeconds = 2.0f;
+        }
+
+        // ---
+
         Draw();
     }
-	
-	// Update is called once per frame
-	void Update () {
-		if (BlinkPeriodSeconds > 0.0f) {
-            blinkLevel += blinkDirection * BlinkPeriodSeconds * 2 * Time.deltaTime;
+
+    // Update is called once per frame
+    void Update() {
+        if (blinkPeriodSeconds > 0.0f) {
+            blinkLevel += blinkDirection * (1/blinkPeriodSeconds) * 2 * Time.deltaTime;
 
             if (blinkLevel < 0.0f || blinkLevel > 1.0f) {
                 blinkDirection *= -1.0f;
@@ -35,29 +70,36 @@ public class SitelinkMarker : MonoBehaviour {
             blinkLevel = 1.0f;
         }
 
-        Color.a = blinkLevel;
+        lineColor.a = blinkLevel;
 
-        //Draw();
-        if (!(StartSiteMarker && EndSiteMarker)) { //TODO: Optimise
-            Destroy(gameObject);
-        }
+        Draw();
     }
 
     public void Draw() {
-        lineRenderer.positionCount = NumPoints;
-        lineRenderer.startColor = Color;
-        lineRenderer.endColor = Color;
+        // This check is so that if there is an sitelink marker with no from/to site (eg. because
+        // it's a dummy marker for easy modification of the prefab), it won't try to draw itself
+        // and spam the console with an error per frame.
+        if (fromSiteMarker != null && toSiteMarker != null) {
+            lineRenderer.positionCount = numPoints;
+            lineRenderer.startColor = lineColor;
+            lineRenderer.endColor = lineColor;
+            lineRenderer.startWidth = lineWidth;
+            lineRenderer.endWidth = lineWidth;
 
-        for (int i = 0; i < NumPoints; i++) {
-            float progress = ((float)i) / (NumPoints - 1);
-            Vector3 result = Vector3.Slerp(StartSiteMarker.gameObject.transform.position, EndSiteMarker.gameObject.transform.position, progress);
-            float radius = Vector3.Distance(SpherePosition, result);
+            for (int i = 0; i < numPoints; i++) {
+                float progress = ((float)i) / (numPoints - 1);
+                Vector3 result = Vector3.Slerp(
+                    fromSiteMarker.gameObject.transform.position,
+                    toSiteMarker.gameObject.transform.position,
+                    progress);
 
-            if (radius < SphereRadius) {
-                result *= (SphereRadius / radius);
+                float radius = Vector3.Distance(globePosition, result);
+                if (radius < globeRadius) {
+                    result *= (globeRadius / radius);
+                }
+
+                lineRenderer.SetPosition(i, result);
             }
-
-            lineRenderer.SetPosition(i, result);
         }
     }
 }
