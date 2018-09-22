@@ -72,7 +72,12 @@ public class SitelinkMarker : MonoBehaviour {
 
         lineColor.a = blinkLevel;
 
+        // Redraw to update blink level.
         Draw();
+
+        if (!(fromSiteMarker && toSiteMarker)) { //TODO: Optimise
+            Destroy(gameObject);
+        }
     }
 
     public void Draw() {

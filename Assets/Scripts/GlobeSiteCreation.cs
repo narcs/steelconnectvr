@@ -54,7 +54,6 @@ public class GlobeSiteCreation : MonoBehaviour {
         // ---
 
         // What follows is a whole lot of promise-based async code.
-        // TODO: I promise I'll explain what each promise is for.
 
         // Gets the list of sites from the SteelConnect API and returns it as an array of Sites.
         var sitesPromise = steelConnect.GetSitesInOrg()
@@ -99,8 +98,8 @@ public class GlobeSiteCreation : MonoBehaviour {
                 return sitelinksDict;
             });
 
-        // Connect random pairs of sites, just for something to show.
-        var arbitraryLineMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
+        // Connect sites by sitelinks.
+        PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
             .Then(tup => {
                 Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
                 Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
