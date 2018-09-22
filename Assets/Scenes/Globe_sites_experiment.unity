@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.044414505, g: 0.0418735, b: 0.045859963, a: 1}
+  m_IndirectSpecularColor: {r: 0.04345821, g: 0.041858047, b: 0.044895597, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -20420,6 +20420,48 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 621974332}
   m_CullTransparentMesh: 0
+--- !u!1001 &624043620
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 299656877}
+    m_Modifications:
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2c2a4d6e2e932c34d9cdde365c2b018b, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1001 &773190229
 Prefab:
   m_ObjectHideFlags: 0
@@ -20462,203 +20504,6 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce7abbbeb276a1547bd8ce1069fdabb7, type: 2}
   m_IsPrefabAsset: 0
---- !u!1 &802436617
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 1677000810490696, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1828474804}
-  - component: {fileID: 802436621}
-  - component: {fileID: 802436620}
-  - component: {fileID: 802436619}
-  - component: {fileID: 802436618}
-  m_Layer: 0
-  m_Name: GlobeMap
-  m_TagString: Globe
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &802436618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114559210871341554, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 802436617}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76a256726e16d4966a3f30b97a17e1d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _mapInstance: {fileID: 802436621}
-  OnTileError:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: Mapbox.Unity.Map.TileErrorEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &802436619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114917511622980218, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 802436617}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9407d2a4576149b18a84d9addc9c8a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _map: {fileID: 802436621}
-  _locations:
-  - 37.7648, -122.463
-  - 40.7825, -73.966111111111
-  - 35.658611111111, 139.74555555556
-  _spawnScale: 100
-  _markerPrefab: {fileID: 1839187062704024, guid: 9b5b1b761a8994c07affd0a05396633b,
-    type: 2}
---- !u!114 &802436620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114920653282471576, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 802436617}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a718f313c2f574a4aad42d7b52867205, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &802436621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114560243132123672, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 802436617}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd961b1c9541a4cee99686069ecce852, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _initializeOnStart: 1
-  _options:
-    locationOptions:
-      latitudeLongitude: 0,0
-      zoom: 3
-    extentOptions:
-      extentType: 3
-      cameraBoundsOptions:
-        camera: {fileID: 0}
-        visibleBuffer: 0
-        disposeBuffer: 0
-        updateInterval: 0
-      rangeAroundCenterOptions:
-        west: 1
-        north: 1
-        east: 1
-        south: 1
-      rangeAroundTransformOptions:
-        targetTransform: {fileID: 0}
-        visibleBuffer: 0
-        disposeBuffer: 0
-    placementOptions:
-      placementType: 1
-      snapMapToZero: 0
-    scalingOptions:
-      scalingType: 1
-      unityTileSize: 100
-    loadingTexture: {fileID: 0}
-  _imagery:
-    _layerProperty:
-      sourceType: 6
-      sourceOptions:
-        isActive: 1
-        layerSource:
-          Name: Streets
-          Id: mapbox://styles/raishiro/cjlxob18d4meh2sqrul7tnjxl
-          Modified: 
-          UserName: 
-      rasterOptions:
-        useRetina: 0
-        useCompression: 0
-        useMipMap: 0
-  _terrain:
-    _layerProperty:
-      sourceType: 0
-      sourceOptions:
-        isActive: 1
-        layerSource:
-          Name: 
-          Id: mapbox.terrain-rgb
-          Modified: 
-          UserName: 
-      elevationLayerType: 3
-      requiredOptions:
-        baseMaterial: {fileID: 2100000, guid: b9f23e9bce724fa4daac57ecded470b8, type: 2}
-        addCollider: 1
-        exaggerationFactor: 1
-      modificationOptions:
-        sampleCount: 10
-        useRelativeHeight: 1
-        earthRadius: 1
-      unityLayerOptions:
-        addToLayer: 1
-        layerId: 9
-      sideWallOptions:
-        isActive: 0
-        wallHeight: 10
-        wallMaterial: {fileID: 0}
-  _vectorData:
-    _layerProperty:
-      tileJsonData:
-        tileJSONLoaded: 0
-        LayerDisplayNames:
-        - admin
-        - aeroway
-        - airport_label
-        - barrier_line
-        - building
-        - country_label
-        - housenum_label
-        - landuse
-        - landuse_overlay
-        - marine_label
-        - motorway_junction
-        - mountain_peak_label
-        - place_label
-        - poi_label
-        - rail_station_label
-        - road
-        - road_label
-        - state_label
-        - water
-        - water_label
-        - waterway
-        - waterway_label
-      _sourceType: 1
-      sourceOptions:
-        isActive: 1
-        layerSource:
-          Name: Mapbox Streets
-          Id: mapbox.mapbox-streets-v7
-          Modified: 
-          UserName: 
-      useOptimizedStyle: 0
-      optimizedStyle:
-        Name: 
-        Id: 
-        Modified: 
-        UserName: 
-      performanceOptions:
-        isEnabled: 1
-        entityPerCoroutine: 20
-      vectorSubLayers: []
-      locationPrefabList: []
-  _tileProvider: {fileID: 802436620}
 --- !u!1 &822532016
 GameObject:
   m_ObjectHideFlags: 0
@@ -31715,20 +31560,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1803766253}
   m_Mesh: {fileID: 4300002, guid: ca585da7f11b089479fe1dd53d613e09, type: 3}
---- !u!4 &1828474804
+--- !u!4 &1828474804 stripped
 Transform:
-  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 4914851068992452, guid: 2c2a4d6e2e932c34d9cdde365c2b018b,
     type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 802436617}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 299656877}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_PrefabInternal: {fileID: 624043620}
 --- !u!1 &1873971002
 GameObject:
   m_ObjectHideFlags: 0

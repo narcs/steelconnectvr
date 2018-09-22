@@ -21,7 +21,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
-        _lineLayerMask = ~(1 << LayerMask.NameToLayer("Uplink Line"));
+        _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
         if (wan && site) {
             SetLine();
             line.GetComponent<Renderer>().material.color = Color.yellow;
