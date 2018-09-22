@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114352516001778234}
   - component: {fileID: 120762477117276932}
   m_Layer: 0
-  m_Name: LineMarker
+  m_Name: SitelinkMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

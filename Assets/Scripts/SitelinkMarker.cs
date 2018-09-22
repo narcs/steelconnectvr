@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Models.SteelConnect;
 
-public class LineMarker : MonoBehaviour {
+public class SitelinkMarker : MonoBehaviour {
     public SiteMarker StartSiteMarker;
     public SiteMarker EndSiteMarker;
     public int NumPoints;
