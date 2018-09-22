@@ -6,7 +6,11 @@ using UnityEngine;
 // For promises and REST client.
 using RSG;
 using Proyecto26;
-using Models.Google;
+
+// Mapbox
+using Mapbox.Geocoding;
+using Mapbox.Unity;
+using Mapbox.Utils;
 
 // We're using promises/futures here for async operations. See:
 // https://github.com/Real-Serious-Games/C-Sharp-Promise
@@ -31,28 +35,34 @@ public static class LatLongUtility {
 
     // ---
 
-    private static string gmapsAPI = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-
-    // TODO: Actually implement this properly!
     public static IPromise<LatLong> GetLatLongForAddress(string streetAddress, string city, string country) {
-        string url = gmapsAPI;
+        // Get access singleton (object that holds a token and associated geocoder).
+        MapboxAccess access = MapboxAccess.Instance;
+        Geocoder geocoder = access.Geocoder;
 
-        if (streetAddress != "") {
-            url += (streetAddress.Replace(" ", "+") + ",+");
-        }
+        var promise = new Promise<LatLong>();
 
-        url += ",+" + city.Replace(" ", "+") + ",+" + country;
+        string forwardGeocodeQuery = $"{streetAddress} {city} {country}";
+        Debug.Log($"Performing forward geocode with query \"{forwardGeocodeQuery}\"");
+        ForwardGeocodeResource forwardGeocode = new ForwardGeocodeResource(forwardGeocodeQuery);
 
-        return RestClient.Get<Models.Google.Maps.ResultList>(url)
-            .Then(resultList => {
-                if (resultList.results.Length > 0) {
-                    return new LatLong(
-                    resultList.results[0].geometry.location.lat,
-                    resultList.results[0].geometry.location.lng);
-                } else {
-                    return new LatLong();
-                }
-            });
+        geocoder.Geocode(forwardGeocode, (ForwardGeocodeResponse response) => {
+            /*
+            Debug.Log($"Forward geocode response has features:");
+            foreach (Feature feature in response.Features) {
+                Debug.Log($" - {feature.Id} {feature.PlaceName} {feature.Address} {feature.Center}");
+            }
+            */
+
+            // There are lots of interesting types of features returned by the API, places, POIs, localities, etc.
+            // I'm assuming they're ordered by relevance, so let's just pick the first one.
+            Feature chosenFeature = response.Features[0];
+            Vector2d coordinates = chosenFeature.Center;
+
+            promise.Resolve(new LatLong((float)coordinates.x, (float)coordinates.y));
+        });
+
+        return promise;
     }
 }
 
@@ -76,83 +86,5 @@ public class LatLong {
 
     public override string ToString() {
         return $"LatLong({latitude}, {longitude})";
-    }
-}
-
-namespace Models {
-    namespace Google {
-        namespace Maps {
-            [Serializable]
-            public class ResultList {
-                public Result[] results;
-                public string status;
-            }
-
-            [Serializable]
-            public class Result {
-                public AddressComponents[] address_components;
-                public string formatted_address;
-                public Geometry geometry;
-                public string place_id;
-                public string[] types;
-            }
-
-            [Serializable]
-            public class Geometry {
-                public Bounds bounds;
-                public Location location;
-                public string location_type;
-                public Viewport viewport;
-            }
-
-            [Serializable]
-            public class Bounds {
-                public Northeast northeast;
-                public Southwest southwest;
-            }
-
-            [Serializable]
-            public class Northeast {
-                public float lat;
-                public float lng;
-            }
-
-            [Serializable]
-            public class Southwest {
-                public float lat;
-                public float lng;
-            }
-
-            [Serializable]
-            public class Location {
-                public float lat;
-                public float lng;
-            }
-
-            [Serializable]
-            public class Viewport {
-                public Northeast1 northeast;
-                public Southwest1 southwest;
-            }
-
-            [Serializable]
-            public class Northeast1 {
-                public float lat;
-                public float lng;
-            }
-
-            [Serializable]
-            public class Southwest1 {
-                public float lat;
-                public float lng;
-            }
-
-            [Serializable]
-            public class AddressComponents {
-                public string long_name;
-                public string short_name;
-                public string[] types;
-            }
-        }
     }
 }
