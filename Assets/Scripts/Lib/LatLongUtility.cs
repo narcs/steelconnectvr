@@ -56,10 +56,13 @@ public static class LatLongUtility {
 
             // There are lots of interesting types of features returned by the API, places, POIs, localities, etc.
             // I'm assuming they're ordered by relevance, so let's just pick the first one.
-            Feature chosenFeature = response.Features[0];
-            Vector2d coordinates = chosenFeature.Center;
-
-            promise.Resolve(new LatLong((float)coordinates.x, (float)coordinates.y));
+            if (response.Features.Count > 0) {
+                Feature chosenFeature = response.Features[0];
+                Vector2d coordinates = chosenFeature.Center;
+                promise.Resolve(new LatLong((float)coordinates.x, (float)coordinates.y));
+            } else {
+                promise.Resolve(new LatLong());
+            }
         });
 
         return promise;
