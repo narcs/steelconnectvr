@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using Gvr.Internal;
 
+public enum StateManagerMode {
+    Normal,
+    Delete,
+    CreateSite,
+}
+
 public class StateManager : MonoBehaviour {
 
     public GameObject laser;
     public GameObject confirm;
-    public bool deleteMode = false;
+
     public GameObject currentObjectHover;
     public GameObject earthSphere;
 
     private GameObject _tempObject;
 
-	// Use this for initialization
-	void Start () {
+    public StateManagerMode currentMode = StateManagerMode.Normal;
+
+    // Use this for initialization
+    void Start () {
         confirm.SetActive(false);
 	}
 	
@@ -28,17 +36,38 @@ public class StateManager : MonoBehaviour {
 	}
 
     public void EnableDeleteMode() {
-        // Change to red
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        deleteMode = true;
+        currentMode = StateManagerMode.Delete;
+        SetLaserColorForMode(currentMode);
     }
 
     public void DisableDeleteMode() {
-        // Change back to white
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        deleteMode = false;
+        currentMode = StateManagerMode.Normal;
+        SetLaserColorForMode(currentMode);
+    }
+
+    void SetLaserColorForMode(StateManagerMode mode) {
+        Color newColor;
+  
+        switch (mode) {
+            case StateManagerMode.Normal:
+                newColor = Color.white;
+                break;
+
+            case StateManagerMode.Delete:
+                newColor = Color.red;
+                break;
+
+            case StateManagerMode.CreateSite:
+                newColor = Color.green;
+                break;
+
+            default:
+                newColor = Color.magenta;
+                break;
+        }
+
+        laser.GetComponent<GvrLaserVisual>().laserColor = newColor;
+        laser.GetComponent<GvrLaserVisual>().laserColorEnd = newColor;
     }
 
     public void ShowConfirm() {
