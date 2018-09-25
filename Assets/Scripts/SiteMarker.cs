@@ -37,7 +37,9 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if (response.StatusCode == 200) {
                     Debug.Log($"Site deleted: {site.name}");
                 } else {
-                    Debug.LogError($"Unable to delete site: {site.name}");
+                    Debug.LogError($"Unable to delete site: {site.name}.\n" +
+                        $"Status code: {response.StatusCode}\n" +
+                        $"Error: {response.Error}");
                 }
             });
         Destroy(gameObject, particleSystem.main.duration);
