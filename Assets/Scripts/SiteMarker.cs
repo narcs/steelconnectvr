@@ -26,6 +26,14 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     }
 
+    private void OnTriggerEnter(Collider other) {
+        ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
+        particleSystem.Play();
+        model.SetActive(false);
+        Destroy(gameObject, particleSystem.main.duration);
+        Debug.Log("Site deletion");
+    }
+
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
         _informationMeshRenderer.enabled = true;

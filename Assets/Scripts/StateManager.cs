@@ -10,6 +10,7 @@ public class StateManager : MonoBehaviour {
     public bool deleteMode = false;
     public GameObject currentObjectHover;
     public GameObject earthSphere;
+    public GameObject destroyerObject;
 
     private GameObject _tempObject;
 
@@ -56,12 +57,14 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
-        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        particleSystem.Play();
-        siteMarker.model.SetActive(false);
-        Destroy(_tempObject, particleSystem.main.duration);
-        Debug.Log("Site deletion");
+        Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
+        destroyer.StartDestruction(gameObjectSite);
+        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
+        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
+        //particleSystem.Play();
+        //siteMarker.model.SetActive(false);
+        //Destroy(_tempObject, particleSystem.main.duration);
+        //Debug.Log("Site deletion");
     }
 
     public void DeleteGameObject() {

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4475784741442038}
   - component: {fileID: 198506541652983718}
   - component: {fileID: 199195257989212670}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: BigExplosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 23973696660499488}
   - component: {fileID: 136582773827888568}
   - component: {fileID: 122836733091370754}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Pillar
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -56,7 +56,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4993637438577290}
   - component: {fileID: 114170087902565710}
-  m_Layer: 0
+  - component: {fileID: 54556625753409614}
+  m_Layer: 10
   m_Name: SiteMarker
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -72,7 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4921785928406832}
   - component: {fileID: 122841358522141124}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Skycraper_173
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -90,7 +91,7 @@ GameObject:
   - component: {fileID: 33580450547218274}
   - component: {fileID: 23615215062633400}
   - component: {fileID: 64831921453578140}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder001
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -107,7 +108,7 @@ GameObject:
   - component: {fileID: 4765224669300852}
   - component: {fileID: 198374751174157936}
   - component: {fileID: 199193766989653756}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Debris
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +125,7 @@ GameObject:
   - component: {fileID: 4146847323416720}
   - component: {fileID: 198074871757439682}
   - component: {fileID: 199041198802610440}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Embers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +143,7 @@ GameObject:
   - component: {fileID: 33022890223524880}
   - component: {fileID: 23419329544816360}
   - component: {fileID: 64355468185157512}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box002
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -160,7 +161,7 @@ GameObject:
   - component: {fileID: 23723947726237140}
   - component: {fileID: 102367758655688344}
   - component: {fileID: 114008933387104702}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Information
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +178,7 @@ GameObject:
   - component: {fileID: 4889625398645696}
   - component: {fileID: 198766489074634120}
   - component: {fileID: 199236383688527846}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +196,7 @@ GameObject:
   - component: {fileID: 33539281927617658}
   - component: {fileID: 23957305303272568}
   - component: {fileID: 64848116365409390}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box004
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -212,7 +213,7 @@ GameObject:
   - component: {fileID: 4961317001433946}
   - component: {fileID: 198347792218906304}
   - component: {fileID: 199251525350742016}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Embers (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,7 +230,7 @@ GameObject:
   - component: {fileID: 4785181248762060}
   - component: {fileID: 198093743058281920}
   - component: {fileID: 199839080916875514}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: AdditonalSmoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -246,7 +247,7 @@ GameObject:
   - component: {fileID: 4069265913419592}
   - component: {fileID: 198788373530852708}
   - component: {fileID: 199955125129420568}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shockwave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +264,7 @@ GameObject:
   - component: {fileID: 4172043004889418}
   - component: {fileID: 198685043334620960}
   - component: {fileID: 199067953991943802}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SmokeTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +282,7 @@ GameObject:
   - component: {fileID: 33103795248551078}
   - component: {fileID: 23995953715704452}
   - component: {fileID: 64663195077088454}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Box001
   m_TagString: Site
   m_Icon: {fileID: 0}
@@ -777,6 +778,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1138336595546270}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &54556625753409614
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1252215799384428}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!64 &64355468185157512
 MeshCollider:
   m_ObjectHideFlags: 1
