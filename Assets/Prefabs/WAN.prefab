@@ -47,7 +47,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1489385136498528
 GameObject:
   m_ObjectHideFlags: 0
@@ -66,7 +66,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1593806330636466
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,7 +354,7 @@ MonoBehaviour:
     longname: 
     org: 
     uplinks: []
-  cloud: {fileID: 1489385136498528}
+  cloud: {fileID: 1255497662251046}
   information: {fileID: 1145352307441112}
   uplinkPrefab: {fileID: 1221943760286042, guid: ec8d81c2546505546b3217936092ed0b,
     type: 2}
