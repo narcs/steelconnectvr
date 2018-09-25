@@ -7,6 +7,16 @@ public class SCVRKeyboardDelegate : GvrKeyboardDelegateBase {
     public override event EventHandler KeyboardHidden;
     public override event EventHandler KeyboardShown;
 
+    GameObject _currentVRInputField = null;
+
+    // ---
+
+    public void SetCurrentTextField(GameObject gameObject) {
+        _currentVRInputField = gameObject;
+    }
+
+    // ---
+
     public override void OnKeyboardEnterPressed(string edit_text) {
         Debug.Log($"Keyboard enter pressed callback called with text: {edit_text}");
     }

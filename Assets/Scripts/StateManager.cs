@@ -12,7 +12,9 @@ public enum StateManagerMode {
 public class StateManager : MonoBehaviour {
 
     public GameObject laser;
+
     public GameObject confirm;
+    public GameObject createSiteWindow;
 
     public GameObject currentObjectHover;
     public GameObject earthSphere;
@@ -24,6 +26,7 @@ public class StateManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         confirm.SetActive(false);
+        createSiteWindow.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -35,14 +38,23 @@ public class StateManager : MonoBehaviour {
         }
 	}
 
-    public void EnableDeleteMode() {
+    public void SwitchToDeleteMode() {
         currentMode = StateManagerMode.Delete;
         SetLaserColorForMode(currentMode);
     }
 
-    public void DisableDeleteMode() {
+    public void SwitchToCreateSiteMode() {
+        currentMode = StateManagerMode.CreateSite;
+        SetLaserColorForMode(currentMode);
+        earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = false;
+        createSiteWindow.SetActive(true);
+    }
+
+    public void SwitchToNormalMode() {
         currentMode = StateManagerMode.Normal;
         SetLaserColorForMode(currentMode);
+        earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = true;
+        createSiteWindow.SetActive(false);
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {
