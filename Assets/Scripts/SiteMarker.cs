@@ -14,12 +14,14 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private StateManager _stateManager;
     private Behaviour _halo;
     private MeshRenderer _informationMeshRenderer;
+    private SteelConnect _steelConnect;
 
     void Start() {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _halo = (Behaviour)model.GetComponent("Halo");
         _halo.enabled = false;
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
+        _steelConnect = new SteelConnect();
     }
 
     void Update() {
@@ -30,8 +32,15 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
         particleSystem.Play();
         model.SetActive(false);
+        _steelConnect.DeleteSite(site.id)
+            .Then(response => {
+                if (response.StatusCode == 200) {
+                    Debug.Log($"Site deleted: {site.name}");
+                } else {
+                    Debug.LogError($"Unable to delete site: {site.name}");
+                }
+            });
         Destroy(gameObject, particleSystem.main.duration);
-        Debug.Log($"Site deleted: {site.name}");
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
