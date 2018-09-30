@@ -21,14 +21,14 @@ public class GlobeSiteCreation : MonoBehaviour {
 
     private float globeRadius;
 
-    private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private List<LineMarker> currentLineMarkers;
+    //private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
+    //private List<LineMarker> currentLineMarkers;
 
     private SteelConnect steelConnect;
 
     void Start() {
-        currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentLineMarkers = new List<LineMarker>();
+        //currentSiteMarkers = new Dictionary<string, SiteMarker>();
+        //currentLineMarkers = new List<LineMarker>();
 
         steelConnect = new SteelConnect();
         updateGlobeRadius();
@@ -39,6 +39,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         globeRadius = (mesh.bounds.size.x / 2.0f) * transform.localScale.x;
     }
 
+    /*
     public void UpdateSites() {
         foreach (var entry in currentSiteMarkers) {
             if (entry.Value) Destroy(entry.Value.gameObject);
@@ -137,8 +138,8 @@ public class GlobeSiteCreation : MonoBehaviour {
             })
             .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
     }
-
-    SiteMarker placeSiteMarker(Site site, LatLong latLong) {
+    */
+    public SiteMarker placeSiteMarker(Site site, LatLong latLong) {
         Vector3 sitePosition = LatLongUtility.LatLongToCartesian(latLong, globeRadius);
 
         // We want the site marker's up to face outwards. If we just use Quaternion.LookRotation
@@ -153,13 +154,13 @@ public class GlobeSiteCreation : MonoBehaviour {
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
         newSiteMarker.site = site;
 
-        currentSiteMarkers.Add(site.id, newSiteMarker);
+        //currentSiteMarkers.Add(site.id, newSiteMarker);
         currentSiteMarkerObjects[site.id] = newSiteMarkerObject;
 
         return newSiteMarker;
     }
 
-    LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
+    public LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
         Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
 
         GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
@@ -173,7 +174,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         lineMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
         lineMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
 
-        currentLineMarkers.Add(lineMarker);
+        //currentLineMarkers.Add(lineMarker);
 
         return lineMarker;
     }
