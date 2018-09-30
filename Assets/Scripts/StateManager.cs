@@ -18,6 +18,7 @@ public class StateManager : MonoBehaviour {
     public bool deleteMode = false;
     public GameObject currentObjectHover;
     public GameObject earthSphere;
+    public GameObject destroyerObject;
     public GameObject flatMap;
 
     private GameObject _tempObject;
@@ -49,7 +50,8 @@ public class StateManager : MonoBehaviour {
 	}
 
     // Update Sites
-    public void UpdateSites() {
+    public void UpdateSites()
+    {
         foreach (var entry in currentSiteMarkers)
         {
             if (entry.Value) Destroy(entry.Value.gameObject);
@@ -206,12 +208,14 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
-        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        particleSystem.Play();
-        siteMarker.model.SetActive(false);
-        Destroy(_tempObject, particleSystem.main.duration);
-        Debug.Log("Site deletion");
+        Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
+        destroyer.StartDestruction(gameObjectSite);
+        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
+        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
+        //particleSystem.Play();
+        //siteMarker.model.SetActive(false);
+        //Destroy(_tempObject, particleSystem.main.duration);
+        //Debug.Log("Site deletion");
     }
 
     public void DeleteGameObject() {
@@ -232,10 +236,12 @@ public class StateManager : MonoBehaviour {
 
     public void ChangeMap()
     {
-        currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentLineMarkers = new List<LineMarker>();
+        //currentSiteMarkers = new Dictionary<string, SiteMarker>();
+        //currentLineMarkers = new List<LineMarker>();
 
         earthSphere.SetActive(!earthSphere.activeSelf);
         flatMap.SetActive(!flatMap.activeSelf);
+
+        UpdateSites();
     }
 }
