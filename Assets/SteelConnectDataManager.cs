@@ -40,7 +40,11 @@ public class SteelConnectDataManager : MonoBehaviour {
     private void Start() {
         _steelConnect = new SteelConnect();
 
+        // Preload data.
         GetSites(true);
+        GetWans(true);
+        GetUplinks(true);
+        GetSitelinks(true);
     }
 
     // ---
@@ -97,7 +101,7 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     public IPromise<Dictionary<SiteId, List<SitelinkReporting>>> GetSitelinks(bool forceRefresh) {
         if (forceRefresh || _sitelinksPromise == null) {
-            _sitelinksPromise = GetSites(false)
+            _sitelinksPromise = GetSites(forceRefresh)
                 .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
                 .Then(sitelinksList => {
                     _sitelinkReportings = new Dictionary<SiteId, List<SitelinkReporting>>();
