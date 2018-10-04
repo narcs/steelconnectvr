@@ -8,11 +8,15 @@ using RSG;
 using Proyecto26;
 using Models.SteelConnect;
 
-// Type alias for clarity.
-using SiteID = System.String;
+// These are just to make it clearer what each function or type expects.
+// These aliases are all just equivalent to `string`, and so you can pass strings with no problems.
+using OrgId = System.String;
+using SiteId = System.String;
+using WanId = System.String;
+using UplinkId = System.String;
+using SitelinkId = System.String;
 
 public class StateManager : MonoBehaviour {
-
     public GameObject laser;
     public GameObject confirm;
     public bool deleteMode = false;
@@ -23,19 +27,19 @@ public class StateManager : MonoBehaviour {
 
     private GameObject _tempObject;
 
-    // Site marker code
-    public Dictionary<SiteID, GameObject> currentSiteMarkerObjects = new Dictionary<SiteID, GameObject>();
-    private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private List<LineMarker> currentLineMarkers;
+    private SteelConnectDataManager _dataManager;
 
-    private SteelConnect steelConnect;
+    // Site marker code
+    public Dictionary<SiteId, GameObject> currentSiteMarkerObjects = new Dictionary<SiteId, GameObject>();
+    private Dictionary<SiteId, SiteMarker> currentSiteMarkers;
+    private List<LineMarker> currentLineMarkers;
 
     // Use this for initialization
     void Start () {
-        currentSiteMarkers = new Dictionary<string, SiteMarker>();
+        currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
         currentLineMarkers = new List<LineMarker>();
 
-        steelConnect = new SteelConnect();
+        _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
 
         confirm.SetActive(false);
 	}
@@ -45,16 +49,22 @@ public class StateManager : MonoBehaviour {
         if (Input.GetKeyDown("s")) {
             GetComponent<WanManager>().UpdateWans();
         } else if (Input.GetKeyDown("a")) {
-            UpdateSites();
+            UpdateSites(true);
         }
 	}
 
     // Update Sites
-    public void UpdateSites()
+    public void UpdateSitesForceRefresh() {
+        UpdateSites(true);
+    }
+
+    public void UpdateSites(bool forceRefresh)
     {
         foreach (var entry in currentSiteMarkers)
         {
-            if (entry.Value) Destroy(entry.Value.gameObject);
+            if (entry.Value) {
+                Destroy(entry.Value.gameObject);
+            }
         }
         currentSiteMarkers.Clear();
         currentSiteMarkerObjects.Clear();
@@ -67,80 +77,46 @@ public class StateManager : MonoBehaviour {
 
         // ---
 
-        // What follows is a whole lot of promise-based async code.
-        // TODO: I promise I'll explain what each promise is for.
+        var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
+            .Then(sites => {
+                Dictionary<SiteId, SiteMarker> siteMarkers = new Dictionary<SiteId, SiteMarker>();
 
-        // Gets the list of sites from the SteelConnect API and returns it as an array of Sites.
-        var sitesPromise = steelConnect.GetSitesInOrg()
-            .Then(sites => { Debug.Log($"Got {sites.items.Count()} sites"); return sites.items; });
-
-        var latLongPromise = sitesPromise
-            .ThenAll(sites => sites.Select(site => LatLongUtility.GetLatLongForAddress(site.street_address, site.city, site.country)));
-
-        // Info on PromiseHelpers.All: https://github.com/Real-Serious-Games/C-Sharp-Promise/issues/33
-        var siteMarkersPromise = PromiseHelpers.All(sitesPromise, latLongPromise)
-            .Then(tup => {
-                Site[] sites = tup.Item1;
-                IEnumerable<LatLong> latLongs = tup.Item2;
-                Dictionary<SiteID, SiteMarker> siteMarkers = new Dictionary<SiteID, SiteMarker>();
-
-                for (int i = 0; i < sites.Count(); ++i)
-                {
-                    Site site = sites[i];
-                    if (latLongs.ElementAt(i).isValid)
+                foreach (Site site in sites) {
+                    if (site.coordinates.isValid)
                     {
                         if (earthSphere.activeSelf)
                         {
-                            siteMarkers.Add(site.id, earthSphere.GetComponent<GlobeSiteCreation>().placeSiteMarker(site, latLongs.ElementAt(i)));
+                            siteMarkers.Add(site.id, earthSphere.GetComponent<GlobeSiteCreation>().placeSiteMarker(site, site.coordinates));
                         }
                         else
                         {
-                            siteMarkers.Add(site.id, flatMap.GetComponent<FlatSiteCreation>().placeSiteMarker(site, latLongs.ElementAt(i)));
+                            siteMarkers.Add(site.id, flatMap.GetComponent<FlatSiteCreation>().placeSiteMarker(site, site.coordinates));
                         }
                     }
                     else
                     {
-                        Debug.LogWarning($"LatLong for site {site.id} is not valid, not adding site marker");
+                        Debug.LogWarning($"Coordinates for site {site.id} are not valid, not adding site marker");
                     }
                 }
 
                 return siteMarkers;
             });
 
-        var sitelinksPromise = sitesPromise
-            .ThenAll(sites => sites.Select(site => steelConnect.GetSitelinks(site.id)))
-            .Then(sitelinksList => sitelinksList.Select(sitelinks => sitelinks.items));
-
-        var sitelinksDictPromise = PromiseHelpers.All(sitesPromise, sitelinksPromise)
+        var sitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, _dataManager.GetSitelinks(forceRefresh))
             .Then(tup => {
-                Site[] sites = tup.Item1;
-                IEnumerable<Sitelink[]> sitelinks = tup.Item2;
-                Dictionary<SiteID, Sitelink[]> sitelinksDict = new Dictionary<SiteID, Sitelink[]>();
+                Dictionary<SiteId, SiteMarker> siteMarkers = tup.Item1;
+                Dictionary<SiteId, List<SitelinkReporting>> sitelinks = tup.Item2;
 
-                for (int i = 0; i < sites.Count(); ++i)
-                {
-                    sitelinksDict.Add(sites[i].id, sitelinks.ElementAt(i));
-                }
-
-                return sitelinksDict;
-            });
-
-        // Connect random pairs of sites, just for something to show.
-        var arbitraryLineMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
-            .Then(tup => {
-                Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
-                Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
-
-                // NOTE: Iterating through the sitemarkers dictionary means that if a site didn't
+                // NOTE(andrew): Iterating through the sitemarkers dictionary means that if a site didn't
                 // have a sitemarker, that site will be skipped. The same check is done later for the
                 // remote site (because we get sitelinks for all sites regardless of if they hasd a sitemarker
                 // created).
                 foreach (var siteMarkerEntry in siteMarkers)
                 {
-                    SiteID siteId = siteMarkerEntry.Key;
+                    SiteId siteId = siteMarkerEntry.Key;
                     SiteMarker siteMarker = siteMarkerEntry.Value;
 
-                    foreach (Sitelink sitelink in sitelinks[siteId])
+                    foreach (SitelinkReporting sitelink in sitelinks[siteId])
                     {
                         Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
 
@@ -242,6 +218,6 @@ public class StateManager : MonoBehaviour {
         earthSphere.SetActive(!earthSphere.activeSelf);
         flatMap.SetActive(!flatMap.activeSelf);
 
-        UpdateSites();
+        UpdateSites(false);
     }
 }

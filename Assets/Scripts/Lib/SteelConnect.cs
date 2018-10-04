@@ -4,13 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // For promises and REST client.
+// We're using promises/futures here for async operations. See:
+// https://github.com/Real-Serious-Games/C-Sharp-Promise
+// https://github.com/proyecto26/RestClient/
 using RSG;
 using Proyecto26;
 using Models.SteelConnect;
 
-// We're using promises/futures here for async operations. See:
-// https://github.com/Real-Serious-Games/C-Sharp-Promise
-// https://github.com/proyecto26/RestClient/
+// These are just to make it clearer what each function or type expects.
+// These aliases are all just equivalent to `string`, and so you can pass strings with no problems.
+using OrgId = System.String;
+using SiteId = System.String;
+using WanId = System.String;
+using UplinkId = System.String;
+using SitelinkId = System.String;
 
 public class SteelConnect {
     static readonly string
@@ -19,9 +26,10 @@ public class SteelConnect {
         API_REPORTING = "scm.reporting",
         API_REPORTING_VERSION = "1.0";
 
-    private string username, password, baseUrl, orgId;
+    private string username, password, baseUrl;
+    private OrgId orgId;
 
-    public SteelConnect(string username, string password, string baseUrl, string orgId) {
+    public SteelConnect(string username, string password, string baseUrl, OrgId orgId) {
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
@@ -77,36 +85,36 @@ public class SteelConnect {
 
     // ---
 
-    public IPromise<Sites> GetSitesInOrg() {
-        return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
+    public IPromise<SiteItems> GetSitesInOrg() {
+        return RestClient.Get<SiteItems>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
-    public IPromise<ResponseHelper> DeleteSite(string siteId) {
+    public IPromise<ResponseHelper> DeleteSite(SiteId siteId) {
         return RestClient.Delete(newConfigRequest("/site/" + siteId));
     }
 
-    public IPromise<Wans> GetWansInOrg() {
-        return RestClient.Get<Wans>(newConfigRequest("/org/" + orgId + "/wans"));
+    public IPromise<WanItems> GetWansInOrg() {
+        return RestClient.Get<WanItems>(newConfigRequest("/org/" + orgId + "/wans"));
     }
 
-    public IPromise<Uplinks> GetUplinksInOrg() {
-        return RestClient.Get<Uplinks>(newConfigRequest("/org/" + orgId + "/uplinks"));
+    public IPromise<UplinkItems> GetUplinksInOrg() {
+        return RestClient.Get<UplinkItems>(newConfigRequest("/org/" + orgId + "/uplinks"));
     }
 
-    public IPromise<Sitelinks> GetSitelinks(string siteId) {
+    public IPromise<SitelinkReportingItems> GetSitelinks(SiteId siteId) {
         // Since using standard RestClient with returning a promise counts any non-200
         // status code as an error, but 404 is a potentially valid response for no sitelinks,
         // we need to build the promise manually ourselves.
-        var sitelinksPromise = new Promise<Sitelinks>();
+        var sitelinksPromise = new Promise<SitelinkReportingItems>();
         
-        RestClient.Get<Sitelinks>(newReportingRequest("/site/" + siteId + "/sitelinks"), (err, resp, sitelinks) => {
+        RestClient.Get<SitelinkReportingItems>(newReportingRequest("/site/" + siteId + "/sitelinks"), (err, resp, sitelinks) => {
             if (err == null) {
                 Debug.Log($"Site {siteId} has {sitelinks.items.Length} sitelink(s)");
                 sitelinksPromise.Resolve(sitelinks);
             } else if (err.StatusCode == 404) {
                 // No sitelinks, return empty list.
                 Debug.Log($"Site {siteId} has no sitelinks");
-                sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
+                sitelinksPromise.Resolve(new SitelinkReportingItems { items = new SitelinkReporting[] { } });
             } else {
                 sitelinksPromise.Reject(err);
             }
@@ -120,7 +128,7 @@ public class SteelConnect {
 namespace Models {
     namespace SteelConnect {
         [Serializable]
-        public class Sites {
+        public class SiteItems {
             public Site[] items;
         }
 
@@ -133,15 +141,18 @@ namespace Models {
             public string country;
             public string city;
             public string street_address;
+
+            // Not part of the API response, but added later by SteelConnectDataManager.
+            public LatLong coordinates;
         }
 
         [Serializable]
-        public class Sitelinks {
-            public Sitelink[] items;
+        public class SitelinkReportingItems {
+            public SitelinkReporting[] items;
         }
 
         [Serializable]
-        public class Sitelink {
+        public class SitelinkReporting {
             public string id;
             public string remote_site;
             public string state;
@@ -149,7 +160,7 @@ namespace Models {
         }
 
         [Serializable]
-        public class Wans {
+        public class WanItems {
             public Wan[] items;
         }
 
@@ -163,7 +174,7 @@ namespace Models {
         }
 
         [Serializable]
-        public class Uplinks {
+        public class UplinkItems {
             public Uplink[] items;
         }
 
@@ -177,5 +188,4 @@ namespace Models {
             public string node;
         }
     }
-
 }

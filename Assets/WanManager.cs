@@ -17,12 +17,12 @@ public class WanManager : MonoBehaviour {
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
 
     private List<Wan> _wans = new List<Wan>();
-    private SteelConnect _steelConnect;
-    private bool _showWans = false;
+    private SteelConnectDataManager _dataManager;
     private GlobeSiteCreation _globeSiteCreation;
+    private bool _showWans = false;
 
 	void Start () {
-        _steelConnect = new SteelConnect();
+        _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
         _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
 
@@ -38,14 +38,14 @@ public class WanManager : MonoBehaviour {
         _wans.Clear();
         uplinks.Clear();
         // Get WANs from SteelConnect API
-        _steelConnect.GetWansInOrg()
-            .Then(wans => wans.items.ToList().ForEach(wan => {
+        _dataManager.GetWans(true)
+            .Then(wans => wans.ForEach(wan => {
                 _wans.Add(wan);
             }))
             .Then(() =>
                 // Get uplinks from SteelConnect API
-                _steelConnect.GetUplinksInOrg()
-                    .Then(uplinks => uplinks.items.ToList().ForEach(uplink => {
+                _dataManager.GetUplinks(true)
+                    .Then(uplinks => uplinks.ForEach(uplink => {
                         this.uplinks[uplink.id] = uplink;
                     })))
             .Then(() => {
