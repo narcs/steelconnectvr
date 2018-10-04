@@ -61,13 +61,12 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             // When the button is clicked zoom in
             if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // TODO: Change to double click
             {
-                map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + 0.5f);
+                ZoomIn();
             }
             // When the app button is clicked zoom out
             if (dominantController.GetButtonDown(GvrControllerButton.App)) // TODO: Change to double click
             {
-                if (map.Zoom > 2.0f)
-                    map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - 0.5f);
+                ZoomOut();
             }
         }
 
@@ -77,10 +76,43 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         Vector2d latLong = map.WorldToGeoPosition(new Vector3());
         map.UpdateMap(latLong,map.AbsoluteZoom);
-        this.transform.Translate(-this.transform.position);
-        this.transform.Translate(new Vector3(0, -0.5f, 0));
+        Vector3 translate = new Vector3(0, -0.5f, 0);
+        translate -= this.transform.position;
+        this.transform.Translate(translate);
 
-        statemanager.UpdateSites(false);
+        foreach (var entry in statemanager.currentSiteMarkers)
+        {
+            entry.Value.transform.Translate(-translate);
+        }
+    }
+
+    void RescaleSiteMarkers()
+    {
+        foreach (var entry in statemanager.currentSiteMarkers)
+        {
+            Vector3 scale = entry.Value.initScale;
+
+            scale.x = scale.x / map.transform.lossyScale.x;
+            scale.y = scale.y / map.transform.lossyScale.y;
+            scale.z = scale.z / map.transform.lossyScale.z;
+
+            entry.Value.transform.localScale = scale;
+        }
+    }
+
+    void ZoomIn()
+    {
+        map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + 0.5f);
+
+        RescaleSiteMarkers();
+    }
+
+    void ZoomOut()
+    {
+        if (map.Zoom > 3.0f)
+            map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - 0.5f);
+
+        RescaleSiteMarkers();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

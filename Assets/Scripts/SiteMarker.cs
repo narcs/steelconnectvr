@@ -10,6 +10,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject model;
     public GameObject information;
     public GameObject explosion;
+    public Vector3 initScale;
 
     private StateManager _stateManager;
     private Behaviour _halo;
@@ -22,6 +23,8 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _halo.enabled = false;
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _steelConnect = new SteelConnect();
+
+        initScale = this.transform.localScale;
     }
 
     void Update() {

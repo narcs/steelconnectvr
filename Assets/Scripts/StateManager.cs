@@ -31,7 +31,7 @@ public class StateManager : MonoBehaviour {
 
     // Site marker code
     public Dictionary<SiteId, GameObject> currentSiteMarkerObjects = new Dictionary<SiteId, GameObject>();
-    private Dictionary<SiteId, SiteMarker> currentSiteMarkers;
+    public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
     private List<LineMarker> currentLineMarkers;
 
     // Use this for initialization
