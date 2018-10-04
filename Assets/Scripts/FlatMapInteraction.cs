@@ -59,12 +59,12 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
                 Recenter();
             }
             // When the button is clicked zoom in
-            if (dominantController.GetButton(GvrControllerButton.TouchPadButton)) // TODO: Change to double click
+            if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // TODO: Change to double click
             {
                 map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + 0.5f);
             }
             // When the app button is clicked zoom out
-            if (dominantController.GetButton(GvrControllerButton.App)) // TODO: Change to double click
+            if (dominantController.GetButtonDown(GvrControllerButton.App)) // TODO: Change to double click
             {
                 if (map.Zoom > 2.0f)
                     map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - 0.5f);
