@@ -34,8 +34,6 @@ public class StateManager : MonoBehaviour {
     private Dictionary<SiteId, SiteMarker> currentSiteMarkers;
     private List<LineMarker> currentLineMarkers;
 
-    private SteelConnect steelConnect;
-
     // Use this for initialization
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
