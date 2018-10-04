@@ -38,6 +38,12 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     private void Start() {
         _steelConnect = new SteelConnect();
+
+        // Add some default data.
+        _sitesPromise = Promise<List<Site>>.Resolved(new List<Site>());
+        _wansPromise = Promise<List<Wan>>.Resolved(new List<Wan>());
+        _uplinksPromise = Promise<List<Uplink>>.Resolved(new List<Uplink>());
+        _sitelinksPromise = Promise<Dictionary<SiteId, List<SitelinkReporting>>>.Resolved(new Dictionary<SiteId, List<SitelinkReporting>>());
     }
 
     // ---
