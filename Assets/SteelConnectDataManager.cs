@@ -20,101 +20,96 @@ public class SteelConnectDataManager : MonoBehaviour {
     private SteelConnect _steelConnect;
 
     // Stored data. This data pertains to a single organization in a single realm.
-    private List<Site> _baseSites = null;
-    private List<SiteData> _sites = null; // Sites with coordinates.
+    // This isn't actually returned, it's just here for internal use. What's actually returned
+    // are the promises.
+    private List<Site> _sites = null;
     private List<Wan> _wans = null;
     private List<Uplink> _uplinks = null;
-
     private Dictionary<SiteId, List<SitelinkReporting>> _sitelinkReportings = null;
+
+    // Promises are only executed once, then always just return their result, so we can store
+    // the current set of promises here to return when we don't need to refresh data.
+    private IPromise<List<Site>> _sitesPromise = null;
+    private IPromise<List<Wan>> _wansPromise = null;
+    private IPromise<List<Uplink>> _uplinksPromise = null;
+    private IPromise<Dictionary<SiteId, List<SitelinkReporting>>> _sitelinksPromise = null;
 
     // ---
 
     // Initialization is done here.
-    private void Awake() {
+    private void Start() {
         _steelConnect = new SteelConnect();
+
+        GetSites(true);
     }
 
     // ---
 
-    public IPromise<List<SiteData>> GetSites(bool forceRefresh) {
-        if (forceRefresh || _sites == null) {
-            return _steelConnect.GetSitesInOrg()
+    public IPromise<List<Site>> GetSites(bool forceRefresh) {
+        if (forceRefresh || _sitesPromise == null) {
+            _sitesPromise = _steelConnect.GetSitesInOrg()
                 .Then(items => {
-                    // Save the API sites for later.
-                    _baseSites = new List<Site>(items.items);
-                    return _baseSites;
+                    _sites = new List<Site>(items.items);
+                    return _sites;
                 })
                 .ThenAll(sites => {
+                    // Get coordinates for each site.
                     return sites.Select(site => LatLongUtility.GetLatLongForAddress(site.street_address, site.city, site.country));
                 })
                 .Then(latLongs => {
-                    _sites = new List<SiteData>();
-
                     // We now have an IEnumerable called latLongs (think of it like a list) that has elements of LatLong.
-                    // Each element of latLongs corresponds to the site in _baseSites with the same index.
+                    // Each element of latLongs corresponds to the site in _sites with the same index.
                     // We use this fact to link sites to their LatLongs.
-                    for (int i = 0; i < _baseSites.Count; ++i) {
-                        _sites.Append(new SiteData(_baseSites[i], latLongs.ElementAt(i)));
+                    for (int i = 0; i < _sites.Count; ++i) {
+                        _sites[i].coordinates = latLongs.ElementAt(i);
                     }
 
                     return _sites;
                 });
-        } else {
-            return Promise<List<SiteData>>.Resolved(_sites);
         }
+
+        return _sitesPromise;
     }
 
     public IPromise<List<Wan>> GetWans(bool forceRefresh) {
-        if (forceRefresh || _wans == null) {
-            return _steelConnect.GetWansInOrg()
+        if (forceRefresh || _wansPromise == null) {
+            _wansPromise = _steelConnect.GetWansInOrg()
                 .Then(items => {
                     _wans = new List<Wan>(items.items);
                     return _wans;
                 });
-        } else {
-            return Promise<List<Wan>>.Resolved(_wans);
         }
+
+        return _wansPromise;
     }
 
     public IPromise<List<Uplink>> GetUplinks(bool forceRefresh) {
-        if (forceRefresh || _uplinks == null) {
-            return _steelConnect.GetUplinksInOrg()
+        if (forceRefresh || _uplinksPromise == null) {
+            _uplinksPromise = _steelConnect.GetUplinksInOrg()
                 .Then(items => {
                     _uplinks = new List<Uplink>(items.items);
                     return _uplinks;
                 });
-        } else {
-            return Promise<List<Uplink>>.Resolved(_uplinks);
         }
+
+        return _uplinksPromise;
     }
 
     public IPromise<Dictionary<SiteId, List<SitelinkReporting>>> GetSitelinks(bool forceRefresh) {
-        if (forceRefresh || _sitelinkReportings == null) {
-            return GetSites(false)
-                .ThenAll(siteDatas => siteDatas.Select(siteData => _steelConnect.GetSitelinks(siteData.site.id)))
+        if (forceRefresh || _sitelinksPromise == null) {
+            _sitelinksPromise = GetSites(false)
+                .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
                 .Then(sitelinksList => {
                     _sitelinkReportings = new Dictionary<SiteId, List<SitelinkReporting>>();
 
                     for (int i = 0; i < _sites.Count; ++i) {
-                        _sitelinkReportings.Add(_sites[i].site.id, new List<SitelinkReporting>(sitelinksList.ElementAt(i).items));
+                        _sitelinkReportings.Add(_sites[i].id, new List<SitelinkReporting>(sitelinksList.ElementAt(i).items));
                     }
 
                     return _sitelinkReportings;
                 });
-        } else {
-            return Promise<Dictionary<SiteId, List<SitelinkReporting>>>.Resolved(_sitelinkReportings);
         }
-    }
-}
 
-// ---
-
-public class SiteData {
-    public Site site;
-    public LatLong coordinates;
-
-    public SiteData(Site site, LatLong coordinates) {
-        this.site = site;
-        this.coordinates = coordinates;
+        return _sitelinksPromise;
     }
 }

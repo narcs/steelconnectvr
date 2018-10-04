@@ -141,6 +141,9 @@ namespace Models {
             public string country;
             public string city;
             public string street_address;
+
+            // Not part of the API response, but added later by SteelConnectDataManager.
+            public LatLong coordinates;
         }
 
         [Serializable]
