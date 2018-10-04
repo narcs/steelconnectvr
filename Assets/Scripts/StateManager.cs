@@ -18,6 +18,7 @@ public class StateManager : MonoBehaviour {
 
     public GameObject currentObjectHover;
     public GameObject earthSphere;
+    public GvrKeyboard keyboardManager;
 
     private GameObject _tempObject;
 
@@ -53,6 +54,7 @@ public class StateManager : MonoBehaviour {
     public void SwitchToNormalMode() {
         currentMode = StateManagerMode.Normal;
         SetLaserColorForMode(currentMode);
+        keyboardManager.Hide();
         earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = true;
         createSiteWindow.SetActive(false);
     }

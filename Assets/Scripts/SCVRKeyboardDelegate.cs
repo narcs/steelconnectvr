@@ -2,17 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SCVRKeyboardDelegate : GvrKeyboardDelegateBase {
     public override event EventHandler KeyboardHidden;
     public override event EventHandler KeyboardShown;
 
-    GameObject _currentVRInputField = null;
+    public GvrKeyboard keyboardManager;
+    public SphereInteraction sphereInteraction;
+
+    GameObject _currentVrInputField = null;
+    Text _currentVrInputFieldText = null;
+
 
     // ---
 
     public void SetCurrentTextField(GameObject gameObject) {
-        _currentVRInputField = gameObject;
+        Debug.Log($"Current VR text field changed to {gameObject.name}");
+        
+        _currentVrInputField = gameObject;
+        _currentVrInputFieldText = _currentVrInputField.GetComponentInChildren<Text>();
+        keyboardManager.EditorText = _currentVrInputFieldText.text;
+
+        keyboardManager.Show();
     }
 
     // ---
@@ -35,5 +47,8 @@ public class SCVRKeyboardDelegate : GvrKeyboardDelegateBase {
 
     public override void OnKeyboardUpdate(string edit_text) {
         Debug.Log($"Keyboard update callback called with text: {edit_text}");
+        if (_currentVrInputFieldText != null) {
+            _currentVrInputFieldText.text = edit_text;
+        }
     }
 }
