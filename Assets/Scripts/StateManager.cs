@@ -79,8 +79,6 @@ public class StateManager : MonoBehaviour {
 
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {
-                Dictionary<SiteId, SiteMarker> siteMarkers = new Dictionary<SiteId, SiteMarker>();
-
                 foreach (Site site in sites) {
                     if (site.coordinates.isValid)
                     {
@@ -99,13 +97,15 @@ public class StateManager : MonoBehaviour {
                     }
                 }
 
-                return siteMarkers;
+                return currentSiteMarkers;
             });
 
         var sitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, _dataManager.GetSitelinks(forceRefresh))
             .Then(tup => {
                 Dictionary<SiteId, SiteMarker> siteMarkers = tup.Item1;
                 Dictionary<SiteId, List<SitelinkReporting>> sitelinks = tup.Item2;
+
+                Debug.Log($"Adding sitelink markers, there are {siteMarkers.Count} site markers");
 
                 // NOTE(andrew): Iterating through the sitemarkers dictionary means that if a site didn't
                 // have a sitemarker, that site will be skipped. The same check is done later for the
