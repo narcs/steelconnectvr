@@ -18,7 +18,10 @@ public class StateManager : MonoBehaviour {
 
     public GameObject currentObjectHover;
     public GameObject earthSphere;
-    public GvrKeyboard keyboardManager;
+
+    public GameObject destroyerObject;
+
+	public GvrKeyboard keyboardManager;
 
     private GameObject _tempObject;
 
@@ -99,12 +102,14 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
-        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        particleSystem.Play();
-        siteMarker.model.SetActive(false);
-        Destroy(_tempObject, particleSystem.main.duration);
-        Debug.Log("Site deletion");
+        Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
+        destroyer.StartDestruction(gameObjectSite);
+        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
+        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
+        //particleSystem.Play();
+        //siteMarker.model.SetActive(false);
+        //Destroy(_tempObject, particleSystem.main.duration);
+        //Debug.Log("Site deletion");
     }
 
     public void DeleteGameObject() {

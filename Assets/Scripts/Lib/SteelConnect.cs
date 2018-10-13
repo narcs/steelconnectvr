@@ -81,6 +81,10 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
+    public IPromise<ResponseHelper> DeleteSite(string siteId) {
+        return RestClient.Delete(newConfigRequest("/site/" + siteId));
+    }
+
     public IPromise<Wans> GetWansInOrg() {
         return RestClient.Get<Wans>(newConfigRequest("/org/" + orgId + "/wans"));
     }
