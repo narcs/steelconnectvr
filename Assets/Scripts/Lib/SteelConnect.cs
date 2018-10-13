@@ -110,6 +110,11 @@ public class SteelConnect {
 
         return sitelinksPromise;
     }
+
+    public IPromise<ResponseHelper> CreateSite(string name, string longName, string city, string country) {
+        return RestClient.Post(newConfigRequest($"/org/{orgId}/sites"));
+
+    }
 }
 
 // Received JSON gets deserialized into these types.
