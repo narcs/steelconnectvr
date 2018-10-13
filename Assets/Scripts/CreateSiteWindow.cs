@@ -58,27 +58,13 @@ public class CreateSiteWindow : MonoBehaviour {
         string siteCity = SiteCityText.text;
 
         _steelConnect.CreateSite(siteName, siteName, siteCity, siteCountry)
-            .Then((resp) => {
+            .Then(() => {
                 StatusText.text = "Site created! Don't forget to press \"Update Sites\"";
                 StatusText.color = Color.green;
             })
             .Catch((err) => {
                 StatusText.text = "There was a problem creating the site, see the log window to your right";
                 StatusText.color = Color.red;
-
-                if (err is RequestException) {
-                    RequestException reqErr = err as RequestException;
-
-                    if (reqErr.StatusCode == 400) {
-                        Debug.Log($"Site creation parameters were invalid: {reqErr.ServerMessage}");
-                    }  else if (reqErr.StatusCode == 500) {
-                        Debug.Log($"Failed to create site: {reqErr.Message}");
-                    } else {
-                        Debug.Log($"Request exception: {reqErr.StatusCode} {reqErr.Message}\n    {reqErr.ServerMessage}\n{reqErr.StackTrace}");
-                    }
-                } else {
-                    Debug.Log($"Other exception: {err.Message}\n{err.StackTrace}");
-                }
             });
 
         createdSite = true;
