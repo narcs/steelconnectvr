@@ -50,16 +50,22 @@ public class StateManager : MonoBehaviour {
     public void SwitchToCreateSiteMode() {
         currentMode = StateManagerMode.CreateSite;
         SetLaserColorForMode(currentMode);
+
         earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = false;
+
+        createSiteWindow.GetComponent<CreateSiteWindow>().OnEnterCreateSiteMode();
         createSiteWindow.SetActive(true);
     }
 
     public void SwitchToNormalMode() {
         currentMode = StateManagerMode.Normal;
         SetLaserColorForMode(currentMode);
-        keyboardManager.Hide();
+
         earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = true;
+
+        keyboardManager.Hide();
         createSiteWindow.SetActive(false);
+        createSiteWindow.GetComponent<CreateSiteWindow>().OnLeaveCreateSiteMode();
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {

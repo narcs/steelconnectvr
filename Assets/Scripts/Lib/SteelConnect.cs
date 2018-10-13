@@ -81,6 +81,19 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
+    public IPromise<ResponseHelper> CreateSite(string name, string longName, string city, string country) {
+        RequestHelper request = newConfigRequest($"/org/{orgId}/sites");
+
+        request.Body = new Site {
+            name = name,
+            longname = longName,
+            city = city,
+            country = country,
+        };
+
+        return RestClient.Post(request);
+    }
+
     public IPromise<ResponseHelper> DeleteSite(string siteId) {
         return RestClient.Delete(newConfigRequest("/site/" + siteId));
     }
@@ -113,11 +126,6 @@ public class SteelConnect {
         });
 
         return sitelinksPromise;
-    }
-
-    public IPromise<ResponseHelper> CreateSite(string name, string longName, string city, string country) {
-        return RestClient.Post(newConfigRequest($"/org/{orgId}/sites"));
-
     }
 }
 
