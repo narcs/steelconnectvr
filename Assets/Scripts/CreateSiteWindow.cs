@@ -32,11 +32,15 @@ public class CreateSiteWindow : MonoBehaviour {
 
     // ---
 
-    public void ResetWindow() {
+    void ResetWindow() {
         SiteNameText.text = string.Empty;
         SiteCountryText.text = string.Empty;
         SiteCityText.text = string.Empty;
 
+        ResetStatusText();
+    }
+
+    void ResetStatusText() {
         StatusText.text = "Enter site details then press \"Create site\"";
         StatusText.color = Color.white;
     }
@@ -49,10 +53,14 @@ public class CreateSiteWindow : MonoBehaviour {
         if (createdSite) {
             ResetWindow();
             createdSite = false;
+        } else {
+            ResetStatusText();
         }
     }
 
     public void OnCreateSitePressed() {
+        Debug.Log("Create site button pressed!");
+
         string siteName = SiteNameText.text;
         string siteCountry = SiteCountryText.text;
         string siteCity = SiteCityText.text;
@@ -61,12 +69,11 @@ public class CreateSiteWindow : MonoBehaviour {
             .Then(() => {
                 StatusText.text = "Site created! Don't forget to press \"Update Sites\"";
                 StatusText.color = Color.green;
+                createdSite = true;
             })
             .Catch((err) => {
                 StatusText.text = "There was a problem creating the site, see the log window to your right";
                 StatusText.color = Color.red;
             });
-
-        createdSite = true;
     }
 }
