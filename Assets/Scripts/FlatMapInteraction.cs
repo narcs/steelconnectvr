@@ -21,7 +21,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Vector2 previousTouch;
     private Vector3 translate;
 
-    private float panFactor = 0.05f;
+    public float panFactor = 0.5f;
     private float velocityDecayFactor = 0.92f;
 
     // Use this for initialization
@@ -42,13 +42,12 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 Vector2 touchPos = dominantController.TouchPos;
                 //Debug.Log(touchPos + " " + previousTouch);
-
+                translate = new Vector3();
                 Vector2 orientationDelta = touchPos - previousTouch;
 
                 translate.x += orientationDelta.x * panFactor;
                 translate.z += orientationDelta.y * panFactor;
                 previousTouch = touchPos;
-
 
                 this.transform.Translate(translate);
             }
@@ -57,6 +56,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 //Debug.Log("Stop Touch");
                 Recenter();
+                previousTouch = dominantController.TouchPos;
             }
             // When the button is clicked zoom in
             if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // TODO: Change to double click
