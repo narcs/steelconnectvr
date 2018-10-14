@@ -105,7 +105,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         _steelConnect.DeleteUplink(uplink.id)
             .Then(response => {
                 if (response.StatusCode == 200) {
-                    Debug.Log($"Uplink deleted: {site.name}");
+                    Debug.Log($"Uplink deleted: {uplink.name}");
                     Destroy(gameObject);
                 } else {
                     Debug.LogError($"Unable to delete uplink: {uplink.name}.\n" +
