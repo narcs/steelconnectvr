@@ -7,16 +7,16 @@ public class UplinkInformation : MonoBehaviour {
     private GameObject _uplinkObject;
     private Camera _camera;
 
-	void Start () {
+    void Start () {
         _uplinkObject = transform.parent.gameObject;
         UpdateInformation();
         _camera = Camera.main;
-	}
+    }
 	
-	void Update () {
+    void Update () {
         // Billboard the text
         transform.LookAt(transform.position + _camera.transform.rotation * Vector3.forward, _camera.transform.rotation * Vector3.up);
-	}
+    }
 
     public void UpdateInformation() {
         UplinkMarker uplinkMarker = _uplinkObject.GetComponent<UplinkMarker>();
