@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 using Models.SteelConnect;
+using RSG;
+using Proyecto26;
 
 public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler {
 
@@ -15,9 +17,11 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     private Behaviour _halo;
     private MeshRenderer _informationMeshRenderer;
     private GameObject _currentUplinkCreation = null;
+    private GameObject _uplinkCreationInProgress = null;
     private List<GameObject> _uplinks = new List<GameObject>();
     private StateManager _stateManager;
     private GameObject _reticle;
+    private SteelConnect _steelConnect;
 
 	void Start () {
         _halo = (Behaviour)cloud.GetComponent("Halo");
@@ -26,6 +30,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         _informationMeshRenderer.enabled = false;
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _reticle = GameObject.Find("Reticle");
+        _steelConnect = new SteelConnect();
 	}
 	
 	void Update () {
@@ -71,14 +76,29 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (_stateManager.currentMode != StateManagerMode.Delete) {
             if (_stateManager.currentObjectHover) {
                 _uplinks.Add(_currentUplinkCreation);
-                Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");
-                UplinkMarker uplinkMarker = _currentUplinkCreation.GetComponent<UplinkMarker>();
-                GameObject line = _currentUplinkCreation.transform.Find("Line").gameObject;
-                line.GetComponent<BoxCollider>().enabled = true;
-                uplinkMarker.created = true;
-                uplinkMarker.wan = gameObject;
-                uplinkMarker.site = _stateManager.currentObjectHover;
+                string siteId = _stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id;
+                Debug.Log($"Creating uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{siteId}");
+                _uplinkCreationInProgress = _currentUplinkCreation;
                 // Create uplink API call
+                _steelConnect.CreateUplink(wan.id, siteId)
+                    .Then(response => {
+                        Uplink uplinkResponse = JsonUtility.FromJson<Uplink>(response.Text);
+                        Debug.Log($"Uplink created {uplinkResponse.id} from WAN: {wan.id} to site:{siteId}");
+                        UplinkMarker uplinkMarker = _uplinkCreationInProgress.GetComponent<UplinkMarker>();
+                        GameObject line = _uplinkCreationInProgress.transform.Find("Line").gameObject;
+                        line.GetComponent<BoxCollider>().enabled = true;
+                        uplinkMarker.created = true;
+                        uplinkMarker.uplink.id = uplinkResponse.id;
+                        uplinkMarker.uplink.name = uplinkResponse.name;
+                        uplinkMarker.uplink.node = uplinkResponse.node;
+                        uplinkMarker.uplink.org = uplinkResponse.org;
+                        uplinkMarker.uplink.site = uplinkResponse.site;
+                        uplinkMarker.uplink.wan = uplinkResponse.wan;
+                        uplinkMarker.information.GetComponent<UplinkInformation>().UpdateInformation();
+                        uplinkMarker.wan = gameObject;
+                        uplinkMarker.site = _stateManager.currentObjectHover;
+                        _uplinkCreationInProgress = null;
+                });
             } else {
                 Destroy(_currentUplinkCreation);
             }

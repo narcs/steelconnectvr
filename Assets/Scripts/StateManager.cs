@@ -35,11 +35,11 @@ public class StateManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown("s")) {
-            GetComponent<WanManager>().UpdateWans();
-        } else if (Input.GetKeyDown("a")) {
-            earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
-        }
+        //if (Input.GetKeyDown("s")) {
+        //    GetComponent<WanManager>().UpdateWans();
+        //} else if (Input.GetKeyDown("a")) {
+        //    earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
+        //}
 	}
 
     public void SwitchToDeleteMode() {

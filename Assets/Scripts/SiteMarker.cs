@@ -36,13 +36,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             .Then(response => {
                 if (response.StatusCode == 200) {
                     Debug.Log($"Site deleted: {site.name}");
-                    Destroy(gameObject, particleSystem.main.duration);
                 } else {
                     Debug.LogError($"Unable to delete site: {site.name}.\n" +
                         $"Status code: {response.StatusCode}\n" +
                         $"Error: {response.Error}");
                 }
             });
+        Destroy(gameObject, particleSystem.main.duration);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

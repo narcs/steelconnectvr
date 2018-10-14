@@ -81,31 +81,22 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
-    public IPromise CreateSite(string name, string longName, string city, string country) {
-        RequestHelper request = newConfigRequest($"/org/{orgId}/sites");
-
-        request.Body = new Site {
-            name = name,
-            longname = longName,
-            city = city,
-            country = country,
-        };
-
-        var promise = new Promise();
+    private IPromise<ResponseHelper> CreatePost(string entity, RequestHelper request) {
+        var promise = new Promise<ResponseHelper>();
 
         RestClient.Post(request, (err, resp) => {
             if (err == null) {
-                promise.Resolve();
+                promise.Resolve(resp);
             } else {
                 if (err is RequestException) {
                     RequestException reqErr = err as RequestException;
 
                     if (reqErr.StatusCode == 400) {
-                        Debug.Log($"Site creation parameters were invalid: {resp.Text}");
+                        Debug.LogError($"Creation parameters were invalid for {entity}: {resp.Text}");
                     } else if (reqErr.StatusCode == 500) {
-                        Debug.Log($"Failed to create site: {resp.Text}");
+                        Debug.LogError($"Failed to create {entity}: {resp.Text}");
                     } else {
-                        Debug.Log($"Request exception: {reqErr.StatusCode} {reqErr.Message}\n    {resp.Text}\n{reqErr.StackTrace}");
+                        Debug.LogError($"Request exception: {reqErr.StatusCode} {reqErr.Message}\n    {resp.Text}\n{reqErr.StackTrace}");
                     }
                 } else {
                     Debug.Log($"Other exception: {err.Message}\n{err.StackTrace}");
@@ -116,6 +107,30 @@ public class SteelConnect {
         });
 
         return promise;
+    }
+
+    public IPromise<ResponseHelper> CreateSite(string name, string longName, string city, string country) {
+        RequestHelper request = newConfigRequest($"/org/{orgId}/sites");
+
+        request.Body = new Site {
+            name = name,
+            longname = longName,
+            city = city,
+            country = country,
+        };
+
+        return CreatePost("site", request);
+    }
+
+    public IPromise<ResponseHelper> CreateUplink(string wan, string site) {
+        RequestHelper request = newConfigRequest($"/org/{orgId}/uplinks");
+
+        request.Body = new Uplink {
+            wan = wan,
+            site = site,
+        };
+
+        return CreatePost("uplink", request);
     }
 
     public IPromise<ResponseHelper> DeleteSite(string siteId) {
