@@ -110,12 +110,11 @@ public class StateManager : MonoBehaviour {
     private void DeleteSite(GameObject gameObjectSite) {
         Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
         destroyer.StartDestruction(gameObjectSite);
-        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        //particleSystem.Play();
-        //siteMarker.model.SetActive(false);
-        //Destroy(_tempObject, particleSystem.main.duration);
-        //Debug.Log("Site deletion");
+    }
+
+    private void DeleteUplink(GameObject gameObjectUplink) {
+        UplinkMarker uplinkMarker = gameObjectUplink.GetComponent<UplinkMarker>();
+        uplinkMarker.DeleteUplink();
     }
 
     public void DeleteGameObject() {
@@ -123,6 +122,8 @@ public class StateManager : MonoBehaviour {
             confirm.SetActive(false);
             if (_tempObject.tag == "Site") {
                 DeleteSite(_tempObject);
+            } else if (_tempObject.tag == "Uplink") {
+                DeleteUplink(_tempObject);
             } else {
                 Destroy(_tempObject);
             }

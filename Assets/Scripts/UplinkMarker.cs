@@ -17,11 +17,13 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private StateManager _stateManager;
     private MeshRenderer _informationMeshRenderer;
     private int _lineLayerMask;
+    private SteelConnect _steelConnect;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
+        _steelConnect = new SteelConnect();
         if (wan && site) {
             SetLine();
             line.GetComponent<Renderer>().material.color = Color.yellow;
@@ -97,5 +99,19 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 }
             }
         }
+    }
+    public void DeleteUplink() {
+        line.SetActive(false);
+        _steelConnect.DeleteUplink(uplink.id)
+            .Then(response => {
+                if (response.StatusCode == 200) {
+                    Debug.Log($"Uplink deleted: {site.name}");
+                    Destroy(gameObject);
+                } else {
+                    Debug.LogError($"Unable to delete uplink: {uplink.name}.\n" +
+                        $"Status code: {response.StatusCode}\n" +
+                        $"Error: {response.Error}");
+                }
+            });
     }
 }

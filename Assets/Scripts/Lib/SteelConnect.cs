@@ -122,6 +122,10 @@ public class SteelConnect {
         return RestClient.Delete(newConfigRequest("/site/" + siteId));
     }
 
+    public IPromise<ResponseHelper> DeleteUplink(string uplinkId) {
+        return RestClient.Delete(newConfigRequest("/uplink/" + uplinkId));
+    }
+
     public IPromise<Wans> GetWansInOrg() {
         return RestClient.Get<Wans>(newConfigRequest("/org/" + orgId + "/wans"));
     }
