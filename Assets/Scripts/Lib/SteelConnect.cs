@@ -81,6 +81,43 @@ public class SteelConnect {
         return RestClient.Get<Sites>(newConfigRequest("/org/" + orgId + "/sites"));
     }
 
+    public IPromise CreateSite(string name, string longName, string city, string country) {
+        RequestHelper request = newConfigRequest($"/org/{orgId}/sites");
+
+        request.Body = new Site {
+            name = name,
+            longname = longName,
+            city = city,
+            country = country,
+        };
+
+        var promise = new Promise();
+
+        RestClient.Post(request, (err, resp) => {
+            if (err == null) {
+                promise.Resolve();
+            } else {
+                if (err is RequestException) {
+                    RequestException reqErr = err as RequestException;
+
+                    if (reqErr.StatusCode == 400) {
+                        Debug.Log($"Site creation parameters were invalid: {resp.Text}");
+                    } else if (reqErr.StatusCode == 500) {
+                        Debug.Log($"Failed to create site: {resp.Text}");
+                    } else {
+                        Debug.Log($"Request exception: {reqErr.StatusCode} {reqErr.Message}\n    {resp.Text}\n{reqErr.StackTrace}");
+                    }
+                } else {
+                    Debug.Log($"Other exception: {err.Message}\n{err.StackTrace}");
+                }
+
+                promise.Reject(err);
+            }
+        });
+
+        return promise;
+    }
+
     public IPromise<ResponseHelper> DeleteSite(string siteId) {
         return RestClient.Delete(newConfigRequest("/site/" + siteId));
     }
@@ -146,6 +183,9 @@ namespace Models {
             public string remote_site;
             public string state;
             public string status;
+            public string inuse;
+            public float throughput_in;
+            public float throughput_out;
         }
 
         [Serializable]

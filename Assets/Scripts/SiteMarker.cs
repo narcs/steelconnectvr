@@ -66,7 +66,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerClick(PointerEventData eventData) {
         // Delete site
-        if (_stateManager.deleteMode) {
+        if (_stateManager.currentMode == StateManagerMode.Delete) {
             // Confirmation panel
             _stateManager.ShowConfirm();
             _stateManager.SetDeleteConfirmText(gameObject, site.name);

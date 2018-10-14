@@ -54,7 +54,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerDown(PointerEventData eventData) {
         // Delete WAN
-        if (_stateManager.deleteMode) {
+        if (_stateManager.currentMode == StateManagerMode.Delete) {
             // Confirmation panel
             _stateManager.ShowConfirm();
             _stateManager.SetDeleteConfirmText(gameObject, wan.name);
@@ -68,7 +68,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerUp(PointerEventData eventData) {
         // Create uplink if selecting site
-        if (!_stateManager.deleteMode) {
+        if (_stateManager.currentMode != StateManagerMode.Delete) {
             if (_stateManager.currentObjectHover) {
                 _uplinks.Add(_currentUplinkCreation);
                 Debug.Log($"Created uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{_stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id}");

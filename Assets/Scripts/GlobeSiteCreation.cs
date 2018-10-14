@@ -15,20 +15,20 @@ public class GlobeSiteCreation : MonoBehaviour {
     // away from the center of the globe.
     public GameObject siteMarkerPrefab;
 
-    // The prefab that represents a line connecting sites.
-    public GameObject lineMarkerPrefab;
+    // The prefab that represents a sitelink.
+    public GameObject sitelinkMarkerPrefab;
     public Dictionary<SiteID, GameObject> currentSiteMarkerObjects = new Dictionary<SiteID, GameObject>();
 
     private float globeRadius;
 
     private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private List<LineMarker> currentLineMarkers;
+    private Dictionary<SiteID, SitelinkMarker> currentSitelinkMarkers;
 
     private SteelConnect steelConnect;
 
     void Start() {
         currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentLineMarkers = new List<LineMarker>();
+        currentSitelinkMarkers = new Dictionary<SiteID, SitelinkMarker>();
 
         steelConnect = new SteelConnect();
         updateGlobeRadius();
@@ -46,15 +46,14 @@ public class GlobeSiteCreation : MonoBehaviour {
         currentSiteMarkers.Clear();
         currentSiteMarkerObjects.Clear();
 
-        foreach (LineMarker lineMarker in currentLineMarkers) {
-            Destroy(lineMarker.gameObject);
+        foreach (var entry in currentSitelinkMarkers) {
+            Destroy(entry.Value.gameObject);
         }
-        currentLineMarkers.Clear();
+        currentSitelinkMarkers.Clear();
 
         // ---
 
         // What follows is a whole lot of promise-based async code.
-        // TODO: I promise I'll explain what each promise is for.
 
         // Gets the list of sites from the SteelConnect API and returns it as an array of Sites.
         var sitesPromise = steelConnect.GetSitesInOrg()
@@ -99,8 +98,8 @@ public class GlobeSiteCreation : MonoBehaviour {
                 return sitelinksDict;
             });
 
-        // Connect random pairs of sites, just for something to show.
-        var arbitraryLineMarkersPromise = PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
+        // Connect sites by sitelinks.
+        PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
             .Then(tup => {
                 Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
                 Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
@@ -117,25 +116,14 @@ public class GlobeSiteCreation : MonoBehaviour {
                         Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
 
                         if (siteMarkers.ContainsKey(sitelink.remote_site)) {
-                            Color lineColor;
-                            float blinkPeriodSeconds;
-
-                            if (sitelink.state == "up") {
-                                lineColor = Color.green;
-                                blinkPeriodSeconds = 0.0f;
-                            } else {
-                                lineColor = Color.red;
-                                blinkPeriodSeconds = 2.0f;
-                            }
-
-                            drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], lineColor, blinkPeriodSeconds);
+                            placeSitelinkMarker(siteId, sitelink);
                         } else {
                             Debug.LogWarning($"Remote site {sitelink.remote_site} has no site marker, not drawing sitelink");
                         }
                     }
                 }
             })
-            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
+            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
     }
 
     SiteMarker placeSiteMarker(Site site, LatLong latLong) {
@@ -159,22 +147,16 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
-        Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
+    SitelinkMarker placeSitelinkMarker(SiteID siteId, Sitelink sitelink) {
+        SiteMarker fromSite = currentSiteMarkers[siteId];
+        SiteMarker toSite = currentSiteMarkers[sitelink.remote_site];
+        Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
-        GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
-        LineMarker lineMarker = lineMarkerObject.GetComponent<LineMarker>();
+        GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
+        SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
+        sitelinkMarker.Set(fromSite, toSite, sitelink, transform.position, globeRadius * 1.03f);
+        currentSitelinkMarkers.Add(siteId, sitelinkMarker);
 
-        lineMarker.StartSiteMarker = site1;
-        lineMarker.EndSiteMarker = site2;
-        lineMarker.SpherePosition = transform.position;
-        lineMarker.SphereRadius = globeRadius * 1.03f;
-        lineMarker.Color = color;
-        lineMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
-        lineMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
-
-        currentLineMarkers.Add(lineMarker);
-
-        return lineMarker;
+        return sitelinkMarker;
     }
 }
