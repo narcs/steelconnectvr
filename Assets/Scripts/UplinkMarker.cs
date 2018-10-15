@@ -42,7 +42,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         _informationMeshRenderer.enabled = true;
         _stateManager.currentObjectHover = gameObject;
         // Don't show WAN information
-        transform.parent.Find("Information").gameObject.SetActive(false);
+        wan.GetComponent<WanMarker>().information.SetActive(false);
     }
 
     public void OnPointerExit(PointerEventData eventData) {
@@ -50,7 +50,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         _informationMeshRenderer.enabled = false;
         _stateManager.currentObjectHover = null;
         // Re-enable WAN information
-        transform.parent.Find("Information").gameObject.SetActive(true);
+        wan.GetComponent<WanMarker>().information.SetActive(true);
     }
 
     // Need this event for PointerClick

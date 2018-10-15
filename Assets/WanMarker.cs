@@ -12,6 +12,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public Wan wan;
     public GameObject cloud;
     public GameObject information;
+    public GameObject uplinks;
     public GameObject uplinkPrefab;
 
     private Behaviour _halo;
@@ -74,7 +75,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerUp(PointerEventData eventData) {
         // Create uplink if selecting site
         if (_stateManager.currentMode != StateManagerMode.Delete) {
-            if (_stateManager.currentObjectHover) {
+            if (_stateManager.currentObjectHover && _stateManager.currentObjectHover.tag == "Site") {
                 _uplinks.Add(_currentUplinkCreation);
                 string siteId = _stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id;
                 Debug.Log($"Creating uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{siteId}");
@@ -97,6 +98,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         uplinkMarker.information.GetComponent<UplinkInformation>().UpdateInformation();
                         uplinkMarker.wan = gameObject;
                         uplinkMarker.site = _stateManager.currentObjectHover;
+                        _uplinkCreationInProgress.transform.parent = uplinks.transform;
                         _uplinkCreationInProgress = null;
                 });
             } else {
