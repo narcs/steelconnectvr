@@ -108,8 +108,9 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
+        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
         Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
-        destroyer.StartDestruction(gameObjectSite);
+        siteMarker.DeleteSite(destroyer);
     }
 
     private void DeleteUplink(GameObject gameObjectUplink) {

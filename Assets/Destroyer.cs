@@ -43,7 +43,7 @@ public class Destroyer : MonoBehaviour {
 
         laser.SetActive(false);
         SiteMarker siteMarker = shootTarget.GetComponent<SiteMarker>();
-        siteMarker.DeleteSite();
+        siteMarker.SiteDestruction();
         shootTarget = null;
         // Move back to original position
         StopCoroutine("Movement");

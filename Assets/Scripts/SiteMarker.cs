@@ -28,21 +28,25 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     }
 
-    public void DeleteSite() {
+    public void SiteDestruction() {
         ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
         particleSystem.Play();
         model.SetActive(false);
+        Destroy(gameObject, particleSystem.main.duration);
+    }
+
+    public void DeleteSite(Destroyer destroyer) {
         _steelConnect.DeleteSite(site.id)
             .Then(response => {
                 if (response.StatusCode == 200) {
                     Debug.Log($"Site deleted: {site.name}");
+                    destroyer.StartDestruction(gameObject);
                 } else {
                     Debug.LogError($"Unable to delete site: {site.name}.\n" +
                         $"Status code: {response.StatusCode}\n" +
                         $"Error: {response.Error}");
                 }
             });
-        Destroy(gameObject, particleSystem.main.duration);
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
