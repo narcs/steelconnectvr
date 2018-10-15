@@ -12,9 +12,13 @@ public class Destroyer : MonoBehaviour {
     public GameObject shootTarget;
     public GameObject laser;
     public GameObject pointer;
+    public AudioClip laserSound;
+
+    private AudioSource _audioSource;
 
 	// Use this for initialization
 	void Start () {
+        _audioSource = GameObject.Find("Audio Source").GetComponent<AudioSource>();
         originalPosition.transform.position = destroyerTransform.position;
         laser.SetActive(false);
 	}
@@ -68,6 +72,8 @@ public class Destroyer : MonoBehaviour {
         laser.SetActive(true);
         StopCoroutine("LaserMovement");
         StartCoroutine("LaserMovement", shootTarget);
+        _audioSource.clip = laserSound;
+        _audioSource.Play();
     }
 	
 	// Update is called once per frame

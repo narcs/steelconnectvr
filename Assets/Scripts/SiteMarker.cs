@@ -10,11 +10,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject model;
     public GameObject information;
     public GameObject explosionPrefab;
+    public AudioClip explosionSound;
 
     private StateManager _stateManager;
     private Behaviour _halo;
     private MeshRenderer _informationMeshRenderer;
     private SteelConnect _steelConnect;
+    private AudioSource _audioSource;
 
     void Start() {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
@@ -22,6 +24,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _halo.enabled = false;
         _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _steelConnect = new SteelConnect();
+        _audioSource = GameObject.Find("Audio Source").GetComponent<AudioSource>();
     }
 
     void Update() {
@@ -33,6 +36,8 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
         particleSystem.Play();
         model.SetActive(false);
+        _audioSource.clip = explosionSound;
+        _audioSource.Play();
         Destroy(gameObject, particleSystem.main.duration);
     }
 
