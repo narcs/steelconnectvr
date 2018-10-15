@@ -60,7 +60,7 @@ public class Destroyer : MonoBehaviour {
     }
 
     public void Shoot(GameObject target) {
-        Vector3 heading = destroyerTransform.position - target.transform.position;
+        Vector3 heading = target.transform.position - destroyerTransform.position;
         float distance = heading.magnitude;
         Vector3 direction = heading / distance;
         laser.transform.position = destroyerTransform.position;

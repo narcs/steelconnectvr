@@ -114,7 +114,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     private void SetLine() {
-        Vector3 heading = transform.position - _reticle.transform.position;
+        Vector3 heading = _reticle.transform.position - transform.position;
         float distance = heading.magnitude;
         Vector3 direction = heading / distance;
         Vector3 midPoint = (transform.position + _reticle.transform.position) / 2;

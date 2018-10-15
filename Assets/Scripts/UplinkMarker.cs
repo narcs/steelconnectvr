@@ -76,7 +76,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     private void SetLine() {
-        Vector3 heading = wan.transform.position - site.transform.position;
+        Vector3 heading = site.transform.position - wan.transform.position;
         float distance = heading.magnitude;
         Vector3 direction = heading / distance;
         Vector3 midPoint = (wan.transform.position + site.transform.position) / 2;
@@ -85,20 +85,24 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (Physics.Linecast(wan.transform.position, site.transform.position, out hit, _lineLayerMask)) {
             if (hit.collider != null) {
                 if (hit.collider.tag == "Site") {
-                    line.SetActive(true);
-                    line.transform.parent = transform;
-                    line.transform.position = midPoint;
-                    SetGlobalScale(line.transform, new Vector3(1, 1, distance));
-                    // Set X and Y localscale so cube appears to be a line
-                    line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
-                    line.transform.rotation = Quaternion.LookRotation(direction);
+                    SiteMarker siteMarker = site.GetComponent<SiteMarker>();
+                    SiteMarker hitSiteMarker = hit.transform.parent.transform.parent.GetComponent<SiteMarker>();
+                    if (hitSiteMarker.site.id == siteMarker.site.id) {
+                        line.SetActive(true);
+                        line.transform.parent = transform;
+                        line.transform.position = midPoint;
+                        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+                        // Set X and Y localscale so cube appears to be a line
+                        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+                        line.transform.rotation = Quaternion.LookRotation(direction);
 
-                    _informationMeshRenderer.transform.position = midPoint;
-                } else {
-                    line.SetActive(false);
+                        _informationMeshRenderer.transform.position = midPoint;
+                        return;
+                    }
                 }
             }
         }
+        line.SetActive(false);
     }
     public void DeleteUplink() {
         line.SetActive(false);
