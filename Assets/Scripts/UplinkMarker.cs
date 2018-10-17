@@ -69,12 +69,6 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
     }
 
-    private void SetGlobalScale(Transform transform, Vector3 globalScale) {
-        transform.localScale = Vector3.one;
-        transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y,
-            globalScale.z / transform.lossyScale.z);
-    }
-
     private void SetLine() {
         Vector3 heading = site.transform.position - wan.transform.position;
         float distance = heading.magnitude;
@@ -91,7 +85,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                         line.SetActive(true);
                         line.transform.parent = transform;
                         line.transform.position = midPoint;
-                        SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change in next line
+                        Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
                         // Set X and Y localscale so cube appears to be a line
                         line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
                         line.transform.rotation = Quaternion.LookRotation(direction);

@@ -39,12 +39,6 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (_currentUplinkCreation) {
             SetLine();
         }
-        // Position uplink line to follow WANs
-        // TODO: Optimise
-        //foreach (GameObject uplink in _uplinks) {
-        //    LineRenderer lineRenderer = uplink.GetComponent<LineRenderer>();
-        //    lineRenderer.SetPosition(0, transform.position);
-        //}
 		
 	}
 
@@ -111,11 +105,6 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             _currentUplinkCreation = null;
         }
     }
-    private void SetGlobalScale(Transform transform, Vector3 globalScale) {
-        transform.localScale = Vector3.one;
-        transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y,
-            globalScale.z / transform.lossyScale.z);
-    }
 
     private void SetLine() {
         Vector3 heading = _reticle.transform.position - transform.position;
@@ -127,7 +116,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         line.GetComponent<BoxCollider>().enabled = false;
         line.SetActive(true);
         line.transform.position = midPoint;
-        SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon
+        Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon
         // Set X and Y localscale so cube appears to be a line
         line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
         line.transform.rotation = Quaternion.LookRotation(direction);
