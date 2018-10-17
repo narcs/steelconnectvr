@@ -12,7 +12,9 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public GameObject site;
     public GameObject line;
     public bool created = true;
+    public Color uplinkColour = Color.yellow;
     public Color hoverColour = new Color(1, 0.65f, 0, 1); // Orange
+    public float uplinkLineThickness = 10f;
 
     private StateManager _stateManager;
     private int _lineLayerMask;
@@ -26,7 +28,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         UpdateInformation();
         if (wan && site) {
             SetLine();
-            line.GetComponent<Renderer>().material.color = Color.yellow;
+            line.GetComponent<Renderer>().material.color = uplinkColour;
         }
     }
 	
@@ -45,7 +47,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        line.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        line.GetComponent<MeshRenderer>().material.color = uplinkColour;
         _stateManager.HideInformation();
         // Re-enable WAN information
         wan.GetComponent<WanMarker>().showInformation = true;
@@ -84,14 +86,14 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             if (hit.collider != null) {
                 if (hit.collider.tag == "Site") {
                     SiteMarker siteMarker = site.GetComponent<SiteMarker>();
-                    SiteMarker hitSiteMarker = hit.transform.parent.transform.parent.GetComponent<SiteMarker>();
+                    SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
                     if (hitSiteMarker.site.id == siteMarker.site.id) {
                         line.SetActive(true);
                         line.transform.parent = transform;
                         line.transform.position = midPoint;
-                        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+                        SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change in next line
                         // Set X and Y localscale so cube appears to be a line
-                        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+                        line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
                         line.transform.rotation = Quaternion.LookRotation(direction);
 
                         return;

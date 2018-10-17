@@ -14,6 +14,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject uplinks;
     public GameObject uplinkPrefab;
     public bool showInformation = true;
+    public float uplinkLineThickness = 10f;
 
     private Behaviour _halo;
     private GameObject _currentUplinkCreation = null;
@@ -126,9 +127,9 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         line.GetComponent<BoxCollider>().enabled = false;
         line.SetActive(true);
         line.transform.position = midPoint;
-        SetGlobalScale(line.transform, new Vector3(1, 1, distance));
+        SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon
         // Set X and Y localscale so cube appears to be a line
-        line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
+        line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
         line.transform.rotation = Quaternion.LookRotation(direction);
     }
 
