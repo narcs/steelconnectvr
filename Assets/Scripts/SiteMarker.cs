@@ -8,23 +8,22 @@ using Models.SteelConnect;
 public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler{
     public Site site;
     public GameObject model;
-    public GameObject information;
     public GameObject explosionPrefab;
     public AudioClip explosionSound;
 
     private StateManager _stateManager;
     private Behaviour _halo;
-    private MeshRenderer _informationMeshRenderer;
     private SteelConnect _steelConnect;
     private AudioSource _audioSource;
+    private string _information;
 
     void Start() {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _halo = (Behaviour)model.GetComponent("Halo");
         _halo.enabled = false;
-        _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _steelConnect = new SteelConnect();
         _audioSource = GameObject.Find("Audio Source").GetComponent<AudioSource>();
+        UpdateInformation();
     }
 
     void Update() {
@@ -57,13 +56,13 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
-        _informationMeshRenderer.enabled = true;
+        _stateManager.DisplayInformation(_information);
         _stateManager.currentObjectHover = gameObject;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         _halo.enabled = false;
-        _informationMeshRenderer.enabled = false;
+        _stateManager.HideInformation();
         _stateManager.currentObjectHover = null;
     }
 
@@ -81,6 +80,16 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             _stateManager.ShowConfirm();
             _stateManager.SetDeleteConfirmText(gameObject, site.name);
         }
+    }
+
+    public void UpdateInformation() {
+        _information = $"Id: {site.id}\n" +
+                      $"Name: {site.name}\n" +
+                      $"Longname: {site.longname}\n" +
+                      $"Org: {site.org}\n" +
+                      $"Country: {site.country}\n" +
+                      $"City: {site.city}\n" +
+                      $"Street Address: {site.street_address}";
     }
 
     

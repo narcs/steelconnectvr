@@ -10,20 +10,20 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public Uplink uplink;
     public GameObject wan;
     public GameObject site;
-    public GameObject information;
     public GameObject line;
     public bool created = true;
+    public Color hoverColour = new Color(1, 0.65f, 0, 1); // Orange
 
     private StateManager _stateManager;
-    private MeshRenderer _informationMeshRenderer;
     private int _lineLayerMask;
     private SteelConnect _steelConnect;
+    private string _information;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
         _steelConnect = new SteelConnect();
+        UpdateInformation();
         if (wan && site) {
             SetLine();
             line.GetComponent<Renderer>().material.color = Color.yellow;
@@ -38,19 +38,17 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	}
 
     public void OnPointerEnter(PointerEventData eventData) {
-        line.GetComponent<MeshRenderer>().material.color = new Color(1, 0.65f, 0, 1); // Orange
-        _informationMeshRenderer.enabled = true;
-        _stateManager.currentObjectHover = gameObject;
+        line.GetComponent<MeshRenderer>().material.color = hoverColour;
+        _stateManager.DisplayInformation(_information);
         // Don't show WAN information
-        wan.GetComponent<WanMarker>().information.SetActive(false);
+        wan.GetComponent<WanMarker>().showInformation = false;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         line.GetComponent<MeshRenderer>().material.color = Color.yellow;
-        _informationMeshRenderer.enabled = false;
-        _stateManager.currentObjectHover = null;
+        _stateManager.HideInformation();
         // Re-enable WAN information
-        wan.GetComponent<WanMarker>().information.SetActive(true);
+        wan.GetComponent<WanMarker>().showInformation = true;
     }
 
     // Need this event for PointerClick
@@ -96,7 +94,6 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                         line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
                         line.transform.rotation = Quaternion.LookRotation(direction);
 
-                        _informationMeshRenderer.transform.position = midPoint;
                         return;
                     }
                 }
@@ -117,5 +114,14 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                         $"Error: {response.Error}");
                 }
             });
+    }
+
+    public void UpdateInformation() {
+        _information = $"Id: {uplink.id}\n" +
+                      $"Name: {uplink.name}\n" +
+                      $"Org: {uplink.org}\n" +
+                      $"Site: {uplink.site}\n" +
+                      $"WAN: {uplink.wan}\n" +
+                      $"Appliance: {uplink.node}";
     }
 }

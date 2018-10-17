@@ -23,14 +23,20 @@ public class StateManager : MonoBehaviour {
 
 	public GvrKeyboard keyboardManager;
 
-    private GameObject _tempObject;
-
     public StateManagerMode currentMode = StateManagerMode.Normal;
+
+    public GameObject informationText;
+
+    private GameObject _tempObject;
+    private TextMesh _informationTextMesh;
+
 
     // Use this for initialization
     void Start () {
         confirm.SetActive(false);
         createSiteWindow.SetActive(false);
+        _informationTextMesh = informationText.GetComponent<TextMesh>();
+        informationText.transform.parent.parent.gameObject.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -134,5 +140,14 @@ public class StateManager : MonoBehaviour {
         } else {
             Debug.LogError("No object to delete");
         }
+    }
+
+    public void DisplayInformation(string entityInformationText) {
+        _informationTextMesh.text = entityInformationText;
+        informationText.transform.parent.parent.gameObject.SetActive(true);
+    }
+
+    public void HideInformation() {
+        informationText.transform.parent.parent.gameObject.SetActive(false);
     }
 }

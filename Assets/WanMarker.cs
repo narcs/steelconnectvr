@@ -11,27 +11,26 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public Wan wan;
     public GameObject cloud;
-    public GameObject information;
     public GameObject uplinks;
     public GameObject uplinkPrefab;
+    public bool showInformation = true;
 
     private Behaviour _halo;
-    private MeshRenderer _informationMeshRenderer;
     private GameObject _currentUplinkCreation = null;
     private GameObject _uplinkCreationInProgress = null;
     private List<GameObject> _uplinks = new List<GameObject>();
     private StateManager _stateManager;
     private GameObject _reticle;
     private SteelConnect _steelConnect;
+    private string _information;
 
 	void Start () {
         _halo = (Behaviour)cloud.GetComponent("Halo");
         _halo.enabled = false;
-        _informationMeshRenderer = information.GetComponent<MeshRenderer>();
-        _informationMeshRenderer.enabled = false;
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _reticle = GameObject.Find("Reticle");
         _steelConnect = new SteelConnect();
+        UpdateInformation();
 	}
 	
 	void Update () {
@@ -50,12 +49,16 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
-        _informationMeshRenderer.enabled = true;
+        if (showInformation) {
+            _stateManager.DisplayInformation(_information);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         _halo.enabled = false;
-        _informationMeshRenderer.enabled = false;
+        if (showInformation) {
+            _stateManager.HideInformation();
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData) {
@@ -95,7 +98,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         uplinkMarker.uplink.org = uplinkResponse.org;
                         uplinkMarker.uplink.site = uplinkResponse.site;
                         uplinkMarker.uplink.wan = uplinkResponse.wan;
-                        uplinkMarker.information.GetComponent<UplinkInformation>().UpdateInformation();
+                        uplinkMarker.UpdateInformation();
                         uplinkMarker.wan = gameObject;
                         uplinkMarker.site = _stateManager.currentObjectHover;
                         _uplinkCreationInProgress.transform.parent = uplinks.transform;
@@ -127,5 +130,12 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Set X and Y localscale so cube appears to be a line
         line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
         line.transform.rotation = Quaternion.LookRotation(direction);
+    }
+
+    public void UpdateInformation() {
+        _information = $"Id: {wan.id}\n" +
+                      $"Name: {wan.name}\n" +
+                      $"Longname: {wan.longname}\n" +
+                      $"Org: {wan.org}\n";
     }
 }
