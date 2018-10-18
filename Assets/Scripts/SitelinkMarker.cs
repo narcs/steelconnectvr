@@ -21,6 +21,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private float blinkDirection = 1.0f;
 
     private LineRenderer lineRenderer;
+    private CapsuleCollider collider;
 
     private StateManager _stateManager;
     private string _information;
@@ -34,7 +35,8 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         this.fromSiteMarker = fromSiteMarker;
         this.toSiteMarker = toSiteMarker;
         this.sitelinkPair = sitelinkPair;
-        lineRenderer = gameObject.GetComponent<LineRenderer>();
+        lineRenderer = GetComponent<LineRenderer>();
+        collider = GetComponent<CapsuleCollider>();
 
         // TODO: Get these values in a better way, eg. link the globe object here with a public member variable.
         this.globePosition = globePosition;
@@ -60,6 +62,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         // ---
 
         Draw();
+        UpdateCollider();
     }
 
     // Update is called once per frame
@@ -95,6 +98,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             lineRenderer.startWidth = lineWidth;
             lineRenderer.endWidth = lineWidth;
 
+            // Update the line renderer.
             for (int i = 0; i < numPoints; i++) {
                 float progress = ((float)i) / (numPoints - 1);
                 Vector3 result = Vector3.Slerp(
@@ -110,6 +114,19 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 lineRenderer.SetPosition(i, result);
             }
         }
+    }
+
+    // Update the collider for being able to point at the sitelink marker with the controller.
+    // https://answers.unity.com/questions/470943/collider-for-line-renderer.html
+    // TODO: This only works for short sitelinks, as it's just a capsule between the two sites.
+    public void UpdateCollider() {
+        collider.radius = lineWidth / 2;
+        collider.direction = 2;
+
+        Vector3 fromPos = fromSiteMarker.transform.position;
+        Vector3 toPos = toSiteMarker.transform.position;
+        collider.transform.position = fromPos + (toPos - fromPos) / 2;
+        collider.height = (toPos - fromPos).magnitude;
     }
 
     // ---

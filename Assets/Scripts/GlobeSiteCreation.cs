@@ -96,19 +96,23 @@ public class GlobeSiteCreation : MonoBehaviour {
                 List<SitelinkPair> sitelinkPairs = tup.Item2;
 
                 foreach (SitelinkPair sitelinkPair in sitelinkPairs) {
-                    Sitelink sitelink0 = sitelinkPair.pair[0];
-                    Sitelink sitelink1 = sitelinkPair.pair[1];
+                    if (sitelinkPair.IsValid()) {
+                        Sitelink sitelink0 = sitelinkPair.pair[0];
+                        Sitelink sitelink1 = sitelinkPair.pair[1];
 
-                    Debug.Log($"Sitelink pair {sitelink0.id}/{sitelink1.id} between {sitelink0.local_site} and {sitelink0.remote_site}: first element of pair has status({sitelink0.status}) state({sitelink0.state})");
+                        Debug.Log($"Sitelink pair {sitelink0.id}/{sitelink1.id} between {sitelink0.local_site} and {sitelink0.remote_site}: first element of pair has status({sitelink0.status}) state({sitelink0.state})");
 
-                    // For now, just use sitelink0 as "the" sitelink. The problem with this is, the order of sitelinks
-                    // in a pair is probably not deterministic, so they may swap between refreshes.
-                    // TODO: Deal with this somehow, eg. sitelink markers have SitelinkPairs attached, not just a single sitelink.
-                    
-                    if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
-                        placeSitelinkMarker(sitelinkPair);
+                        // For now, just use sitelink0 as "the" sitelink. The problem with this is, the order of sitelinks
+                        // in a pair is probably not deterministic, so they may swap between refreshes.
+                        // TODO: Deal with this somehow, eg. sitelink markers have SitelinkPairs attached, not just a single sitelink.
+
+                        if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
+                            placeSitelinkMarker(sitelinkPair);
+                        } else {
+                            Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
+                        }
                     } else {
-                        Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
+                        Debug.LogError("A sitelink pair is invalid!");
                     }
                 }
             })

@@ -166,7 +166,7 @@ public class SteelConnect {
                 Debug.Log($"Site {siteId} has no sitelinks");
                 sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
             } else {
-                Debug.LogError($"Failed to get sitelinks for {siteId}: {err.StatusCode} {err.Message} {resp.Text}");
+                Debug.LogError($"Failed to get sitelinks for {siteId}: {err.StatusCode} {err.Message}");
                 
                 // Some sites were returning 503, so to work around this I'm logging it then returning an empty list of sitelinks.
                 sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
@@ -254,6 +254,10 @@ namespace Models {
 
             public SitelinkPair() {
                 pair = new List<Sitelink>();
+            }
+
+            public bool IsValid() {
+                return pair.Count == 2;
             }
         }
 
