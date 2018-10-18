@@ -10,21 +10,25 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public Uplink uplink;
     public GameObject wan;
     public GameObject site;
-    public GameObject information;
     public GameObject line;
     public bool created = true;
+    public Color uplinkColour = Color.yellow;
+    public Color hoverColour = new Color(1, 0.65f, 0, 1); // Orange
+    public float uplinkLineThickness = 10f;
 
     private StateManager _stateManager;
-    private MeshRenderer _informationMeshRenderer;
     private int _lineLayerMask;
+    private SteelConnect _steelConnect;
+    private string _information;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        _informationMeshRenderer = information.GetComponent<MeshRenderer>();
         _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
+        _steelConnect = new SteelConnect();
+        UpdateInformation();
         if (wan && site) {
             SetLine();
-            line.GetComponent<Renderer>().material.color = Color.yellow;
+            line.GetComponent<Renderer>().material.color = uplinkColour;
         }
     }
 	
@@ -36,19 +40,17 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	}
 
     public void OnPointerEnter(PointerEventData eventData) {
-        line.GetComponent<MeshRenderer>().material.color = new Color(1, 0.65f, 0, 1); // Orange
-        _informationMeshRenderer.enabled = true;
-        _stateManager.currentObjectHover = gameObject;
+        line.GetComponent<MeshRenderer>().material.color = hoverColour;
+        _stateManager.DisplayInformation(_information);
         // Don't show WAN information
-        transform.parent.Find("Information").gameObject.SetActive(false);
+        wan.GetComponent<WanMarker>().showInformation = false;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        line.GetComponent<MeshRenderer>().material.color = Color.yellow;
-        _informationMeshRenderer.enabled = false;
-        _stateManager.currentObjectHover = null;
+        line.GetComponent<MeshRenderer>().material.color = uplinkColour;
+        _stateManager.HideInformation();
         // Re-enable WAN information
-        transform.parent.Find("Information").gameObject.SetActive(true);
+        wan.GetComponent<WanMarker>().showInformation = true;
     }
 
     // Need this event for PointerClick
@@ -67,14 +69,8 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
     }
 
-    private void SetGlobalScale(Transform transform, Vector3 globalScale) {
-        transform.localScale = Vector3.one;
-        transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y,
-            globalScale.z / transform.lossyScale.z);
-    }
-
     private void SetLine() {
-        Vector3 heading = wan.transform.position - site.transform.position;
+        Vector3 heading = site.transform.position - wan.transform.position;
         float distance = heading.magnitude;
         Vector3 direction = heading / distance;
         Vector3 midPoint = (wan.transform.position + site.transform.position) / 2;
@@ -83,19 +79,45 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (Physics.Linecast(wan.transform.position, site.transform.position, out hit, _lineLayerMask)) {
             if (hit.collider != null) {
                 if (hit.collider.tag == "Site") {
-                    line.SetActive(true);
-                    line.transform.parent = transform;
-                    line.transform.position = midPoint;
-                    SetGlobalScale(line.transform, new Vector3(1, 1, distance));
-                    // Set X and Y localscale so cube appears to be a line
-                    line.transform.localScale = new Vector3(10, 10, line.transform.localScale.z);
-                    line.transform.rotation = Quaternion.LookRotation(direction);
+                    SiteMarker siteMarker = site.GetComponent<SiteMarker>();
+                    SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
+                    if (hitSiteMarker.site.id == siteMarker.site.id) {
+                        line.SetActive(true);
+                        line.transform.parent = transform;
+                        line.transform.position = midPoint;
+                        Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
+                        // Set X and Y localscale so cube appears to be a line
+                        line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
+                        line.transform.rotation = Quaternion.LookRotation(direction);
 
-                    _informationMeshRenderer.transform.position = midPoint;
-                } else {
-                    line.SetActive(false);
+                        return;
+                    }
                 }
             }
         }
+        line.SetActive(false);
+    }
+    public void DeleteUplink() {
+        line.SetActive(false);
+        _steelConnect.DeleteUplink(uplink.id)
+            .Then(response => {
+                if (response.StatusCode == 200) {
+                    Debug.Log($"Uplink deleted: {uplink.name}");
+                    Destroy(gameObject);
+                } else {
+                    Debug.LogError($"Unable to delete uplink: {uplink.name}.\n" +
+                        $"Status code: {response.StatusCode}\n" +
+                        $"Error: {response.Error}");
+                }
+            });
+    }
+
+    public void UpdateInformation() {
+        _information = $"Id: {uplink.id}\n" +
+                      $"Name: {uplink.name}\n" +
+                      $"Org: {uplink.org}\n" +
+                      $"Site: {uplink.site}\n" +
+                      $"WAN: {uplink.wan}\n" +
+                      $"Appliance: {uplink.node}";
     }
 }

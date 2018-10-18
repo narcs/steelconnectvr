@@ -66,12 +66,12 @@ public class CreateSiteWindow : MonoBehaviour {
         string siteCity = SiteCityText.text;
 
         _steelConnect.CreateSite(siteName, siteName, siteCity, siteCountry)
-            .Then(() => {
+            .Then(response => {
                 StatusText.text = "Site created! Don't forget to press \"Update Sites\"";
                 StatusText.color = Color.green;
                 createdSite = true;
             })
-            .Catch((err) => {
+            .Catch(err => {
                 StatusText.text = "There was a problem creating the site, see the log window to your right";
                 StatusText.color = Color.red;
             });

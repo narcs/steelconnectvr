@@ -23,23 +23,29 @@ public class StateManager : MonoBehaviour {
 
 	public GvrKeyboard keyboardManager;
 
-    private GameObject _tempObject;
-
     public StateManagerMode currentMode = StateManagerMode.Normal;
+
+    public GameObject informationText;
+
+    private GameObject _tempObject;
+    private TextMesh _informationTextMesh;
+
 
     // Use this for initialization
     void Start () {
         confirm.SetActive(false);
         createSiteWindow.SetActive(false);
+        _informationTextMesh = informationText.GetComponent<TextMesh>();
+        informationText.transform.parent.parent.gameObject.SetActive(false);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown("s")) {
-            GetComponent<WanManager>().UpdateWans();
-        } else if (Input.GetKeyDown("a")) {
-            earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
-        }
+        //if (Input.GetKeyDown("s")) {
+        //    GetComponent<WanManager>().UpdateWans();
+        //} else if (Input.GetKeyDown("a")) {
+        //    earthSphere.GetComponent<GlobeSiteCreation>().UpdateSites();
+        //}
 	}
 
     public void SwitchToDeleteMode() {
@@ -108,14 +114,14 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
+        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
         Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
-        destroyer.StartDestruction(gameObjectSite);
-        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        //particleSystem.Play();
-        //siteMarker.model.SetActive(false);
-        //Destroy(_tempObject, particleSystem.main.duration);
-        //Debug.Log("Site deletion");
+        siteMarker.DeleteSite(destroyer);
+    }
+
+    private void DeleteUplink(GameObject gameObjectUplink) {
+        UplinkMarker uplinkMarker = gameObjectUplink.GetComponent<UplinkMarker>();
+        uplinkMarker.DeleteUplink();
     }
 
     public void DeleteGameObject() {
@@ -123,6 +129,8 @@ public class StateManager : MonoBehaviour {
             confirm.SetActive(false);
             if (_tempObject.tag == "Site") {
                 DeleteSite(_tempObject);
+            } else if (_tempObject.tag == "Uplink") {
+                DeleteUplink(_tempObject);
             } else {
                 Destroy(_tempObject);
             }
@@ -132,5 +140,14 @@ public class StateManager : MonoBehaviour {
         } else {
             Debug.LogError("No object to delete");
         }
+    }
+
+    public void DisplayInformation(string entityInformationText) {
+        _informationTextMesh.text = entityInformationText;
+        informationText.transform.parent.parent.gameObject.SetActive(true);
+    }
+
+    public void HideInformation() {
+        informationText.transform.parent.parent.gameObject.SetActive(false);
     }
 }
