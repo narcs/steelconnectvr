@@ -85,41 +85,30 @@ public class GlobeSiteCreation : MonoBehaviour {
             .ThenAll(sites => sites.Select(site => steelConnect.GetSitelinks(site.id)))
             .Then(sitelinksList => sitelinksList.Select(sitelinks => sitelinks.items));
 
-        var sitelinksDictPromise = PromiseHelpers.All(sitesPromise, sitelinksPromise)
-            .Then(tup => {
-                Site[] sites = tup.Item1;
-                IEnumerable<Sitelink[]> sitelinks = tup.Item2;
-                Dictionary<SiteID, Sitelink[]> sitelinksDict = new Dictionary<SiteID, Sitelink[]>();
+        var sitelinksPairsPromise = sitesPromise
+            .Then(sites => new List<Site>(sites))
+            .Then(sites => steelConnect.GetSitelinkPairsForSites(sites));
 
-                for (int i = 0; i < sites.Count(); ++i) {
-                    sitelinksDict.Add(sites[i].id, sitelinks.ElementAt(i));
-                }
-
-                return sitelinksDict;
-            });
-
-        // Connect sites by sitelinks.
-        PromiseHelpers.All(siteMarkersPromise, sitelinksDictPromise)
+        // Connect sites by sitelink pairs.
+        PromiseHelpers.All(siteMarkersPromise, sitelinksPairsPromise)
             .Then(tup => {
                 Dictionary<SiteID, SiteMarker> siteMarkers = tup.Item1;
-                Dictionary<SiteID, Sitelink[]> sitelinks = tup.Item2;
+                List<SitelinkPair> sitelinkPairs = tup.Item2;
 
-                // NOTE: Iterating through the sitemarkers dictionary means that if a site didn't
-                // have a sitemarker, that site will be skipped. The same check is done later for the
-                // remote site (because we get sitelinks for all sites regardless of if they hasd a sitemarker
-                // created).
-                foreach (var siteMarkerEntry in siteMarkers) {
-                    SiteID siteId = siteMarkerEntry.Key;
-                    SiteMarker siteMarker = siteMarkerEntry.Value;
+                foreach (SitelinkPair sitelinkPair in sitelinkPairs) {
+                    Sitelink sitelink0 = sitelinkPair.pair[0];
+                    Sitelink sitelink1 = sitelinkPair.pair[1];
 
-                    foreach (Sitelink sitelink in sitelinks[siteId]) {
-                        Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
+                    Debug.Log($"Sitelink pair {sitelink0.id}/{sitelink1.id} between {sitelink0.local_site} and {sitelink0.remote_site}: first element of pair has status({sitelink0.status}) state({sitelink0.state})");
 
-                        if (siteMarkers.ContainsKey(sitelink.remote_site)) {
-                            placeSitelinkMarker(siteId, sitelink);
-                        } else {
-                            Debug.LogWarning($"Remote site {sitelink.remote_site} has no site marker, not drawing sitelink");
-                        }
+                    // For now, just use sitelink0 as "the" sitelink. The problem with this is, the order of sitelinks
+                    // in a pair is probably not deterministic, so they may swap between refreshes.
+                    // TODO: Deal with this somehow.
+                    
+                    if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
+                        placeSitelinkMarker(sitelink0.local_site, sitelink0);
+                    } else {
+                        Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
                     }
                 }
             })

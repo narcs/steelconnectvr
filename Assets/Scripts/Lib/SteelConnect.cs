@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Linq;
+
 // For promises and REST client.
 using RSG;
 using Proyecto26;
@@ -170,6 +172,38 @@ public class SteelConnect {
 
         return sitelinksPromise;
     }
+
+    // TODO: When the SteelConnectDataManager is merged in, we can update this to use
+    // its cached site list, and rename this to GetSitelinkPairsInOrg().
+    public IPromise<List<SitelinkPair>> GetSitelinkPairsForSites(IEnumerable<Site> siteList) {
+        return Promise<IEnumerable<Site>>.Resolved(siteList)
+            .ThenAll(sites => sites.Select(site => GetSitelinks(site.id)))
+            .Then(sitelinks => {
+                List<SitelinkPair> sitelinkPairs = new List<SitelinkPair>();
+
+                foreach (Sitelinks sitelinkContainer in sitelinks) {
+                    foreach (Sitelink sitelink in sitelinkContainer.items) {
+                        // Check if there is a matching sitelink already.
+                        // This is somewhat inefficient, but I couldn't think of a better way at the time I wrote this.
+                        SitelinkPair matchedPair = sitelinkPairs.Find(sitelinkPair => sitelinkPair.pair.Count == 1
+                            && sitelinkPair.pair[0].remote_site == sitelink.local_site
+                            && sitelinkPair.pair[0].local_site == sitelink.remote_site);
+                        
+                        if (matchedPair != null) {
+                            // Complete this pair.
+                            matchedPair.pair.Add(sitelink);
+                        } else {
+                            // New pair!
+                            SitelinkPair newPair = new SitelinkPair();
+                            newPair.pair.Add(sitelink);
+                            sitelinkPairs.Add(newPair);
+                        }
+                    }
+                }
+
+                return sitelinkPairs;
+            });
+    }
 }
 
 // Received JSON gets deserialized into these types.
@@ -199,12 +233,24 @@ namespace Models {
         [Serializable]
         public class Sitelink {
             public string id;
+            public string local_site;
             public string remote_site;
             public string state;
             public string status;
             public string inuse;
             public float throughput_in;
             public float throughput_out;
+        }
+
+        // Since two sitelink is reported for one "logical" sitelink, we bundle them
+        // together as one entity.
+        public class SitelinkPair {
+            // This should always have two items when used outside this file.
+            public List<Sitelink> pair;
+
+            public SitelinkPair() {
+                pair = new List<Sitelink>();
+            }
         }
 
         [Serializable]
