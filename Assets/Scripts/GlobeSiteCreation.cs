@@ -103,7 +103,7 @@ public class GlobeSiteCreation : MonoBehaviour {
 
                     // For now, just use sitelink0 as "the" sitelink. The problem with this is, the order of sitelinks
                     // in a pair is probably not deterministic, so they may swap between refreshes.
-                    // TODO: Deal with this somehow.
+                    // TODO: Deal with this somehow, eg. sitelink markers have SitelinkPairs attached, not just a single sitelink.
                     
                     if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
                         placeSitelinkMarker(sitelink0.local_site, sitelink0);
