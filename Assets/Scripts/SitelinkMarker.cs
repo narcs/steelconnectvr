@@ -142,10 +142,10 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         Sitelink sitelink1 = sitelinkPair.pair[1];
 
         _information = "Sitelink pair:\n" +
-                      $"Sites: {sitelink0.local_site} <-> {sitelink1.remote_site}\n" +
-                      $"Sitelink IDs: {sitelink0.id}/{sitelink1.id}\n" +
+                      $"Sites: {sitelink0.local_site}\n<-> {sitelink0.remote_site}\n" +
+                      //$"Sitelink IDs: {sitelink0.id}/{sitelink1.id}\n" +
                       $"States: {sitelink0.state}/{sitelink1.state}\n" +
-                      $"Statuses: {sitelink0.status}/{sitelink1.status}\n" +
+                      //$"Statuses: {sitelink0.status}/{sitelink1.status}\n" +
                       $"In use: {sitelink0.inuse}/{sitelink1.inuse}\n" +
                       $"Sitelink 0 throughput in/out: {sitelink0.throughput_in}/{sitelink0.throughput_out}\n" + 
                       $"Sitelink 1 throughput in/out: {sitelink1.throughput_in}/{sitelink1.throughput_out}\n";
