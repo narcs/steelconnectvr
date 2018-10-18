@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Models.SteelConnect;
 
-public class SitelinkMarker : MonoBehaviour {
+public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     private SiteMarker fromSiteMarker;
     private SiteMarker toSiteMarker;
-    private Sitelink sitelink;
-    public string SitelinkId; // Viewable in the editor for debugging.
+    private SitelinkPair sitelinkPair;
 
     private Vector3 globePosition;
     private float globeRadius;
@@ -22,16 +22,18 @@ public class SitelinkMarker : MonoBehaviour {
 
     private LineRenderer lineRenderer;
 
-	// Use this for initialization
-	void Start () {
+    private StateManager _stateManager;
+    private string _information;
+
+    // Use this for initialization
+    void Start () {
         
     }
 
-    public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, Sitelink sitelink, Vector3 globePosition, float globeRadius) {
+    public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, SitelinkPair sitelinkPair, Vector3 globePosition, float globeRadius) {
         this.fromSiteMarker = fromSiteMarker;
         this.toSiteMarker = toSiteMarker;
-        this.sitelink = sitelink;
-        SitelinkId = sitelink.id;
+        this.sitelinkPair = sitelinkPair;
         lineRenderer = gameObject.GetComponent<LineRenderer>();
 
         // TODO: Get these values in a better way, eg. link the globe object here with a public member variable.
@@ -40,14 +42,16 @@ public class SitelinkMarker : MonoBehaviour {
 
         // ---
 
+        Sitelink sitelink0 = sitelinkPair.pair[0];
+
         lineColor = Color.green;
         lineWidth = 0.1f;
         blinkPeriodSeconds = 0.0f;
 
-        if (sitelink.state == "up") {
+        if (sitelink0.state == "up") {
             lineColor = Color.green;
 
-            lineWidth = 0.05f + sitelink.throughput_out * 0.01f;
+            lineWidth = 0.05f + sitelink0.throughput_out * 0.01f;
         } else {
             lineColor = Color.red;
             blinkPeriodSeconds = 2.0f;
@@ -106,5 +110,29 @@ public class SitelinkMarker : MonoBehaviour {
                 lineRenderer.SetPosition(i, result);
             }
         }
+    }
+
+    // ---
+
+    public void UpdateInformation() {
+        Sitelink sitelink0 = sitelinkPair.pair[0];
+        Sitelink sitelink1 = sitelinkPair.pair[1];
+
+        _information = "Sitelink pair:\n" +
+                      $"Sites: {sitelink0.local_site} <-> {sitelink1.remote_site}\n" +
+                      $"Sitelink IDs: {sitelink0.id}/{sitelink1.id}\n" +
+                      $"States: {sitelink0.state}/{sitelink1.state}\n" +
+                      $"Statuses: {sitelink0.status}/{sitelink1.status}\n" +
+                      $"In use: {sitelink0.inuse}/{sitelink1.inuse}\n" +
+                      $"Sitelink 0 throughput in/out: {sitelink0.throughput_in}/{sitelink0.throughput_out}\n" + 
+                      $"Sitelink 1 throughput in/out: {sitelink1.throughput_in}/{sitelink1.throughput_out}\n";
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        _stateManager.DisplayInformation(_information);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        _stateManager.HideInformation();
     }
 }

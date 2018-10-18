@@ -22,13 +22,13 @@ public class GlobeSiteCreation : MonoBehaviour {
     private float globeRadius;
 
     private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private Dictionary<SiteID, SitelinkMarker> currentSitelinkMarkers;
+    private List<SitelinkMarker> currentSitelinkMarkers;
 
     private SteelConnect steelConnect;
 
     void Start() {
         currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentSitelinkMarkers = new Dictionary<SiteID, SitelinkMarker>();
+        currentSitelinkMarkers = new List<SitelinkMarker>();
 
         steelConnect = new SteelConnect();
         updateGlobeRadius();
@@ -46,8 +46,8 @@ public class GlobeSiteCreation : MonoBehaviour {
         currentSiteMarkers.Clear();
         currentSiteMarkerObjects.Clear();
 
-        foreach (var entry in currentSitelinkMarkers) {
-            Destroy(entry.Value.gameObject);
+        foreach (SitelinkMarker sitelinkMarker in currentSitelinkMarkers) {
+            Destroy(sitelinkMarker.gameObject);
         }
         currentSitelinkMarkers.Clear();
 
@@ -106,7 +106,7 @@ public class GlobeSiteCreation : MonoBehaviour {
                     // TODO: Deal with this somehow, eg. sitelink markers have SitelinkPairs attached, not just a single sitelink.
                     
                     if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
-                        placeSitelinkMarker(sitelink0.local_site, sitelink0);
+                        placeSitelinkMarker(sitelinkPair);
                     } else {
                         Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
                     }
@@ -136,15 +136,17 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    SitelinkMarker placeSitelinkMarker(SiteID siteId, Sitelink sitelink) {
-        SiteMarker fromSite = currentSiteMarkers[siteId];
-        SiteMarker toSite = currentSiteMarkers[sitelink.remote_site];
+    SitelinkMarker placeSitelinkMarker(SitelinkPair sitelinkPair) {
+        Sitelink sitelink0 = sitelinkPair.pair[0];
+
+        SiteMarker fromSite = currentSiteMarkers[sitelink0.local_site];
+        SiteMarker toSite = currentSiteMarkers[sitelink0.remote_site];
         Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
         GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
         SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
-        sitelinkMarker.Set(fromSite, toSite, sitelink, transform.position, globeRadius * 1.03f);
-        currentSitelinkMarkers.Add(siteId, sitelinkMarker);
+        sitelinkMarker.Set(fromSite, toSite, sitelinkPair, transform.position, globeRadius * 1.03f);
+        currentSitelinkMarkers.Add(sitelinkMarker);
 
         return sitelinkMarker;
     }
