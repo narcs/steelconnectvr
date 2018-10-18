@@ -96,6 +96,7 @@ public class GlobeSiteCreation : MonoBehaviour {
                 List<SitelinkPair> sitelinkPairs = tup.Item2;
 
                 foreach (SitelinkPair sitelinkPair in sitelinkPairs) {
+                    Debug.Log($"Sitelink pair has {sitelinkPair.pair.Count} sitelinks");
                     if (sitelinkPair.IsValid()) {
                         Sitelink sitelink0 = sitelinkPair.pair[0];
                         Sitelink sitelink1 = sitelinkPair.pair[1];
