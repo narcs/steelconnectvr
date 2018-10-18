@@ -151,7 +151,7 @@ public class SteelConnect {
         return RestClient.Get<Uplinks>(newConfigRequest("/org/" + orgId + "/uplinks"));
     }
 
-    public IPromise<Sitelinks> GetSitelinks(string siteId) {
+    private IPromise<Sitelinks> GetSitelinks(string siteId) {
         // Since using standard RestClient with returning a promise counts any non-200
         // status code as an error, but 404 is a potentially valid response for no sitelinks,
         // we need to build the promise manually ourselves.

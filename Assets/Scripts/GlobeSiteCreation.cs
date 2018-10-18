@@ -81,10 +81,6 @@ public class GlobeSiteCreation : MonoBehaviour {
                 return siteMarkers;
             });
 
-        var sitelinksPromise = sitesPromise
-            .ThenAll(sites => sites.Select(site => steelConnect.GetSitelinks(site.id)))
-            .Then(sitelinksList => sitelinksList.Select(sitelinks => sitelinks.items));
-
         var sitelinksPairsPromise = sitesPromise
             .Then(sites => new List<Site>(sites))
             .Then(sites => steelConnect.GetSitelinkPairsForSites(sites));
