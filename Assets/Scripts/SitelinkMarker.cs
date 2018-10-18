@@ -12,7 +12,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private Vector3 globePosition;
     private float globeRadius;
 
-    private int numPoints = 32; // TODO: Calculate based on sphere surface distance.
+    private int numPoints = 8; // TODO: Calculate based on sphere surface distance.
     private float lineWidth;
     private Color lineColor;
 
@@ -21,7 +21,6 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private float blinkDirection = 1.0f;
 
     private LineRenderer lineRenderer;
-    private CapsuleCollider lineCollider;
 
     private StateManager _stateManager;
     private string _information;
@@ -38,7 +37,6 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         lineRenderer = GetComponent<LineRenderer>();
-        lineCollider = GetComponent<CapsuleCollider>();
 
         // TODO: Get these values in a better way, eg. link the globe object here with a public member variable.
         this.globePosition = globePosition;
@@ -119,20 +117,47 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    // Update the collider for being able to point at the sitelink marker with the controller.
-    // https://answers.unity.com/questions/470943/collider-for-line-renderer.html
-    // TODO: This only works for short sitelinks, as it's just a capsule between the two sites.
+    // Build a chain of colliders along the line.
     public void UpdateCollider() {
-        lineCollider.radius = lineWidth / 2;
-        lineCollider.direction = 2;
+        foreach (Transform child in transform) {
+            Destroy(child.gameObject);
+        }
 
-        Vector3 fromPos = fromSiteMarker.transform.position;
-        Vector3 toPos = toSiteMarker.transform.position;
+        if (fromSiteMarker != null && toSiteMarker != null) {
+            Vector3 lastPoint = Vector3.zero;
+            
+            for (int i = 0; i < numPoints; i++) {
+                float progress = ((float)i) / (numPoints - 1);
+                Vector3 result = Vector3.Slerp(
+                    fromSiteMarker.gameObject.transform.position,
+                    toSiteMarker.gameObject.transform.position,
+                    progress);
 
-        lineCollider.transform.position = fromPos + (toPos - fromPos) / 2;
-        lineCollider.center = Vector3.zero;
-        lineCollider.transform.LookAt(fromPos);
-        lineCollider.height = (toPos - fromPos).magnitude / 2;
+                float radius = Vector3.Distance(globePosition, result);
+                if (radius < globeRadius) {
+                    result *= (globeRadius / radius);
+                }
+
+                if (i > 0) {
+                    GameObject colliderObject = new GameObject($"Collider{i}");
+                    colliderObject.transform.SetParent(transform);
+
+                    CapsuleCollider col = colliderObject.AddComponent<CapsuleCollider>();
+
+                    Vector3 start = lastPoint;
+                    Vector3 end = result;
+
+                    col.radius = lineWidth / 2;
+                    col.height = (end - start).magnitude / 2;
+                    col.center = Vector3.zero;
+                    col.direction = 2; // Aligned on Z.
+                    colliderObject.transform.position = start + (end - start) / 2;
+                    colliderObject.transform.LookAt(start);
+                }
+
+                lastPoint = result;
+            }
+        }
     }
 
     // ---
