@@ -19,8 +19,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4182667253027822}
-  - component: {fileID: 114352516001778234}
   - component: {fileID: 120762477117276932}
+  - component: {fileID: 136362981922544066}
+  - component: {fileID: 114352516001778234}
   m_Layer: 0
   m_Name: SitelinkMarker
   m_TagString: Untagged
@@ -35,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1105123534481834}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.595978, y: 77.28966, z: -67.45951}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,13 +53,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f58a45ef9bd34894090879e42f66a4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartSiteMarker: {fileID: 0}
-  EndSiteMarker: {fileID: 0}
-  NumPoints: 0
-  Color: {r: 0, g: 0, b: 0, a: 0}
-  SpherePosition: {x: 0, y: 0, z: 0}
-  SphereRadius: 0
-  BlinkPeriodSeconds: 0
 --- !u!120 &120762477117276932
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -151,3 +145,16 @@ LineRenderer:
     generateLightingData: 1
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!136 &136362981922544066
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1105123534481834}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.55
+  m_Height: 0.1
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}

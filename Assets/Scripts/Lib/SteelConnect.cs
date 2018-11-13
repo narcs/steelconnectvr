@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Linq;
+
 // For promises and REST client.
 using RSG;
 using Proyecto26;
@@ -149,7 +151,7 @@ public class SteelConnect {
         return RestClient.Get<Uplinks>(newConfigRequest("/org/" + orgId + "/uplinks"));
     }
 
-    public IPromise<Sitelinks> GetSitelinks(string siteId) {
+    private IPromise<Sitelinks> GetSitelinks(string siteId) {
         // Since using standard RestClient with returning a promise counts any non-200
         // status code as an error, but 404 is a potentially valid response for no sitelinks,
         // we need to build the promise manually ourselves.
@@ -164,11 +166,47 @@ public class SteelConnect {
                 Debug.Log($"Site {siteId} has no sitelinks");
                 sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
             } else {
-                sitelinksPromise.Reject(err);
+                Debug.LogError($"Failed to get sitelinks for {siteId}: {err.StatusCode} {err.Message}");
+                
+                // Some sites were returning 503, so to work around this I'm logging it then returning an empty list of sitelinks.
+                sitelinksPromise.Resolve(new Sitelinks { items = new Sitelink[] { } });
+                //sitelinksPromise.Reject(err);
             }
         });
 
         return sitelinksPromise;
+    }
+
+    // TODO: When the SteelConnectDataManager is merged in, we can update this to use
+    // its cached site list, and rename this to GetSitelinkPairsInOrg().
+    public IPromise<List<SitelinkPair>> GetSitelinkPairsForSites(IEnumerable<Site> siteList) {
+        return Promise<IEnumerable<Site>>.Resolved(siteList)
+            .ThenAll(sites => sites.Select(site => GetSitelinks(site.id)))
+            .Then(sitelinks => {
+                List<SitelinkPair> sitelinkPairs = new List<SitelinkPair>();
+
+                foreach (Sitelinks sitelinkContainer in sitelinks) {
+                    foreach (Sitelink sitelink in sitelinkContainer.items) {
+                        // Check if there is a matching sitelink already.
+                        // This is somewhat inefficient, but I couldn't think of a better way at the time I wrote this.
+                        SitelinkPair matchedPair = sitelinkPairs.Find(sitelinkPair => sitelinkPair.pair.Count == 1
+                            && sitelinkPair.pair[0].remote_site == sitelink.local_site
+                            && sitelinkPair.pair[0].local_site == sitelink.remote_site);
+                        
+                        if (matchedPair != null) {
+                            // Complete this pair.
+                            matchedPair.pair.Add(sitelink);
+                        } else {
+                            // New pair!
+                            SitelinkPair newPair = new SitelinkPair();
+                            newPair.pair.Add(sitelink);
+                            sitelinkPairs.Add(newPair);
+                        }
+                    }
+                }
+
+                return sitelinkPairs;
+            });
     }
 }
 
@@ -199,12 +237,28 @@ namespace Models {
         [Serializable]
         public class Sitelink {
             public string id;
+            public string local_site;
             public string remote_site;
             public string state;
             public string status;
             public string inuse;
             public float throughput_in;
             public float throughput_out;
+        }
+
+        // Since two sitelink is reported for one "logical" sitelink, we bundle them
+        // together as one entity.
+        public class SitelinkPair {
+            // This should always have two items when used outside this file.
+            public List<Sitelink> pair;
+
+            public SitelinkPair() {
+                pair = new List<Sitelink>();
+            }
+
+            public bool IsValid() {
+                return pair.Count == 2;
+            }
         }
 
         [Serializable]
