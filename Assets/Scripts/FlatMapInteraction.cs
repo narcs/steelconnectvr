@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using Mapbox.Unity.Map;
 using Mapbox.Utils;
 
-public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
 
     public AbstractMap map;
     public StateManager statemanager;
@@ -23,6 +23,10 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private float panFactor = 0.05f;
     private float velocityDecayFactor = 0.92f;
+    private float zoomFactor = 1.0f;
+
+    public int xRange = 5;
+    public int zRange = 5;
 
     // Use this for initialization
     void Start () {
@@ -59,9 +63,9 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
                 Recenter();
             }
             // When the button is clicked zoom in
-            if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // TODO: Change to double click
+            if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // Using event instead
             {
-                ZoomIn();
+                
             }
             // When the app button is clicked zoom out
             if (dominantController.GetButtonDown(GvrControllerButton.App)) // TODO: Change to double click
@@ -70,6 +74,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }
 
+        CullSiteMarkers();
     }
 
     void Recenter()
@@ -100,9 +105,35 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
+    void CullSiteMarkers()
+    {
+        foreach (var entry in statemanager.currentSiteMarkers)
+        {
+            Vector3 pos = entry.Value.transform.position;
+
+            if (Mathf.Abs(pos.x) > xRange || Mathf.Abs(pos.z) > zRange)
+            {
+                ChangeLayerRecursive(entry.Value.gameObject, 12);
+            }
+            else
+            {
+                ChangeLayerRecursive(entry.Value.gameObject, 10);
+            }
+        }
+    }
+
+    void ChangeLayerRecursive(GameObject obj, int layer)
+    {
+       obj.layer = layer;
+        foreach (Transform child in obj.GetComponentInChildren<Transform>(true))
+        {
+            ChangeLayerRecursive(child.gameObject, layer);
+        }
+    }
+
     void ZoomIn()
     {
-        map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + 0.5f);
+        map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + zoomFactor);
 
         RescaleSiteMarkers();
     }
@@ -110,9 +141,21 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     void ZoomOut()
     {
         if (map.Zoom > 3.0f)
-            map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - 0.5f);
+            map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - zoomFactor);
 
         RescaleSiteMarkers();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Vector2d geo = map.WorldToGeoPosition(eventData.pointerPressRaycast.worldPosition);
+
+        map.UpdateMap(geo, map.Zoom);
+        ZoomIn();
+        statemanager.UpdateSites(false);
+        // TODO: Fix RescaleSiteMarkers to work after UpdateSites
+        // Currently broken because of async issues.
+        //RescaleSiteMarkers();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

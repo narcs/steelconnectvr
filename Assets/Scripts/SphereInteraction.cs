@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
+using Mapbox.Unity.Map;
+using Mapbox.Utils;
+using Mapbox.Unity.Utilities;
+
+public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler {
     // The object that we rotate to orbit. The player should be a child of this.
     public GameObject pivotObject;
+    public AbstractMap flatMap;
+    public AbstractMap globeMap;
+    public StateManager stateManager;
 
     public bool globeDragEnabled = true;
     private bool isCurrentlyDragging = false;
@@ -19,6 +26,10 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     private float panFactor = 120.0f;
     private float velocityDecayFactor = 0.92f;
+
+    private float lastClick = 0.0f;
+
+    public float sphereRadius = 1.0f;
 
     void Start() {
         dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
@@ -53,6 +64,24 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
         Quaternion QT = Quaternion.Euler(localRotation.y, localRotation.x, 0);
         pivotObject.transform.rotation = Quaternion.Lerp(pivotObject.transform.rotation, QT, Time.deltaTime * 10);
         previousOrientation = dominantController.Orientation * Vector3.forward;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.clickTime - lastClick < 1)
+        {
+            Vector3 pos = eventData.pointerPressRaycast.worldPosition;
+            pos = Quaternion.Inverse(globeMap.transform.rotation) * pos;
+
+            Vector2d latlong = Conversions.GeoFromGlobePosition(pos, 1);
+
+            lastClick = eventData.clickTime;
+            stateManager.ChangeMap();
+            Debug.Log(latlong);
+            flatMap.UpdateMap(latlong, flatMap.Zoom);
+            return;
+        }
+        lastClick = eventData.clickTime;
     }
 
     public void OnPointerDown(PointerEventData eventData) {
