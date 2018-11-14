@@ -17,11 +17,13 @@ public class WanManager : MonoBehaviour {
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
 
     private List<Wan> _wans = new List<Wan>();
+    private StateManager _stateManager;
     private SteelConnectDataManager _dataManager;
     private bool _showUplinks = false;
     private GlobeSiteCreation _globeSiteCreation;
 
 	void Start () {
+        _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
         _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
@@ -65,8 +67,8 @@ public class WanManager : MonoBehaviour {
                         newUplinkMarker.uplink = uplinks[uplinkID];
                         newUplinkMarker.wan = newWanMarkerObject;
                         string uplinkSiteID = newUplinkMarker.uplink.site;
-                        if (_globeSiteCreation.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
-                            newUplinkMarker.site = _globeSiteCreation.currentSiteMarkerObjects[uplinkSiteID];
+                        if (_stateManager.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
+                            newUplinkMarker.site = _stateManager.currentSiteMarkerObjects[uplinkSiteID];
                         } else {
                             Debug.LogError($"Site does not exist: {uplinkSiteID}");
                         }

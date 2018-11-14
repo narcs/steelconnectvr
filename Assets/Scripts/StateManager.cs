@@ -4,11 +4,8 @@ using UnityEngine;
 using System.Linq;
 using Gvr.Internal;
 
-public enum StateManagerMode {
-    Normal,
-    Delete,
-    CreateSite,
-}
+using RSG;
+using Models.SteelConnect;
 
 // These are just to make it clearer what each function or type expects.
 // These aliases are all just equivalent to `string`, and so you can pass strings with no problems.
@@ -17,6 +14,12 @@ using SiteId = System.String;
 using WanId = System.String;
 using UplinkId = System.String;
 using SitelinkId = System.String;
+
+public enum StateManagerMode {
+    Normal,
+    Delete,
+    CreateSite,
+}
 
 public class StateManager : MonoBehaviour {
     public GameObject laser;
@@ -28,8 +31,6 @@ public class StateManager : MonoBehaviour {
     public GameObject earthSphere;
     public GameObject destroyerObject;
     public GameObject flatMap;
-
-    public GameObject destroyerObject;
 
 	public GvrKeyboard keyboardManager;
 
@@ -45,12 +46,12 @@ public class StateManager : MonoBehaviour {
     // Site marker code
     public Dictionary<SiteId, GameObject> currentSiteMarkerObjects = new Dictionary<SiteId, GameObject>();
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
-    private List<LineMarker> currentLineMarkers;
+    private List<SitelinkMarker> currentSitelinkMarkers;
 
     // Use this for initialization
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
-        currentLineMarkers = new List<LineMarker>();
+        currentSitelinkMarkers = new List<SitelinkMarker>();
 
         _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
 
@@ -79,7 +80,6 @@ public class StateManager : MonoBehaviour {
         SetLaserColorForMode(currentMode);
         earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = false;
 
-        // ---
         createSiteWindow.GetComponent<CreateSiteWindow>().OnEnterCreateSiteMode();
         createSiteWindow.SetActive(true);
     }
@@ -131,61 +131,38 @@ public class StateManager : MonoBehaviour {
                 return currentSiteMarkers;
             });
 
-        var sitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, _dataManager.GetSitelinks(forceRefresh))
+        var sitelinkMarkersPromise = PromiseHelpers.All(siteMarkersPromise, _dataManager.GetSitelinkPairs(forceRefresh))
             .Then(tup => {
                 Dictionary<SiteId, SiteMarker> siteMarkers = tup.Item1;
-                Dictionary<SiteId, List<SitelinkReporting>> sitelinks = tup.Item2;
+                List<SitelinkPair> sitelinkPairs = tup.Item2;
 
-                Debug.Log($"Adding sitelink markers, there are {siteMarkers.Count} site markers");
+                foreach (SitelinkPair sitelinkPair in sitelinkPairs) {
+                    Debug.Log($"Sitelink pair has {sitelinkPair.pair.Count} sitelinks");
+                    if (sitelinkPair.IsValid()) {
+                        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
+                        SitelinkReporting sitelink1 = sitelinkPair.pair[1];
 
-                // NOTE(andrew): Iterating through the sitemarkers dictionary means that if a site didn't
-                // have a sitemarker, that site will be skipped. The same check is done later for the
-                // remote site (because we get sitelinks for all sites regardless of if they hasd a sitemarker
-                // created).
-                foreach (var siteMarkerEntry in siteMarkers)
-                {
-                    SiteId siteId = siteMarkerEntry.Key;
-                    SiteMarker siteMarker = siteMarkerEntry.Value;
+                        Debug.Log($"Sitelink pair {sitelink0.id}/{sitelink1.id} between {sitelink0.local_site} and {sitelink0.remote_site}: first element of pair has status({sitelink0.status}) state({sitelink0.state})");
 
-                    foreach (SitelinkReporting sitelink in sitelinks[siteId])
-                    {
-                        Debug.Log($"Sitelink {sitelink.id} between {siteId} and {sitelink.remote_site}: status({sitelink.status}) state({sitelink.state})");
+                        // For now, just use sitelink0 as "the" sitelink. The problem with this is, the order of sitelinks
+                        // in a pair is probably not deterministic, so they may swap between refreshes.
+                        // TODO: Deal with this somehow, eg. sitelink markers have SitelinkPairs attached, not just a single sitelink.
 
-                        if (siteMarkers.ContainsKey(sitelink.remote_site))
-                        {
-                            Color lineColor;
-                            float blinkPeriodSeconds;
-
-                            if (sitelink.state == "up")
-                            {
-                                lineColor = Color.green;
-                                blinkPeriodSeconds = 0.0f;
+                        if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
+                            if (earthSphere.activeSelf) {
+                                currentSitelinkMarkers.Add(earthSphere.GetComponent<GlobeSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
+                            } else {
+                                currentSitelinkMarkers.Add(flatMap.GetComponent<FlatSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
                             }
-                            else
-                            {
-                                lineColor = Color.red;
-                                blinkPeriodSeconds = 2.0f;
-                            }
-
-                            if (earthSphere.activeSelf)
-                            {
-                                currentLineMarkers.Add(earthSphere.GetComponent<GlobeSiteCreation>().drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], lineColor, blinkPeriodSeconds));
-                            }
-                            else
-                            {
-                                currentLineMarkers.Add(flatMap.GetComponent<FlatSiteCreation>().drawLineBetweenSites(siteMarker, siteMarkers[sitelink.remote_site], lineColor, blinkPeriodSeconds));
-                            }
+                        } else {
+                            Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
                         }
-                        else
-                        {
-                            Debug.LogWarning($"Remote site {sitelink.remote_site} has no site marker, not drawing sitelink");
-                        }
+                    } else {
+                        Debug.LogError("A sitelink pair is invalid!");
                     }
                 }
             })
             .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
-    }
-
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {
@@ -228,6 +205,7 @@ public class StateManager : MonoBehaviour {
     }
 
     private void DeleteSite(GameObject gameObjectSite) {
+        SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
         Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
         siteMarker.DeleteSite(destroyer);
     }

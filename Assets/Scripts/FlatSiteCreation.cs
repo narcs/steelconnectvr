@@ -10,12 +10,12 @@ using Proyecto26;
 using Models.SteelConnect;
 
 // Type alias for clarity.
-using SiteID = System.String;
+using SiteId = System.String;
 
 public class FlatSiteCreation : MonoBehaviour {
 
     public GameObject siteMarkerPrefab;
-    public GameObject lineMarkerPrefab;
+    public GameObject sitelinkMarkerPrefab;
 
     public AbstractMap map;
 
@@ -57,23 +57,17 @@ public class FlatSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    public LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds)
-    {
-        Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
+    public SitelinkMarker placeSitelinkMarker(SitelinkPair sitelinkPair, Dictionary<SiteId, SiteMarker> siteMarkers) {
+        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
 
-        GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
-        LineMarker lineMarker = lineMarkerObject.GetComponent<LineMarker>();
+        SiteMarker fromSite = siteMarkers[sitelink0.local_site];
+        SiteMarker toSite = siteMarkers[sitelink0.remote_site];
+        Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
-        lineMarker.StartSiteMarker = site1;
-        lineMarker.EndSiteMarker = site2;
-        lineMarker.SpherePosition = transform.position;
-        //lineMarker.SphereRadius = globeRadius * 1.03f;
-        lineMarker.Color = color;
-        lineMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
-        lineMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
+        GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
+        SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
+        sitelinkMarker.Set(fromSite, toSite, sitelinkPair, transform.position);
 
-        //currentLineMarkers.Add(lineMarker);
-
-        return lineMarker;
-    } 
+        return sitelinkMarker;
+    }
 }

@@ -25,14 +25,14 @@ public class SteelConnectDataManager : MonoBehaviour {
     private List<Site> _sites = null;
     private List<Wan> _wans = null;
     private List<Uplink> _uplinks = null;
-    private Dictionary<SiteId, List<SitelinkReporting>> _sitelinkReportings = null;
+    private List<SitelinkPair> _sitelinkPairs = null;
 
     // Promises are only executed once, then always just return their result, so we can store
     // the current set of promises here to return when we don't need to refresh data.
     private IPromise<List<Site>> _sitesPromise = null;
     private IPromise<List<Wan>> _wansPromise = null;
     private IPromise<List<Uplink>> _uplinksPromise = null;
-    private IPromise<Dictionary<SiteId, List<SitelinkReporting>>> _sitelinksPromise = null;
+    private IPromise<List<SitelinkPair>> _sitelinkPairsPromise = null;
 
     // ---
 
@@ -43,7 +43,7 @@ public class SteelConnectDataManager : MonoBehaviour {
         _sitesPromise = Promise<List<Site>>.Resolved(new List<Site>());
         _wansPromise = Promise<List<Wan>>.Resolved(new List<Wan>());
         _uplinksPromise = Promise<List<Uplink>>.Resolved(new List<Uplink>());
-        _sitelinksPromise = Promise<Dictionary<SiteId, List<SitelinkReporting>>>.Resolved(new Dictionary<SiteId, List<SitelinkReporting>>());
+        _sitelinkPairsPromise = Promise<List<SitelinkPair>>.Resolved(new List<SitelinkPair>());
     }
 
     // ---
@@ -98,21 +98,38 @@ public class SteelConnectDataManager : MonoBehaviour {
         return _uplinksPromise;
     }
 
-    public IPromise<Dictionary<SiteId, List<SitelinkReporting>>> GetSitelinks(bool forceRefresh) {
-        if (forceRefresh || _sitelinksPromise == null) {
-            _sitelinksPromise = GetSites(false)
-                .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
-                .Then(sitelinksList => {
-                    _sitelinkReportings = new Dictionary<SiteId, List<SitelinkReporting>>();
+    public IPromise<List<SitelinkPair>> GetSitelinkPairs(bool forceRefresh) {
+        if (forceRefresh || _sitelinkPairsPromise == null) {
+            _sitelinkPairsPromise = Promise<IEnumerable<Site>>.Resolved(_sites)
+            .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
+            .Then(sitelinks => {
+                List<SitelinkPair> sitelinkPairs = new List<SitelinkPair>();
 
-                    for (int i = 0; i < _sites.Count; ++i) {
-                        _sitelinkReportings.Add(_sites[i].id, new List<SitelinkReporting>(sitelinksList.ElementAt(i).items));
+                foreach (SitelinkReportingItems sitelinkContainer in sitelinks) {
+                    foreach (SitelinkReporting sitelink in sitelinkContainer.items) {
+                        // Check if there is a matching sitelink already.
+                        // This is somewhat inefficient, but I couldn't think of a better way at the time I wrote this.
+                        SitelinkPair matchedPair = sitelinkPairs.Find(sitelinkPair => sitelinkPair.pair.Count == 1
+                            && sitelinkPair.pair[0].remote_site == sitelink.local_site
+                            && sitelinkPair.pair[0].local_site == sitelink.remote_site);
+
+                        if (matchedPair != null) {
+                            // Complete this pair.
+                            matchedPair.pair.Add(sitelink);
+                        } else {
+                            // New pair!
+                            SitelinkPair newPair = new SitelinkPair();
+                            newPair.pair.Add(sitelink);
+                            sitelinkPairs.Add(newPair);
+                        }
                     }
+                }
 
-                    return _sitelinkReportings;
-                });
+                _sitelinkPairs = sitelinkPairs;
+                return sitelinkPairs;
+            });
         }
 
-        return _sitelinksPromise;
+        return _sitelinkPairsPromise;
     }
 }

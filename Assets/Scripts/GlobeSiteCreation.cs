@@ -8,7 +8,7 @@ using Proyecto26;
 using Models.SteelConnect;
 
 // Type alias for clarity.
-using SiteID = System.String;
+using SiteId = System.String;
 
 public class GlobeSiteCreation : MonoBehaviour {
     // The prefab that represents a site. Its up will be oriented facing 
@@ -17,18 +17,12 @@ public class GlobeSiteCreation : MonoBehaviour {
 
     // The prefab that represents a sitelink.
     public GameObject sitelinkMarkerPrefab;
-    public Dictionary<SiteID, GameObject> currentSiteMarkerObjects = new Dictionary<SiteID, GameObject>();
 
     private float globeRadius;
-
-    private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
-    private List<SitelinkMarker> currentSitelinkMarkers;
 
     private SteelConnect steelConnect;
 
     void Start() {
-        currentSiteMarkers = new Dictionary<string, SiteMarker>();
-        currentSitelinkMarkers = new List<SitelinkMarker>();
 
         steelConnect = new SteelConnect();
         updateGlobeRadius();
@@ -60,17 +54,16 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    SitelinkMarker placeSitelinkMarker(SitelinkPair sitelinkPair) {
-        Sitelink sitelink0 = sitelinkPair.pair[0];
+    public SitelinkMarker placeSitelinkMarker(SitelinkPair sitelinkPair, Dictionary<SiteId, SiteMarker> siteMarkers) {
+        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
 
-        SiteMarker fromSite = currentSiteMarkers[sitelink0.local_site];
-        SiteMarker toSite = currentSiteMarkers[sitelink0.remote_site];
+        SiteMarker fromSite = siteMarkers[sitelink0.local_site];
+        SiteMarker toSite = siteMarkers[sitelink0.remote_site];
         Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
         GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
         SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
         sitelinkMarker.Set(fromSite, toSite, sitelinkPair, transform.position, globeRadius * 1.03f);
-        currentSitelinkMarkers.Add(sitelinkMarker);
 
         return sitelinkMarker;
     }

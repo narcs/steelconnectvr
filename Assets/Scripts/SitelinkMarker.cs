@@ -30,7 +30,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         
     }
 
-    public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, SitelinkPair sitelinkPair, Vector3 globePosition, float globeRadius) {
+    public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, SitelinkPair sitelinkPair, Vector3 globePosition, float globeRadius = 0.0f) {
         this.fromSiteMarker = fromSiteMarker;
         this.toSiteMarker = toSiteMarker;
         this.sitelinkPair = sitelinkPair;
@@ -44,7 +44,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
         // ---
 
-        Sitelink sitelink0 = sitelinkPair.pair[0];
+        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
 
         lineColor = Color.green;
         lineWidth = 0.1f;
@@ -163,8 +163,8 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     // ---
 
     public void UpdateInformation() {
-        Sitelink sitelink0 = sitelinkPair.pair[0];
-        Sitelink sitelink1 = sitelinkPair.pair[1];
+        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
+        SitelinkReporting sitelink1 = sitelinkPair.pair[1];
 
         _information = "Sitelink pair:\n" +
                       $"Sites: {sitelink0.local_site}\n<-> {sitelink0.remote_site}\n" +
