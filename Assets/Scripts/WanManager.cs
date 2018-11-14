@@ -21,7 +21,9 @@ public class WanManager : MonoBehaviour {
     private SteelConnectDataManager _dataManager;
     private bool _showUplinks = false;
     private GlobeSiteCreation _globeSiteCreation;
-    private float _nameTextYPosition = 155f;
+    private float _nameTextXPosition = 0f;
+    private float _nameTextOnTopYPosition = 155f;
+    private float _nameTextZPosition = 0f;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
@@ -72,7 +74,7 @@ public class WanManager : MonoBehaviour {
                     newWanMarker.wan = wan;
                     // Alternate WAN name Y position
                     if (nameTextOnTop) {
-                        newWanMarker.text.transform.localPosition = new Vector3(0, _nameTextYPosition, 0);
+                        newWanMarker.text.transform.localPosition = new Vector3(_nameTextXPosition, _nameTextOnTopYPosition, _nameTextZPosition);
                     }
                     nameTextOnTop = !nameTextOnTop;
                     Debug.Log($"Created {wan.id}");
