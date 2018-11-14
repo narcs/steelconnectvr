@@ -67,8 +67,8 @@ public class WanManager : MonoBehaviour {
                         newUplinkMarker.uplink = uplinks[uplinkID];
                         newUplinkMarker.wan = newWanMarkerObject;
                         string uplinkSiteID = newUplinkMarker.uplink.site;
-                        if (_stateManager.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
-                            newUplinkMarker.site = _stateManager.currentSiteMarkerObjects[uplinkSiteID];
+                        if (_stateManager.currentSiteMarkers.ContainsKey(uplinkSiteID)) {
+                            newUplinkMarker.site = _stateManager.currentSiteMarkers[uplinkSiteID].gameObject;
                         } else {
                             Debug.LogError($"Site does not exist: {uplinkSiteID}");
                         }

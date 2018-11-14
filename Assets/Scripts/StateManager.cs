@@ -44,7 +44,6 @@ public class StateManager : MonoBehaviour {
     private SteelConnectDataManager _dataManager;
 
     // Site marker code
-    public Dictionary<SiteId, GameObject> currentSiteMarkerObjects = new Dictionary<SiteId, GameObject>();
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
     private List<SitelinkMarker> currentSitelinkMarkers;
 
@@ -104,7 +103,6 @@ public class StateManager : MonoBehaviour {
             }
         }
         currentSiteMarkers.Clear();
-        currentSiteMarkerObjects.Clear();
 
 
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
