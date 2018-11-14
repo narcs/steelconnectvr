@@ -164,7 +164,7 @@ public class StateManager : MonoBehaviour {
             .Then(() => {
                 _wanManager.UpdateWans();
             })
-            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
+            .Catch(err => Debug.LogError($"Error updating entities: {err.Message}\n{err.StackTrace}"));
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {
