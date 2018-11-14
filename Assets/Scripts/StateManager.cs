@@ -4,9 +4,11 @@ using UnityEngine;
 using System.Linq;
 using Gvr.Internal;
 
-using RSG;
-using Proyecto26;
-using Models.SteelConnect;
+public enum StateManagerMode {
+    Normal,
+    Delete,
+    CreateSite,
+}
 
 // These are just to make it clearer what each function or type expects.
 // These aliases are all just equivalent to `string`, and so you can pass strings with no problems.
@@ -18,14 +20,25 @@ using SitelinkId = System.String;
 
 public class StateManager : MonoBehaviour {
     public GameObject laser;
+
     public GameObject confirm;
-    public bool deleteMode = false;
+    public GameObject createSiteWindow;
+
     public GameObject currentObjectHover;
     public GameObject earthSphere;
     public GameObject destroyerObject;
     public GameObject flatMap;
 
+    public GameObject destroyerObject;
+
+	public GvrKeyboard keyboardManager;
+
+    public StateManagerMode currentMode = StateManagerMode.Normal;
+
+    public GameObject informationText;
+
     private GameObject _tempObject;
+    private TextMesh _informationTextMesh;
 
     private SteelConnectDataManager _dataManager;
 
@@ -42,21 +55,45 @@ public class StateManager : MonoBehaviour {
         _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
 
         confirm.SetActive(false);
+        createSiteWindow.SetActive(false);
+        _informationTextMesh = informationText.GetComponent<TextMesh>();
+        informationText.transform.parent.parent.gameObject.SetActive(false);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown("s")) {
-            GetComponent<WanManager>().UpdateWans();
-        } else if (Input.GetKeyDown("a")) {
-            UpdateSites(true);
-        }
 	}
 
     // Update Sites
     public void UpdateSitesForceRefresh() {
         UpdateSites(true);
     }
+
+    public void SwitchToDeleteMode() {
+        currentMode = StateManagerMode.Delete;
+        SetLaserColorForMode(currentMode);
+    }
+
+    public void SwitchToCreateSiteMode() {
+        currentMode = StateManagerMode.CreateSite;
+        SetLaserColorForMode(currentMode);
+        earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = false;
+
+        // ---
+        createSiteWindow.GetComponent<CreateSiteWindow>().OnEnterCreateSiteMode();
+        createSiteWindow.SetActive(true);
+    }
+
+    public void SwitchToNormalMode() {
+        currentMode = StateManagerMode.Normal;
+        SetLaserColorForMode(currentMode);
+
+        earthSphere.GetComponent<SphereInteraction>().globeDragEnabled = true;
+
+        keyboardManager.Hide();
+        createSiteWindow.SetActive(false);
+        createSiteWindow.GetComponent<CreateSiteWindow>().OnLeaveCreateSiteMode();
+	}
 
     public void UpdateSites(bool forceRefresh)
     {
@@ -69,13 +106,6 @@ public class StateManager : MonoBehaviour {
         currentSiteMarkers.Clear();
         currentSiteMarkerObjects.Clear();
 
-        foreach (LineMarker lineMarker in currentLineMarkers)
-        {
-            Destroy(lineMarker.gameObject);
-        }
-        currentLineMarkers.Clear();
-
-        // ---
 
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {
@@ -96,6 +126,7 @@ public class StateManager : MonoBehaviour {
                         Debug.LogWarning($"Coordinates for site {site.id} are not valid, not adding site marker");
                     }
                 }
+
 
                 return currentSiteMarkers;
             });
@@ -155,18 +186,31 @@ public class StateManager : MonoBehaviour {
             .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
     }
 
-    public void EnableDeleteMode() {
-        // Change to red
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-        deleteMode = true;
     }
 
-    public void DisableDeleteMode() {
-        // Change back to white
-        laser.GetComponent<GvrLaserVisual>().laserColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        laser.GetComponent<GvrLaserVisual>().laserColorEnd = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        deleteMode = false;
+    void SetLaserColorForMode(StateManagerMode mode) {
+        Color newColor;
+  
+        switch (mode) {
+            case StateManagerMode.Normal:
+                newColor = Color.white;
+                break;
+
+            case StateManagerMode.Delete:
+                newColor = Color.red;
+                break;
+
+            case StateManagerMode.CreateSite:
+                newColor = Color.green;
+                break;
+
+            default:
+                newColor = Color.magenta;
+                break;
+        }
+
+        laser.GetComponent<GvrLaserVisual>().laserColor = newColor;
+        laser.GetComponent<GvrLaserVisual>().laserColorEnd = newColor;
     }
 
     public void ShowConfirm() {
@@ -185,13 +229,12 @@ public class StateManager : MonoBehaviour {
 
     private void DeleteSite(GameObject gameObjectSite) {
         Destroyer destroyer = destroyerObject.GetComponent<Destroyer>();
-        destroyer.StartDestruction(gameObjectSite);
-        //SiteMarker siteMarker = gameObjectSite.GetComponent<SiteMarker>();
-        //ParticleSystem particleSystem = siteMarker.explosion.GetComponent<ParticleSystem>();
-        //particleSystem.Play();
-        //siteMarker.model.SetActive(false);
-        //Destroy(_tempObject, particleSystem.main.duration);
-        //Debug.Log("Site deletion");
+        siteMarker.DeleteSite(destroyer);
+    }
+
+    private void DeleteUplink(GameObject gameObjectUplink) {
+        UplinkMarker uplinkMarker = gameObjectUplink.GetComponent<UplinkMarker>();
+        uplinkMarker.DeleteUplink();
     }
 
     public void DeleteGameObject() {
@@ -199,6 +242,8 @@ public class StateManager : MonoBehaviour {
             confirm.SetActive(false);
             if (_tempObject.tag == "Site") {
                 DeleteSite(_tempObject);
+            } else if (_tempObject.tag == "Uplink") {
+                DeleteUplink(_tempObject);
             } else {
                 Destroy(_tempObject);
             }
@@ -219,5 +264,13 @@ public class StateManager : MonoBehaviour {
         flatMap.SetActive(!flatMap.activeSelf);
 
         UpdateSites(false);
+    }
+    public void DisplayInformation(string entityInformationText) {
+        _informationTextMesh.text = entityInformationText;
+        informationText.transform.parent.parent.gameObject.SetActive(true);
+    }
+
+    public void HideInformation() {
+        informationText.transform.parent.parent.gameObject.SetActive(false);
     }
 }

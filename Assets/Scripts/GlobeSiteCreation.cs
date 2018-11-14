@@ -15,15 +15,21 @@ public class GlobeSiteCreation : MonoBehaviour {
     // away from the center of the globe.
     public GameObject siteMarkerPrefab;
 
-    // The prefab that represents a line connecting sites.
-    public GameObject lineMarkerPrefab;
+    // The prefab that represents a sitelink.
+    public GameObject sitelinkMarkerPrefab;
     public Dictionary<SiteID, GameObject> currentSiteMarkerObjects = new Dictionary<SiteID, GameObject>();
 
     private float globeRadius;
 
+    private Dictionary<SiteID, SiteMarker> currentSiteMarkers;
+    private List<SitelinkMarker> currentSitelinkMarkers;
+
     private SteelConnect steelConnect;
 
     void Start() {
+        currentSiteMarkers = new Dictionary<string, SiteMarker>();
+        currentSitelinkMarkers = new List<SitelinkMarker>();
+
         steelConnect = new SteelConnect();
         updateGlobeRadius();
     }
@@ -54,22 +60,18 @@ public class GlobeSiteCreation : MonoBehaviour {
         return newSiteMarker;
     }
 
-    public LineMarker drawLineBetweenSites(SiteMarker site1, SiteMarker site2, Color color, float blinkPeriodSeconds) {
-        Debug.Log($"Drawing line between {site1.site.name} and {site2.site.name}");
+    SitelinkMarker placeSitelinkMarker(SitelinkPair sitelinkPair) {
+        Sitelink sitelink0 = sitelinkPair.pair[0];
 
-        GameObject lineMarkerObject = Instantiate(lineMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
-        LineMarker lineMarker = lineMarkerObject.GetComponent<LineMarker>();
+        SiteMarker fromSite = currentSiteMarkers[sitelink0.local_site];
+        SiteMarker toSite = currentSiteMarkers[sitelink0.remote_site];
+        Debug.Log($"Drawing sitelink from {fromSite.site.name} to {toSite.site.name}");
 
-        lineMarker.StartSiteMarker = site1;
-        lineMarker.EndSiteMarker = site2;
-        lineMarker.SpherePosition = transform.position;
-        lineMarker.SphereRadius = globeRadius * 1.03f;
-        lineMarker.Color = color;
-        lineMarker.BlinkPeriodSeconds = blinkPeriodSeconds;
-        lineMarker.NumPoints = 32; // TODO: Calculate based on sphere surface distance.
+        GameObject sitelinkMarkerObject = Instantiate(sitelinkMarkerPrefab, Vector3.zero, Quaternion.identity, transform);
+        SitelinkMarker sitelinkMarker = sitelinkMarkerObject.GetComponent<SitelinkMarker>();
+        sitelinkMarker.Set(fromSite, toSite, sitelinkPair, transform.position, globeRadius * 1.03f);
+        currentSitelinkMarkers.Add(sitelinkMarker);
 
-        //currentLineMarkers.Add(lineMarker);
-
-        return lineMarker;
+        return sitelinkMarker;
     }
 }

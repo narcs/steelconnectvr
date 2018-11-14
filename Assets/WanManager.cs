@@ -18,17 +18,20 @@ public class WanManager : MonoBehaviour {
 
     private List<Wan> _wans = new List<Wan>();
     private SteelConnectDataManager _dataManager;
+    private bool _showUplinks = false;
     private GlobeSiteCreation _globeSiteCreation;
-    private bool _showWans = false;
 
 	void Start () {
         _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
         _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
 
-    public void ShowHideWans() {
-        _showWans = !_showWans;
-        panel.transform.parent.transform.gameObject.SetActive(_showWans);
+    public void ShowHideUplinks() {
+        _showUplinks = !_showUplinks;
+        foreach (Transform wan in panel.transform) {
+            WanMarker wanmarker = wan.GetComponent<WanMarker>();
+            wanmarker.uplinks.SetActive(_showUplinks);
+        }
     }
 
     public void UpdateWans() {
@@ -57,7 +60,7 @@ public class WanManager : MonoBehaviour {
                     Debug.Log($"Created {wan.id}");
                     // Create Uplink Marker Objects for each WAN
                     foreach (string uplinkID in wan.uplinks) {
-                        GameObject newUplinkMarkerObject = Instantiate(uplinkPrefab, newWanMarkerObject.transform);
+                        GameObject newUplinkMarkerObject = Instantiate(uplinkPrefab, newWanMarker.uplinks.transform);
                         UplinkMarker newUplinkMarker = newUplinkMarkerObject.GetComponent<UplinkMarker>();
                         newUplinkMarker.uplink = uplinks[uplinkID];
                         newUplinkMarker.wan = newWanMarkerObject;
@@ -65,7 +68,7 @@ public class WanManager : MonoBehaviour {
                         if (_globeSiteCreation.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
                             newUplinkMarker.site = _globeSiteCreation.currentSiteMarkerObjects[uplinkSiteID];
                         } else {
-                            Debug.LogError($"SiteMarker does not exist: {uplinkSiteID}");
+                            Debug.LogError($"Site does not exist: {uplinkSiteID}");
                         }
                     }
                 }
