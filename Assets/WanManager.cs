@@ -28,12 +28,16 @@ public class WanManager : MonoBehaviour {
         _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
 
-    public void ShowHideUplinks() {
-        _showUplinks = !_showUplinks;
+    private void ShowHideUplinks() {
         foreach (Transform wan in panel.transform) {
             WanMarker wanmarker = wan.GetComponent<WanMarker>();
             wanmarker.uplinks.SetActive(_showUplinks);
         }
+    }
+
+    public void ShowHideUplinksToggle() {
+        _showUplinks = !_showUplinks;
+        ShowHideUplinks();
     }
 
     public void UpdateWans() {
@@ -75,6 +79,7 @@ public class WanManager : MonoBehaviour {
                         }
                     }
                 }
+                ShowHideUplinks();
             });
 
 
