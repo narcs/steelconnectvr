@@ -59,17 +59,27 @@ public class StateManager : MonoBehaviour {
         GameObject explosion = Instantiate(explosionPrefab);
         Destroy(explosion);
 
-        _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
+        _dataManager = gameObject.GetComponent<SteelConnectDataManager>();
 
         confirm.SetActive(false);
         createSiteWindow.SetActive(false);
         _informationTextMesh = informationText.GetComponent<TextMesh>();
         informationText.transform.parent.parent.gameObject.SetActive(false);
+
+        StartCoroutine("UpdateSitesOnStartUp");
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	}
+
+    IEnumerator UpdateSitesOnStartUp() {
+        while (_dataManager.steelConnect == null) {
+            yield return null;
+        }
+        UpdateSitesForceRefresh();
+        yield return null;
+    }
 
     // Update Sites
     public void UpdateSitesForceRefresh() {
