@@ -47,11 +47,13 @@ public class StateManager : MonoBehaviour {
     // Site marker code
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
     private List<SitelinkMarker> currentSitelinkMarkers;
+    private WanManager _wanManager;
 
     // Use this for initialization
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
         currentSitelinkMarkers = new List<SitelinkMarker>();
+        _wanManager = gameObject.GetComponent<WanManager>();
 
         // Instantiate and destroy explosion once to preload 
         GameObject explosion = Instantiate(explosionPrefab);
@@ -99,33 +101,26 @@ public class StateManager : MonoBehaviour {
         createSiteWindow.GetComponent<CreateSiteWindow>().OnLeaveCreateSiteMode();
 	}
 
-    public void UpdateSites(bool forceRefresh)
-    {
-        foreach (var entry in currentSiteMarkers)
-        {
+    public void UpdateSites(bool forceRefresh) {
+        foreach (var entry in currentSiteMarkers) {
             if (entry.Value) {
                 Destroy(entry.Value.gameObject);
             }
         }
         currentSiteMarkers.Clear();
+        _wanManager.DestroyWans();
 
 
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {
                 foreach (Site site in sites) {
-                    if (site.coordinates.isValid)
-                    {
-                        if (earthSphere.activeSelf)
-                        {
+                    if (site.coordinates.isValid) {
+                        if (earthSphere.activeSelf) {
                             currentSiteMarkers.Add(site.id, earthSphere.GetComponent<GlobeSiteCreation>().placeSiteMarker(site, site.coordinates));
-                        }
-                        else
-                        {
+                        } else {
                             currentSiteMarkers.Add(site.id, flatMap.GetComponent<FlatSiteCreation>().placeSiteMarker(site, site.coordinates));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Debug.LogWarning($"Coordinates for site {site.id} are not valid, not adding site marker");
                     }
                 }
@@ -164,6 +159,9 @@ public class StateManager : MonoBehaviour {
                         Debug.LogError("A sitelink pair is invalid!");
                     }
                 }
+            })
+            .Then(() => {
+                _wanManager.UpdateWans();
             })
             .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
     }

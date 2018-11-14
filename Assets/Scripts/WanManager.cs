@@ -40,13 +40,17 @@ public class WanManager : MonoBehaviour {
         ShowHideUplinks();
     }
 
-    public void UpdateWans() {
-        panel.SetActive(true);
+    public void DestroyWans() {
         foreach (Transform child in panel.transform) {
             Destroy(child.gameObject);
         }
         _wans.Clear();
         uplinks.Clear();
+    }
+
+    public void UpdateWans() {
+        panel.SetActive(true);
+        DestroyWans();
         // Get WANs from SteelConnect API
         _dataManager.GetWans(true)
             .Then(wans => wans.ForEach(wan => {
