@@ -21,7 +21,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private SteelConnect _steelConnect;
     private string _information;
 
-	void Start () {
+    void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _lineLayerMask = ~(1 << LayerMask.NameToLayer("Line"));
         _steelConnect = new SteelConnect();
@@ -32,12 +32,11 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
     }
 	
-	// Update is called once per frame
-	void Update () {
+    void Update () {
         if (wan && site && created) {
             SetLine();
         }
-	}
+    }
 
     public void OnPointerEnter(PointerEventData eventData) {
         line.GetComponent<MeshRenderer>().material.color = hoverColour;

@@ -26,22 +26,22 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     private SteelConnect _steelConnect;
     private string _information;
 
-	void Start () {
+    void Start () {
         _halo = (Behaviour)cloud.GetComponent("Halo");
         _halo.enabled = false;
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
         _steelConnect = new SteelConnect();
         UpdateInformation();
         StartCoroutine("FindReticle");
-	}
+    }
 	
-	void Update () {
+    void Update () {
         // Position uplink line from WAN to pointer
         if (_currentUplinkCreation) {
             SetLine();
         }
 		
-	}
+    }
 
     IEnumerator FindReticle() {
         while (_reticle == null) {
