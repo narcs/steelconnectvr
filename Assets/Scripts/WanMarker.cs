@@ -30,7 +30,6 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         _halo = (Behaviour)cloud.GetComponent("Halo");
         _halo.enabled = false;
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        //_reticle = GameObject.Find("Reticle");
         _steelConnect = new SteelConnect();
         UpdateInformation();
         StartCoroutine("FindReticle");
