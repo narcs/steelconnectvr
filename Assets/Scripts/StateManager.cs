@@ -99,16 +99,31 @@ public class StateManager : MonoBehaviour {
         createSiteWindow.GetComponent<CreateSiteWindow>().OnLeaveCreateSiteMode();
 	}
 
-    public void UpdateSites(bool forceRefresh)
+    public void ClearSiteLinks()
+    {
+        foreach (var entry in currentSitelinkMarkers)
+        {
+            Destroy(entry.gameObject);
+        }
+        currentSitelinkMarkers.Clear();
+    }
+
+    public void ClearSiteMarkers()
     {
         foreach (var entry in currentSiteMarkers)
         {
-            if (entry.Value) {
+            if (entry.Value)
+            {
                 Destroy(entry.Value.gameObject);
             }
         }
         currentSiteMarkers.Clear();
+    }
 
+    public void UpdateSites(bool forceRefresh)
+    {
+        ClearSiteMarkers();
+        ClearSiteLinks();
 
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {

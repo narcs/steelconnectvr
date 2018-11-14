@@ -81,7 +81,14 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         lineColor.a = blinkLevel;
 
         // Redraw to update blink level.
-        Draw();
+        if (fromSiteMarker.gameObject.layer != 12 && toSiteMarker.gameObject.layer != 12)
+        {
+            Draw();
+        }
+        else
+        {
+
+        }
 
         if (!(fromSiteMarker && toSiteMarker)) { //TODO: Optimise
             Destroy(gameObject);

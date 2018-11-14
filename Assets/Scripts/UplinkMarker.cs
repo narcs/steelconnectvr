@@ -82,15 +82,18 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                     SiteMarker siteMarker = site.GetComponent<SiteMarker>();
                     SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
                     if (hitSiteMarker.site.id == siteMarker.site.id) {
-                        line.SetActive(true);
-                        line.transform.parent = transform;
-                        line.transform.position = midPoint;
-                        Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
-                        // Set X and Y localscale so cube appears to be a line
-                        line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
-                        line.transform.rotation = Quaternion.LookRotation(direction);
+                        if (hitSiteMarker.gameObject.layer != 12 && siteMarker.gameObject.layer != 12)
+                        {
+                            line.SetActive(true);
+                            line.transform.parent = transform;
+                            line.transform.position = midPoint;
+                            Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
+                                                                                                   // Set X and Y localscale so cube appears to be a line
+                            line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
+                            line.transform.rotation = Quaternion.LookRotation(direction);
 
-                        return;
+                            return;
+                        }
                     }
                 }
             }

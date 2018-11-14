@@ -10,6 +10,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public AbstractMap map;
     public StateManager statemanager;
+    public WanManager wanManager;
 
     public bool dragEnabled = true;
     private bool isCurrentlyDragging = false;
@@ -161,6 +162,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         // TODO: Fix RescaleSiteMarkers to work after UpdateSites
         // Currently broken because of async issues.
         //RescaleSiteMarkers();
+        wanManager.UpdateWans();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
