@@ -225,11 +225,11 @@ public class StateManager : MonoBehaviour {
                 DeleteSite(_tempObject);
             } else if (_tempObject.tag == "Uplink") {
                 DeleteUplink(_tempObject);
+            } else if (_tempObject.tag == "WAN") {
+                Debug.LogWarning("Delete WAN feature not implemented yet");
             } else {
-                Destroy(_tempObject);
+                Debug.LogWarning($"Delete feature for {_tempObject} not implemented");
             }
-            // Delete API here
-            Debug.Log($"Deleted: {_tempObject}");
             _tempObject = null;
         } else {
             Debug.LogError("No object to delete");
