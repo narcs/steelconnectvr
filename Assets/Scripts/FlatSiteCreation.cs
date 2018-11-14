@@ -51,9 +51,6 @@ public class FlatSiteCreation : MonoBehaviour {
 
         newSiteMarker.site = site;
 
-        //currentSiteMarkers.Add(site.id, newSiteMarker);
-        //currentSiteMarkerObjects[site.id] = newSiteMarkerObject;
-
         return newSiteMarker;
     }
 

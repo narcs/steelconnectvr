@@ -48,9 +48,6 @@ public class GlobeSiteCreation : MonoBehaviour {
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
         newSiteMarker.site = site;
 
-        //currentSiteMarkers.Add(site.id, newSiteMarker);
-        //currentSiteMarkerObjects[site.id] = newSiteMarkerObject;
-
         return newSiteMarker;
     }
 
