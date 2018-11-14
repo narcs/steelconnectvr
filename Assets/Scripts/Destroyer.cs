@@ -76,13 +76,4 @@ public class Destroyer : MonoBehaviour {
         _audioSource.Play();
     }
 	
-	// Update is called once per frame
-	void Update () {
-        if (Input.GetKeyDown("d")) {
-            StopCoroutine("Movement");
-            destroyerTransform.position = originalPosition.transform.position;
-            StartCoroutine("Movement", movementTarget);
-        }
-		
-	}
 }
