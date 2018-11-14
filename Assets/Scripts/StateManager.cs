@@ -74,7 +74,7 @@ public class StateManager : MonoBehaviour {
 	}
 
     IEnumerator UpdateSitesOnStartUp() {
-        while (_dataManager.steelConnect == null) {
+        while (!_dataManager.IsInstantiated()) {
             yield return null;
         }
         UpdateSitesForceRefresh();

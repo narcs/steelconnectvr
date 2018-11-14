@@ -17,7 +17,7 @@ using UplinkId = System.String;
 using SitelinkId = System.String;
 
 public class SteelConnectDataManager : MonoBehaviour {
-    public SteelConnect steelConnect;
+    private SteelConnect _steelConnect;
 
     // Stored data. This data pertains to a single organization in a single realm.
     // This isn't actually returned, it's just here for internal use. What's actually returned
@@ -37,7 +37,7 @@ public class SteelConnectDataManager : MonoBehaviour {
     // ---
 
     private void Start() {
-        steelConnect = new SteelConnect();
+        _steelConnect = new SteelConnect();
 
         // Add some default data.
         _sitesPromise = Promise<List<Site>>.Resolved(new List<Site>());
@@ -48,9 +48,13 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     // ---
 
+    public bool IsInstantiated() {
+        return _steelConnect != null;
+    }
+
     public IPromise<List<Site>> GetSites(bool forceRefresh) {
         if (forceRefresh || _sitesPromise == null) {
-            _sitesPromise = steelConnect.GetSitesInOrg()
+            _sitesPromise = _steelConnect.GetSitesInOrg()
                 .Then(items => {
                     _sites = new List<Site>(items.items);
                     return _sites;
@@ -76,7 +80,7 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     public IPromise<List<Wan>> GetWans(bool forceRefresh) {
         if (forceRefresh || _wansPromise == null) {
-            _wansPromise = steelConnect.GetWansInOrg()
+            _wansPromise = _steelConnect.GetWansInOrg()
                 .Then(items => {
                     _wans = new List<Wan>(items.items);
                     return _wans;
@@ -88,7 +92,7 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     public IPromise<List<Uplink>> GetUplinks(bool forceRefresh) {
         if (forceRefresh || _uplinksPromise == null) {
-            _uplinksPromise = steelConnect.GetUplinksInOrg()
+            _uplinksPromise = _steelConnect.GetUplinksInOrg()
                 .Then(items => {
                     _uplinks = new List<Uplink>(items.items);
                     return _uplinks;
@@ -101,7 +105,7 @@ public class SteelConnectDataManager : MonoBehaviour {
     public IPromise<List<SitelinkPair>> GetSitelinkPairs(bool forceRefresh) {
         if (forceRefresh || _sitelinkPairsPromise == null) {
             _sitelinkPairsPromise = _sitesPromise
-            .ThenAll(sites => sites.Select(site => steelConnect.GetSitelinks(site.id)))
+            .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
             .Then(sitelinks => {
                 List<SitelinkPair> sitelinkPairs = new List<SitelinkPair>();
 
