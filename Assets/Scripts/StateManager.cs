@@ -30,6 +30,7 @@ public class StateManager : MonoBehaviour {
     public GameObject currentObjectHover;
     public GameObject earthSphere;
     public GameObject destroyerObject;
+    public GameObject explosionPrefab;
     public GameObject flatMap;
 
 	public GvrKeyboard keyboardManager;
@@ -51,6 +52,10 @@ public class StateManager : MonoBehaviour {
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
         currentSitelinkMarkers = new List<SitelinkMarker>();
+
+        // Instantiate and destroy explosion once to preload 
+        GameObject explosion = Instantiate(explosionPrefab);
+        Destroy(explosion);
 
         _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
 
