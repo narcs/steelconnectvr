@@ -54,12 +54,6 @@ public class StateManager : MonoBehaviour {
         currentSitelinkMarkers = new List<SitelinkMarker>();
         _wanManager = gameObject.GetComponent<WanManager>();
 
-        // Instantiate and destroy explosion once to preload 
-        GameObject explosion = Instantiate(explosionPrefab);
-        ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
-        //particleSystem.Play();
-        Destroy(explosion, particleSystem.main.duration);
-
         _dataManager = gameObject.GetComponent<SteelConnectDataManager>();
 
         confirm.SetActive(false);
