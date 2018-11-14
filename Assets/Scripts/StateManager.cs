@@ -49,7 +49,6 @@ public class StateManager : MonoBehaviour {
     private List<SitelinkMarker> currentSitelinkMarkers;
     private WanManager _wanManager;
 
-    // Use this for initialization
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
         currentSitelinkMarkers = new List<SitelinkMarker>();
@@ -57,7 +56,9 @@ public class StateManager : MonoBehaviour {
 
         // Instantiate and destroy explosion once to preload 
         GameObject explosion = Instantiate(explosionPrefab);
-        Destroy(explosion);
+        ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
+        //particleSystem.Play();
+        Destroy(explosion, particleSystem.main.duration);
 
         _dataManager = gameObject.GetComponent<SteelConnectDataManager>();
 
@@ -67,12 +68,8 @@ public class StateManager : MonoBehaviour {
         informationText.transform.parent.parent.gameObject.SetActive(false);
 
         StartCoroutine("UpdateSitesOnStartUp");
-	}
+    }
 	
-	// Update is called once per frame
-	void Update () {
-	}
-
     IEnumerator UpdateSitesOnStartUp() {
         while (!_dataManager.IsInstantiated()) {
             yield return null;
