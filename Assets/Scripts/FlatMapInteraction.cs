@@ -20,8 +20,9 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Vector3 previousOrientation;
     private Vector2 previousTouch;
     private Vector3 translate;
+    private bool _previousTouchState = false;
 
-    private float panFactor = 0.05f;
+    public float panFactor = 0.05f;
     private float velocityDecayFactor = 0.92f;
     private float zoomFactor = 1.0f;
 
@@ -45,22 +46,26 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (dominantController.GetButton(GvrControllerButton.TouchPadTouch))
             {
                 Vector2 touchPos = dominantController.TouchPos;
-                //Debug.Log(touchPos + " " + previousTouch);
 
-                Vector2 orientationDelta = touchPos - previousTouch;
+                if (_previousTouchState)
+                {
+                    translate = new Vector3();
+                    Vector2 orientationDelta = touchPos - previousTouch;
 
-                translate.x += orientationDelta.x * panFactor;
-                translate.z += orientationDelta.y * panFactor;
+                    translate.x += orientationDelta.x * panFactor;
+                    translate.z += orientationDelta.y * panFactor;
+
+                    this.transform.Translate(translate);
+                }
+                _previousTouchState = true;
                 previousTouch = touchPos;
-
-
-                this.transform.Translate(translate);
             }
             // When the pad is let go recenter the map
             if (dominantController.GetButtonUp(GvrControllerButton.TouchPadTouch))
             {
-                //Debug.Log("Stop Touch");
                 Recenter();
+                previousTouch = dominantController.TouchPos;
+                _previousTouchState = false;
             }
             // When the button is clicked zoom in
             if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // Using event instead
