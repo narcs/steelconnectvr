@@ -162,7 +162,7 @@ public class StateManager : MonoBehaviour {
                     }
                 }
             })
-            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}"));
+            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {

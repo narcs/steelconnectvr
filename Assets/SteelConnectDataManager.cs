@@ -100,7 +100,7 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     public IPromise<List<SitelinkPair>> GetSitelinkPairs(bool forceRefresh) {
         if (forceRefresh || _sitelinkPairsPromise == null) {
-            _sitelinkPairsPromise = Promise<IEnumerable<Site>>.Resolved(_sites)
+            _sitelinkPairsPromise = _sitesPromise
             .ThenAll(sites => sites.Select(site => _steelConnect.GetSitelinks(site.id)))
             .Then(sitelinks => {
                 List<SitelinkPair> sitelinkPairs = new List<SitelinkPair>();
