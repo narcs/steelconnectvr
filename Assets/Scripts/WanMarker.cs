@@ -15,6 +15,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject uplinkPrefab;
     public bool showInformation = true;
     public float uplinkLineThickness = 10f;
+    public TextMesh text;
 
     private Behaviour _halo;
     private GameObject _currentUplinkCreation = null;
@@ -25,22 +26,30 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     private SteelConnect _steelConnect;
     private string _information;
 
-	void Start () {
+    void Start () {
         _halo = (Behaviour)cloud.GetComponent("Halo");
         _halo.enabled = false;
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        _reticle = GameObject.Find("Reticle");
         _steelConnect = new SteelConnect();
         UpdateInformation();
-	}
+        StartCoroutine("FindReticle");
+    }
 	
-	void Update () {
+    void Update () {
         // Position uplink line from WAN to pointer
         if (_currentUplinkCreation) {
             SetLine();
         }
 		
-	}
+    }
+
+    IEnumerator FindReticle() {
+        while (_reticle == null) {
+            _reticle = GameObject.Find("Reticle");
+            yield return null;
+        }
+        yield return null;
+    }
 
     public void OnPointerEnter(PointerEventData eventData) {
         _halo.enabled = true;
@@ -128,5 +137,6 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                       $"Name: {wan.name}\n" +
                       $"Longname: {wan.longname}\n" +
                       $"Org: {wan.org}\n";
+        text.text = wan.name;
     }
 }

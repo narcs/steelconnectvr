@@ -48,6 +48,10 @@ public class SteelConnectDataManager : MonoBehaviour {
 
     // ---
 
+    public bool IsInstantiated() {
+        return _steelConnect != null;
+    }
+
     public IPromise<List<Site>> GetSites(bool forceRefresh) {
         if (forceRefresh || _sitesPromise == null) {
             _sitesPromise = _steelConnect.GetSitesInOrg()

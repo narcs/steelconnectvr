@@ -9,7 +9,7 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public Site site;
     public GameObject model;
     public Vector3 initScale;
-    public GameObject explosionPrefab;
+    public GameObject explosion;
     public AudioClip explosionSound;
 
     private StateManager _stateManager;
@@ -34,7 +34,6 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void SiteDestruction() {
-        GameObject explosion = Instantiate(explosionPrefab, transform);
         ParticleSystem particleSystem = explosion.GetComponent<ParticleSystem>();
         particleSystem.Play();
         model.SetActive(false);

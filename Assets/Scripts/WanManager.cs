@@ -21,6 +21,9 @@ public class WanManager : MonoBehaviour {
     private SteelConnectDataManager _dataManager;
     private bool _showUplinks = false;
     private GlobeSiteCreation _globeSiteCreation;
+    private float _nameTextXPosition = 0f;
+    private float _nameTextOnTopYPosition = 155f;
+    private float _nameTextZPosition = 0f;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
@@ -40,13 +43,17 @@ public class WanManager : MonoBehaviour {
         ShowHideUplinks();
     }
 
-    public void UpdateWans() {
-        panel.SetActive(true);
+    public void DestroyWans() {
         foreach (Transform child in panel.transform) {
             Destroy(child.gameObject);
         }
         _wans.Clear();
         uplinks.Clear();
+    }
+
+    public void UpdateWans() {
+        panel.SetActive(true);
+        DestroyWans();
         // Get WANs from SteelConnect API
         _dataManager.GetWans(true)
             .Then(wans => wans.ForEach(wan => {
@@ -60,10 +67,16 @@ public class WanManager : MonoBehaviour {
                     })))
             .Then(() => {
                 // Create WAN gameObjects
+                bool nameTextOnTop = true;
                 foreach (Wan wan in _wans) {
                     GameObject newWanMarkerObject = Instantiate(wanPrefab, panel.transform);
                     WanMarker newWanMarker = newWanMarkerObject.GetComponent<WanMarker>();
                     newWanMarker.wan = wan;
+                    // Alternate WAN name Y position
+                    if (nameTextOnTop) {
+                        newWanMarker.text.transform.localPosition = new Vector3(_nameTextXPosition, _nameTextOnTopYPosition, _nameTextZPosition);
+                    }
+                    nameTextOnTop = !nameTextOnTop;
                     Debug.Log($"Created {wan.id}");
                     // Create Uplink Marker Objects for each WAN
                     foreach (string uplinkID in wan.uplinks) {
