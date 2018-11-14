@@ -74,8 +74,9 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Create uplink if selecting site
         if (_stateManager.currentMode != StateManagerMode.Delete) {
             if (_stateManager.currentObjectHover && _stateManager.currentObjectHover.tag == "Site") {
+                GameObject currentSite = _stateManager.currentObjectHover;
                 _uplinks.Add(_currentUplinkCreation);
-                string siteId = _stateManager.currentObjectHover.GetComponent<SiteMarker>().site.id;
+                string siteId = currentSite.GetComponent<SiteMarker>().site.id;
                 Debug.Log($"Creating uplink {_currentUplinkCreation} from WAN: {wan.id} to site:{siteId}");
                 _uplinkCreationInProgress = _currentUplinkCreation;
                 // Create uplink API call
@@ -95,7 +96,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                         uplinkMarker.uplink.wan = uplinkResponse.wan;
                         uplinkMarker.UpdateInformation();
                         uplinkMarker.wan = gameObject;
-                        uplinkMarker.site = _stateManager.currentObjectHover;
+                        uplinkMarker.site = currentSite;
                         _uplinkCreationInProgress.transform.parent = uplinks.transform;
                         _uplinkCreationInProgress = null;
                 });
