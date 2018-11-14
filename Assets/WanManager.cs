@@ -17,38 +17,45 @@ public class WanManager : MonoBehaviour {
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
 
     private List<Wan> _wans = new List<Wan>();
-    private SteelConnect _steelConnect;
+    private StateManager _stateManager;
+    private SteelConnectDataManager _dataManager;
     private bool _showUplinks = false;
     private GlobeSiteCreation _globeSiteCreation;
 
 	void Start () {
-        _steelConnect = new SteelConnect();
+        _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
+        _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
         _globeSiteCreation = earthSphere.GetComponent<GlobeSiteCreation>();
 	}
 
-    public void ShowHideUplinks() {
-        _showUplinks = !_showUplinks;
+    private void ShowHideUplinks() {
         foreach (Transform wan in panel.transform) {
             WanMarker wanmarker = wan.GetComponent<WanMarker>();
             wanmarker.uplinks.SetActive(_showUplinks);
         }
     }
 
+    public void ShowHideUplinksToggle() {
+        _showUplinks = !_showUplinks;
+        ShowHideUplinks();
+    }
+
     public void UpdateWans() {
+        panel.SetActive(true);
         foreach (Transform child in panel.transform) {
             Destroy(child.gameObject);
         }
         _wans.Clear();
         uplinks.Clear();
         // Get WANs from SteelConnect API
-        _steelConnect.GetWansInOrg()
-            .Then(wans => wans.items.ToList().ForEach(wan => {
+        _dataManager.GetWans(true)
+            .Then(wans => wans.ForEach(wan => {
                 _wans.Add(wan);
             }))
             .Then(() =>
                 // Get uplinks from SteelConnect API
-                _steelConnect.GetUplinksInOrg()
-                    .Then(uplinks => uplinks.items.ToList().ForEach(uplink => {
+                _dataManager.GetUplinks(true)
+                    .Then(uplinks => uplinks.ForEach(uplink => {
                         this.uplinks[uplink.id] = uplink;
                     })))
             .Then(() => {
@@ -65,13 +72,14 @@ public class WanManager : MonoBehaviour {
                         newUplinkMarker.uplink = uplinks[uplinkID];
                         newUplinkMarker.wan = newWanMarkerObject;
                         string uplinkSiteID = newUplinkMarker.uplink.site;
-                        if (_globeSiteCreation.currentSiteMarkerObjects.ContainsKey(uplinkSiteID)) {
-                            newUplinkMarker.site = _globeSiteCreation.currentSiteMarkerObjects[uplinkSiteID];
+                        if (_stateManager.currentSiteMarkers.ContainsKey(uplinkSiteID)) {
+                            newUplinkMarker.site = _stateManager.currentSiteMarkers[uplinkSiteID].gameObject;
                         } else {
                             Debug.LogError($"Site does not exist: {uplinkSiteID}");
                         }
                     }
                 }
+                ShowHideUplinks();
             });
 
 

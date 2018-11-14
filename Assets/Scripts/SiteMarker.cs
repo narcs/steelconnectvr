@@ -8,6 +8,7 @@ using Models.SteelConnect;
 public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler{
     public Site site;
     public GameObject model;
+    public Vector3 initScale;
     public GameObject explosionPrefab;
     public AudioClip explosionSound;
 
@@ -22,6 +23,8 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _halo = (Behaviour)model.GetComponent("Halo");
         _halo.enabled = false;
         _steelConnect = new SteelConnect();
+
+        initScale = this.transform.localScale;
         _audioSource = GameObject.Find("Audio Source").GetComponent<AudioSource>();
         UpdateInformation();
     }
