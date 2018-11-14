@@ -61,7 +61,6 @@ public class SiteMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _halo.enabled = true;
         _stateManager.DisplayInformation(_information);
         _stateManager.currentObjectHover = gameObject;
-        Debug.Log(this.transform.position);
     }
 
     public void OnPointerExit(PointerEventData eventData) {

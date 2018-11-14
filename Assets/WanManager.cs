@@ -37,6 +37,7 @@ public class WanManager : MonoBehaviour {
     }
 
     public void UpdateWans() {
+        panel.SetActive(true);
         foreach (Transform child in panel.transform) {
             Destroy(child.gameObject);
         }
