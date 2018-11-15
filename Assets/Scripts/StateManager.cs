@@ -32,6 +32,9 @@ public class StateManager : MonoBehaviour {
     public GameObject destroyerObject;
     public GameObject flatMap;
 
+    private string _siteLayer = "Site";
+    private string _uplinkLayer = "Uplink";
+    private string _wanLayer = "WAN";
     private bool isMapInitialized = false;
   
     public GvrKeyboard keyboardManager;
@@ -242,11 +245,11 @@ public class StateManager : MonoBehaviour {
     public void DeleteGameObject() {
         if (_tempObject) {
             confirm.SetActive(false);
-            if (_tempObject.tag == "Site") {
+            if (_tempObject.tag == _siteLayer) {
                 DeleteSite(_tempObject);
-            } else if (_tempObject.tag == "Uplink") {
+            } else if (_tempObject.tag == _uplinkLayer) {
                 DeleteUplink(_tempObject);
-            } else if (_tempObject.tag == "WAN") {
+            } else if (_tempObject.tag == _wanLayer) {
                 Debug.LogWarning("Delete WAN feature not implemented yet");
             } else {
                 Debug.LogWarning($"Delete feature for {_tempObject} not implemented");

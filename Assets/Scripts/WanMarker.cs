@@ -17,6 +17,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public float uplinkLineThickness = 10f;
     public TextMesh text;
 
+    private string _siteLayer = "Site";
     private Behaviour _halo;
     private GameObject _currentUplinkCreation = null;
     private GameObject _uplinkCreationInProgress = null;
@@ -82,7 +83,7 @@ public class WanMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerUp(PointerEventData eventData) {
         // Create uplink if selecting site
         if (_stateManager.currentMode != StateManagerMode.Delete) {
-            if (_stateManager.currentObjectHover && _stateManager.currentObjectHover.tag == "Site") {
+            if (_stateManager.currentObjectHover && _stateManager.currentObjectHover.tag == _siteLayer) {
                 GameObject currentSite = _stateManager.currentObjectHover;
                 _uplinks.Add(_currentUplinkCreation);
                 string siteId = currentSite.GetComponent<SiteMarker>().site.id;

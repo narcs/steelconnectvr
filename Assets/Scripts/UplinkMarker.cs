@@ -16,6 +16,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public Color hoverColour = new Color(1, 0.65f, 0, 1); // Orange
     public float uplinkLineThickness = 10f;
 
+    private string _siteLayer = "Site";
     private StateManager _stateManager;
     private int _lineLayerMask;
     private SteelConnect _steelConnect;
@@ -78,7 +79,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         RaycastHit hit;
         if (Physics.Linecast(wan.transform.position, site.transform.position, out hit, _lineLayerMask)) {
             if (hit.collider != null) {
-                if (hit.collider.tag == "Site") {
+                if (hit.collider.tag == _siteLayer) {
                     SiteMarker siteMarker = site.GetComponent<SiteMarker>();
                     SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
                     if (hitSiteMarker.site.id == siteMarker.site.id) {
