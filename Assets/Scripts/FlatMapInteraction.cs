@@ -26,9 +26,13 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float panFactor = 1f;
     private float velocityDecayFactor = 0.92f;
     private float zoomFactor = 1.0f;
+    public float minZoom = 3.0f;
 
     public int xRange = 5;
     public int zRange = 5;
+
+    public int hiddenLayer = 12;
+    public int siteLayer = 10;
 
     // Use this for initialization
     void Start () {
@@ -120,11 +124,11 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
             if (Mathf.Abs(pos.x) > xRange || Mathf.Abs(pos.z) > zRange)
             {
-                ChangeLayerRecursive(entry.Value.gameObject, 12);
+                ChangeLayerRecursive(entry.Value.gameObject, hiddenLayer);
             }
             else
             {
-                ChangeLayerRecursive(entry.Value.gameObject, 10);
+                ChangeLayerRecursive(entry.Value.gameObject, siteLayer);
             }
         }
     }
@@ -147,7 +151,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void ZoomOut()
     {
-        if (map.Zoom > 3.0f)
+        if (map.Zoom > minZoom)
             map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - zoomFactor);
 
         RescaleSiteMarkers();
