@@ -88,6 +88,6 @@ public class LatLong {
     }
 
     public override string ToString() {
-        return $"LatLong({latitude}, {longitude})";
+        return $"LatLong(latitude = {latitude}, longitude = {longitude})";
     }
 }

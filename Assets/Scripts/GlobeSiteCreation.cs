@@ -42,7 +42,7 @@ public class GlobeSiteCreation : MonoBehaviour {
         Quaternion upToForward = Quaternion.Euler(90.0f, 0.0f, 0.0f);
         Quaternion siteOrientation = Quaternion.LookRotation(sitePosition.normalized) * upToForward;
 
-        Debug.Log($"Site {site.id} is at world position {sitePosition}");
+        Debug.Log($"GLOBE: Site {site.id} is at world position {sitePosition}");
 
         GameObject newSiteMarkerObject = Instantiate(siteMarkerPrefab, sitePosition, siteOrientation, this.transform);
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
