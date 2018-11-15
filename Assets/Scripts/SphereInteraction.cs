@@ -28,9 +28,9 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private float velocityDecayFactor = 0.92f;
 
     private float lastClick = 0.0f;
-    public float doubleClickSpeed = 1.0f;
+    public float doubleClickSpeed = 1.0f; // The delay between clicks allowed for double clicking
 
-    public float sphereRadius = 1.0f;
+    public float sphereRadius = 1.0f; // This should match the radius of the globe, geocoding may not work if it does not
 
     void Start() {
         dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);

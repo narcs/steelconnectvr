@@ -26,13 +26,13 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float panFactor = 1f;
     private float velocityDecayFactor = 0.92f;
     private float zoomFactor = 1.0f;
-    public float minZoom = 3.0f;
+    public float minZoom = 3.0f; // The minimum zoom factor allowed
 
     public int xRange = 5;
     public int zRange = 5;
 
-    public int hiddenLayer = 12;
-    public int siteLayer = 10;
+    public int hiddenLayer = 12; // This should match the layer number of a non-visible layer
+    public int siteLayer = 10; // This should match the layer number sites are in
 
     // Use this for initialization
     void Start () {
