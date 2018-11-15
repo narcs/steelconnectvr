@@ -88,7 +88,8 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         Vector2d latLong = map.WorldToGeoPosition(new Vector3());
         map.UpdateMap(latLong,map.AbsoluteZoom);
-        Vector3 translate = initTransform - this.transform.position;
+        Vector3 translate = new Vector3(0, initTransform.y, 0);
+        translate -= this.transform.position;
         this.transform.Translate(translate);
 
         foreach (var entry in statemanager.currentSiteMarkers)
