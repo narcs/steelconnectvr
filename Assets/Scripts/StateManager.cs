@@ -31,6 +31,8 @@ public class StateManager : MonoBehaviour {
     public GameObject earthSphere;
     public GameObject destroyerObject;
     public GameObject flatMap;
+
+    private bool isMapInitialized = false;
   
     public GvrKeyboard keyboardManager;
 
@@ -59,6 +61,10 @@ public class StateManager : MonoBehaviour {
         createSiteWindow.SetActive(false);
         _informationTextMesh = informationText.GetComponent<TextMesh>();
         informationText.transform.parent.parent.gameObject.SetActive(false);
+
+        flatMap.GetComponent<FlatMapInteraction>().map.OnInitialized += new System.Action(() => {
+            isMapInitialized = true;
+        });
 
         StartCoroutine("UpdateEntitiesOnStartUp");
     }
@@ -259,8 +265,19 @@ public class StateManager : MonoBehaviour {
         earthSphere.SetActive(!earthSphere.activeSelf);
         flatMap.SetActive(!flatMap.activeSelf);
 
-        UpdateEntities(false);
+        StartCoroutine("ChangeMapAsync");
     }
+
+    IEnumerator ChangeMapAsync() {
+        while (!isMapInitialized) {
+            yield return null;
+        }
+
+        UpdateEntities(false);
+
+        yield return null;
+    }
+
     public void DisplayInformation(string entityInformationText) {
         _informationTextMesh.text = entityInformationText;
         informationText.transform.parent.parent.gameObject.SetActive(true);

@@ -28,7 +28,7 @@ public class FlatSiteCreation : MonoBehaviour {
 	void Update () {
 		
 	}
-    
+
     public SiteMarker placeSiteMarker(Site site, LatLong latLong)
     {
         Debug.Log($"FLAT MAP: Site {site.name} is at {latLong}");
