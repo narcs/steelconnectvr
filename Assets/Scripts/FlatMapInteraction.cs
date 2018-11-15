@@ -162,7 +162,6 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         // TODO: Fix RescaleSiteMarkers to work after UpdateSites
         // Currently broken because of async issues.
         //RescaleSiteMarkers();
-        wanManager.UpdateWans();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
