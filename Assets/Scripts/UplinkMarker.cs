@@ -20,6 +20,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private int _lineLayerMask;
     private SteelConnect _steelConnect;
     private string _information;
+    private int _hideSitesLayer = 12;
 
 	void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
@@ -82,7 +83,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                     SiteMarker siteMarker = site.GetComponent<SiteMarker>();
                     SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
                     if (hitSiteMarker.site.id == siteMarker.site.id) {
-                        if (hitSiteMarker.gameObject.layer != 12 && siteMarker.gameObject.layer != 12)
+                        if (hitSiteMarker.gameObject.layer != _hideSitesLayer && siteMarker.gameObject.layer != _hideSitesLayer)
                         {
                             line.SetActive(true);
                             line.transform.parent = transform;
