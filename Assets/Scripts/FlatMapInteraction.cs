@@ -12,22 +12,22 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     public StateManager statemanager;
 
     public bool dragEnabled = true;
-    private bool isCurrentlyDragging = false;
+    private bool _isCurrentlyDragging = false;
 
     private bool _pointingAt = false;
 
-    private GvrControllerInputDevice dominantController;
-    private Vector3 previousOrientation;
-    private Vector2 previousTouch;
-    private Vector3 translate;
+    private GvrControllerInputDevice _dominantController;
+    private Vector3 _previousOrientation;
+    private Vector2 _previousTouch;
+    private Vector3 _translate;
     private bool _previousTouchState = false;
-    private Vector3 initTransform;
+    private Vector3 _initTransform;
 
     public float panFactor = 1f;
-    private float velocityDecayFactor = 0.92f;
-    private float zoomFactor = 1.0f;
+    private float _velocityDecayFactor = 0.92f;
+    private float _zoomFactor = 1.0f;
     public float minZoom = 3.0f; // The minimum zoom factor allowed
-
+  
     public int xRange = 5;
     public int zRange = 5;
 
@@ -36,11 +36,11 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     // Use this for initialization
     void Start () {
-        dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
-        //previousOrientation = dominantController.Orientation * Vector3.forward;
-        previousTouch = dominantController.TouchPos;
-        translate = new Vector3();
-        initTransform = this.transform.position;
+        _dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
+        //_previousOrientation = _dominantController.Orientation * Vector3.forward;
+        _previousTouch = _dominantController.TouchPos;
+        _translate = new Vector3();
+        _initTransform = this.transform.position;
     }
 
     // Update is called once per frame
@@ -49,37 +49,37 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (_pointingAt)
         {
             // While touching the pad pan the map
-            if (dominantController.GetButton(GvrControllerButton.TouchPadTouch))
+            if (_dominantController.GetButton(GvrControllerButton.TouchPadTouch))
             {
-                Vector2 touchPos = dominantController.TouchPos;
+                Vector2 touchPos = _dominantController.TouchPos;
 
                 if (_previousTouchState)
                 {
-                    translate = new Vector3();
-                    Vector2 orientationDelta = touchPos - previousTouch;
+                    _translate = new Vector3();
+                    Vector2 orientationDelta = touchPos - _previousTouch;
 
-                    translate.x += orientationDelta.x * panFactor;
-                    translate.z += orientationDelta.y * panFactor;
+                    _translate.x += orientationDelta.x * panFactor;
+                    _translate.z += orientationDelta.y * panFactor;
 
-                    this.transform.Translate(translate);
+                    this.transform.Translate(_translate);
                 }
                 _previousTouchState = true;
-                previousTouch = touchPos;
+                _previousTouch = touchPos;
             }
             // When the pad is let go recenter the map
-            if (dominantController.GetButtonUp(GvrControllerButton.TouchPadTouch))
+            if (_dominantController.GetButtonUp(GvrControllerButton.TouchPadTouch))
             {
                 Recenter();
-                previousTouch = dominantController.TouchPos;
+                _previousTouch = _dominantController.TouchPos;
                 _previousTouchState = false;
             }
             // When the button is clicked zoom in
-            if (dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // Using event instead
+            if (_dominantController.GetButtonDown(GvrControllerButton.TouchPadButton)) // Using event instead
             {
                 
             }
             // When the app button is clicked zoom out
-            if (dominantController.GetButtonDown(GvrControllerButton.App)) // TODO: Change to double click
+            if (_dominantController.GetButtonDown(GvrControllerButton.App)) // TODO: Change to double click
             {
                 ZoomOut();
             }
@@ -92,7 +92,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         Vector2d latLong = map.WorldToGeoPosition(new Vector3());
         map.UpdateMap(latLong,map.AbsoluteZoom);
-        Vector3 translate = new Vector3(0, initTransform.y, 0);
+        Vector3 translate = new Vector3(0, _initTransform.y, 0);
         translate -= this.transform.position;
         this.transform.Translate(translate);
 
@@ -144,7 +144,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void ZoomIn()
     {
-        map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + zoomFactor);
+        map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom + _zoomFactor);
 
         RescaleSiteMarkers();
     }
@@ -152,7 +152,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     void ZoomOut()
     {
         if (map.Zoom > minZoom)
-            map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - zoomFactor);
+            map.UpdateMap(map.CenterLatitudeLongitude, map.Zoom - _zoomFactor);
 
         RescaleSiteMarkers();
     }

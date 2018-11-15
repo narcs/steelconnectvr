@@ -14,7 +14,7 @@ public class CreateSiteWindow : MonoBehaviour {
 
     private SteelConnect _steelConnect;
 
-    private bool createdSite = false;
+    private bool _createdSite = false;
 
     // ---
 
@@ -50,9 +50,9 @@ public class CreateSiteWindow : MonoBehaviour {
     }
 
     public void OnLeaveCreateSiteMode() {
-        if (createdSite) {
+        if (_createdSite) {
             ResetWindow();
-            createdSite = false;
+            _createdSite = false;
         } else {
             ResetStatusText();
         }
@@ -69,7 +69,7 @@ public class CreateSiteWindow : MonoBehaviour {
             .Then(response => {
                 StatusText.text = "Site created! Don't forget to press \"Update Sites\"";
                 StatusText.color = Color.green;
-                createdSite = true;
+                _createdSite = true;
             })
             .Catch(err => {
                 StatusText.text = "There was a problem creating the site, see the log window to your right";

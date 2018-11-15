@@ -5,22 +5,22 @@ using UnityEngine.EventSystems;
 using Models.SteelConnect;
 
 public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-    private SiteMarker fromSiteMarker;
-    private SiteMarker toSiteMarker;
-    private SitelinkPair sitelinkPair;
+    private SiteMarker _fromSiteMarker;
+    private SiteMarker _toSiteMarker;
+    private SitelinkPair _sitelinkPair;
 
-    private Vector3 globePosition;
-    private float globeRadius;
+    private Vector3 _globePosition;
+    private float _globeRadius;
 
-    private int numPoints = 8; // TODO: Calculate based on sphere surface distance.
-    private float lineWidth;
-    private Color lineColor;
+    private int _numPoints = 8; // TODO: Calculate based on sphere surface distance.
+    private float _lineWidth;
+    private Color _lineColor;
 
-    private float blinkPeriodSeconds = 0.0f;
-    private float blinkLevel = 0.0f;
-    private float blinkDirection = 1.0f;
+    private float _blinkPeriodSeconds = 0.0f;
+    private float _blinkLevel = 0.0f;
+    private float _blinkDirection = 1.0f;
 
-    private LineRenderer lineRenderer;
+    private LineRenderer _lineRenderer;
 
     private StateManager _stateManager;
     private string _information;
@@ -31,32 +31,32 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void Set(SiteMarker fromSiteMarker, SiteMarker toSiteMarker, SitelinkPair sitelinkPair, Vector3 globePosition, float globeRadius = 0.0f) {
-        this.fromSiteMarker = fromSiteMarker;
-        this.toSiteMarker = toSiteMarker;
-        this.sitelinkPair = sitelinkPair;
+        this._fromSiteMarker = fromSiteMarker;
+        this._toSiteMarker = toSiteMarker;
+        this._sitelinkPair = sitelinkPair;
 
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
-        lineRenderer = GetComponent<LineRenderer>();
+        _lineRenderer = GetComponent<LineRenderer>();
 
         // TODO: Get these values in a better way, eg. link the globe object here with a public member variable.
-        this.globePosition = globePosition;
-        this.globeRadius = globeRadius;
+        this._globePosition = globePosition;
+        this._globeRadius = globeRadius;
 
         // ---
 
         SitelinkReporting sitelink0 = sitelinkPair.pair[0];
 
-        lineColor = Color.green;
-        lineWidth = 0.1f;
-        blinkPeriodSeconds = 0.0f;
+        _lineColor = Color.green;
+        _lineWidth = 0.1f;
+        _blinkPeriodSeconds = 0.0f;
 
         if (sitelink0.state == "up") {
-            lineColor = Color.green;
+            _lineColor = Color.green;
 
-            lineWidth = 0.05f + sitelink0.throughput_out * 0.01f;
+            _lineWidth = 0.05f + sitelink0.throughput_out * 0.01f;
         } else {
-            lineColor = Color.red;
-            blinkPeriodSeconds = 2.0f;
+            _lineColor = Color.red;
+            _blinkPeriodSeconds = 2.0f;
         }
 
         // ---
@@ -68,22 +68,22 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     // Update is called once per frame
     void Update() {
-        if (blinkPeriodSeconds > 0.0f) {
-            blinkLevel += blinkDirection * (1/blinkPeriodSeconds) * 2 * Time.deltaTime;
+        if (_blinkPeriodSeconds > 0.0f) {
+            _blinkLevel += _blinkDirection * (1/_blinkPeriodSeconds) * 2 * Time.deltaTime;
 
-            if (blinkLevel < 0.0f || blinkLevel > 1.0f) {
-                blinkDirection *= -1.0f;
+            if (_blinkLevel < 0.0f || _blinkLevel > 1.0f) {
+                _blinkDirection *= -1.0f;
             }
         } else {
-            blinkLevel = 1.0f;
+            _blinkLevel = 1.0f;
         }
 
-        lineColor.a = blinkLevel;
+        _lineColor.a = _blinkLevel;
 
         // Redraw to update blink level.
         Draw();
 
-        if (!(fromSiteMarker && toSiteMarker)) { //TODO: Optimise
+        if (!(_fromSiteMarker && _toSiteMarker)) { //TODO: Optimise
             Destroy(gameObject);
         }
     }
@@ -92,27 +92,27 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         // This check is so that if there is an sitelink marker with no from/to site (eg. because
         // it's a dummy marker for easy modification of the prefab), it won't try to draw itself
         // and spam the console with an error per frame.
-        if (fromSiteMarker != null && toSiteMarker != null) {
-            lineRenderer.positionCount = numPoints;
-            lineRenderer.startColor = lineColor;
-            lineRenderer.endColor = lineColor;
-            lineRenderer.startWidth = lineWidth;
-            lineRenderer.endWidth = lineWidth;
+        if (_fromSiteMarker != null && _toSiteMarker != null) {
+            _lineRenderer.positionCount = _numPoints;
+            _lineRenderer.startColor = _lineColor;
+            _lineRenderer.endColor = _lineColor;
+            _lineRenderer.startWidth = _lineWidth;
+            _lineRenderer.endWidth = _lineWidth;
 
             // Update the line renderer.
-            for (int i = 0; i < numPoints; i++) {
-                float progress = ((float)i) / (numPoints - 1);
+            for (int i = 0; i < _numPoints; i++) {
+                float progress = ((float)i) / (_numPoints - 1);
                 Vector3 result = Vector3.Slerp(
-                    fromSiteMarker.gameObject.transform.position,
-                    toSiteMarker.gameObject.transform.position,
+                    _fromSiteMarker.gameObject.transform.position,
+                    _toSiteMarker.gameObject.transform.position,
                     progress);
 
-                float radius = Vector3.Distance(globePosition, result);
-                if (radius < globeRadius) {
-                    result *= (globeRadius / radius);
+                float radius = Vector3.Distance(_globePosition, result);
+                if (radius < _globeRadius) {
+                    result *= (_globeRadius / radius);
                 }
 
-                lineRenderer.SetPosition(i, result);
+                _lineRenderer.SetPosition(i, result);
             }
         }
     }
@@ -123,19 +123,19 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             Destroy(child.gameObject);
         }
 
-        if (fromSiteMarker != null && toSiteMarker != null) {
+        if (_fromSiteMarker != null && _toSiteMarker != null) {
             Vector3 lastPoint = Vector3.zero;
             
-            for (int i = 0; i < numPoints; i++) {
-                float progress = ((float)i) / (numPoints - 1);
+            for (int i = 0; i < _numPoints; i++) {
+                float progress = ((float)i) / (_numPoints - 1);
                 Vector3 result = Vector3.Slerp(
-                    fromSiteMarker.gameObject.transform.position,
-                    toSiteMarker.gameObject.transform.position,
+                    _fromSiteMarker.gameObject.transform.position,
+                    _toSiteMarker.gameObject.transform.position,
                     progress);
 
-                float radius = Vector3.Distance(globePosition, result);
-                if (radius < globeRadius) {
-                    result *= (globeRadius / radius);
+                float radius = Vector3.Distance(_globePosition, result);
+                if (radius < _globeRadius) {
+                    result *= (_globeRadius / radius);
                 }
 
                 if (i > 0) {
@@ -147,7 +147,7 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                     Vector3 start = lastPoint;
                     Vector3 end = result;
 
-                    col.radius = lineWidth / 2;
+                    col.radius = _lineWidth / 2;
                     col.height = (end - start).magnitude / 2;
                     col.center = Vector3.zero;
                     col.direction = 2; // Aligned on Z.
@@ -163,8 +163,8 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     // ---
 
     public void UpdateInformation() {
-        SitelinkReporting sitelink0 = sitelinkPair.pair[0];
-        SitelinkReporting sitelink1 = sitelinkPair.pair[1];
+        SitelinkReporting sitelink0 = _sitelinkPair.pair[0];
+        SitelinkReporting sitelink1 = _sitelinkPair.pair[1];
 
         _information = "Sitelink pair:\n" +
                       $"Sites: {sitelink0.local_site}\n<-> {sitelink0.remote_site}\n" +

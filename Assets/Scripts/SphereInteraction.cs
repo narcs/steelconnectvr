@@ -15,83 +15,83 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     public StateManager stateManager;
 
     public bool globeDragEnabled = true;
-    private bool isCurrentlyDragging = false;
+    private bool _isCurrentlyDragging = false;
 
-    private GvrControllerInputDevice dominantController;
+    private GvrControllerInputDevice _dominantController;
 
-    private Vector3 previousOrientation;
-    private Vector3 localRotation;
+    private Vector3 _previousOrientation;
+    private Vector3 _localRotation;
 
-    private Vector3 localRotationVelocity = Vector3.zero;
+    private Vector3 _localRotationVelocity = Vector3.zero;
 
-    private float panFactor = 120.0f;
-    private float velocityDecayFactor = 0.92f;
+    private float _panFactor = 120.0f;
+    private float _velocityDecayFactor = 0.92f;
 
-    private float lastClick = 0.0f;
-    public float doubleClickSpeed = 1.0f; // The delay between clicks allowed for double clicking
+    private float _lastClick = 0.0f;
+    public float doubleClickSpeed = 0.5f; // The delay between clicks allowed for double clicking
 
     public float sphereRadius = 1.0f; // This should match the radius of the globe, geocoding may not work if it does not
 
     void Start() {
-        dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
-        previousOrientation = dominantController.Orientation * Vector3.forward;
+        _dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
+        _previousOrientation = _dominantController.Orientation * Vector3.forward;
     }
 
     void Update() {
-        if (isCurrentlyDragging) {
-            Vector3 orientationDelta = (dominantController.Orientation * Vector3.forward) - previousOrientation;
+        if (_isCurrentlyDragging) {
+            Vector3 orientationDelta = (_dominantController.Orientation * Vector3.forward) - _previousOrientation;
 
-            localRotation.x += orientationDelta.x * panFactor;
-            localRotation.y -= orientationDelta.y * panFactor;
+            _localRotation.x += orientationDelta.x * _panFactor;
+            _localRotation.y -= orientationDelta.y * _panFactor;
 
-            localRotationVelocity.x = orientationDelta.x * panFactor / Time.deltaTime;
-            localRotationVelocity.x = orientationDelta.x * panFactor / Time.deltaTime;
+            _localRotationVelocity.x = orientationDelta.x * _panFactor / Time.deltaTime;
+            _localRotationVelocity.x = orientationDelta.x * _panFactor / Time.deltaTime;
         } else {
             // Momentum.
-            localRotationVelocity.x *= velocityDecayFactor;
-            localRotationVelocity.y *= velocityDecayFactor;
+            _localRotationVelocity.x *= _velocityDecayFactor;
+            _localRotationVelocity.y *= _velocityDecayFactor;
 
-            localRotation.x += localRotationVelocity.x * Time.deltaTime;
-            localRotation.y -= localRotationVelocity.y * Time.deltaTime;
+            _localRotation.x += _localRotationVelocity.x * Time.deltaTime;
+            _localRotation.y -= _localRotationVelocity.y * Time.deltaTime;
         }
 
         // Prevents flipping upside down
-        if (localRotation.y < -90.0f) {
-            localRotation.y = -90.0f;
-        } else if (localRotation.y > 90.0f) {
-            localRotation.y = 90.0f;
+        if (_localRotation.y < -90.0f) {
+            _localRotation.y = -90.0f;
+        } else if (_localRotation.y > 90.0f) {
+            _localRotation.y = 90.0f;
         }
 
-        Quaternion QT = Quaternion.Euler(localRotation.y, localRotation.x, 0);
+        Quaternion QT = Quaternion.Euler(_localRotation.y, _localRotation.x, 0);
         pivotObject.transform.rotation = Quaternion.Lerp(pivotObject.transform.rotation, QT, Time.deltaTime * 10);
-        previousOrientation = dominantController.Orientation * Vector3.forward;
+        _previousOrientation = _dominantController.Orientation * Vector3.forward;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (globeDragEnabled && eventData.clickTime - lastClick < doubleClickSpeed)
+        if (globeDragEnabled && eventData.clickTime - _lastClick < doubleClickSpeed)
         {
             Vector3 pos = eventData.pointerPressRaycast.worldPosition;
             pos = Quaternion.Inverse(globeMap.transform.rotation) * pos;
 
             Vector2d latlong = Conversions.GeoFromGlobePosition(pos, sphereRadius);
 
-            lastClick = eventData.clickTime;
+            _lastClick = eventData.clickTime;
             stateManager.ChangeMap();
             Debug.Log(latlong);
             flatMap.UpdateMap(latlong, flatMap.Zoom);
             return;
         }
-        lastClick = eventData.clickTime;
+        _lastClick = eventData.clickTime;
     }
 
     public void OnPointerDown(PointerEventData eventData) {
         if (globeDragEnabled) {
-            isCurrentlyDragging = true;
+            _isCurrentlyDragging = true;
         }
     }
 
     public void OnPointerUp(PointerEventData eventData) {
-        isCurrentlyDragging = false;
+        _isCurrentlyDragging = false;
     }
 }

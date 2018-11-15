@@ -62,6 +62,7 @@ Features of VR app are:
   * WANs
   * Uplinks
 * Change view from globe to flat and vice versa.
+  * Double touchpad click on globe to zoom in on flat map.
 * Log window. Point and swipe to scroll through history.
 
 ### Entity information
@@ -76,8 +77,7 @@ The VR keyboard only appears when running on Android. When running on PC, use ke
 1. Grab Mapbox style URL from <a href="https://www.mapbox.com/studio/">account</a>.
 2. Paste style URL in `Abstract Map (Script) > IMAGE > Map Id / Style URL` field.
 
-## Exporting to Android
-
 ## Known Issues
 
 ## To Do
+* Make WAN `Panel` object `Rect Transform` Width size dynamic and based on number of WANs.

@@ -7,7 +7,7 @@ public class CameraDrag : MonoBehaviour {
     //public float dragSpeed = 2;
     public float rotateSpeed = 3.5f;
     //private Vector3 dragOrigin;
-    private float X, Y;
+    private float _x, _y;
 
 	
 	// Update is called once per frame
@@ -31,9 +31,9 @@ public class CameraDrag : MonoBehaviour {
         {
             transform.Rotate(new Vector3(Input.GetAxis("Mouse Y") * rotateSpeed, -Input.GetAxis("Mouse X") * rotateSpeed, 0));
 
-            X = transform.rotation.eulerAngles.x;
-            Y = transform.rotation.eulerAngles.y;
-            transform.rotation = Quaternion.Euler(X, Y, 0);
+            _x = transform.rotation.eulerAngles.x;
+            _y = transform.rotation.eulerAngles.y;
+            transform.rotation = Quaternion.Euler(_x, _y, 0);
         }
         // Transform code if keys are pressed
         if (Input.GetKey("w"))  // Forward
