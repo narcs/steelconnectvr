@@ -4,19 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class VRLogWindow : MonoBehaviour {
-    private GameObject textObject;
-    private Text textComponent;
+    private GameObject _textObject;
+    private Text _textComponent;
 
-    private Queue<string> lines;
-    private string text;
+    private Queue<string> _lines;
+    private string _text;
 
-    private int num_lines = 0;
-    private int MAX_LINES = 100;
+    private int _num_lines = 0;
+    private int _MAX_LINES = 100;
 
     void Start() {
-        textObject = gameObject.transform.Find("Panel/ScrollRect/LogText").gameObject;
-        textComponent = textObject.GetComponent<Text>();
-        textComponent.text = "";
+        _textObject = gameObject.transform.Find("Panel/ScrollRect/LogText").gameObject;
+        _textComponent = _textObject.GetComponent<Text>();
+        _textComponent.text = "";
 
         Application.logMessageReceived += handleLogMessage;
     }
@@ -26,17 +26,17 @@ public class VRLogWindow : MonoBehaviour {
     }
 
     void handleLogMessage(string logString, string stackTrace, LogType type) {
-        num_lines += 1;
+        _num_lines += 1;
 
-        if (num_lines > MAX_LINES) {
-            num_lines = MAX_LINES;
+        if (_num_lines > _MAX_LINES) {
+            _num_lines = _MAX_LINES;
 
-            int newline_position = textComponent.text.IndexOf("\n");
-            textComponent.text = textComponent.text.Substring(newline_position + 1);
+            int newline_position = _textComponent.text.IndexOf("\n");
+            _textComponent.text = _textComponent.text.Substring(newline_position + 1);
         }
 
         string line = $"<color={logTypeToColorString(type)}>{logString}</color>\n";
-        textComponent.text += line;
+        _textComponent.text += line;
     }
 
     string logTypeToColorString(LogType type) {

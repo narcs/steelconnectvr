@@ -35,7 +35,7 @@ public class StateManager : MonoBehaviour {
     private string _siteLayer = "Site";
     private string _uplinkLayer = "Uplink";
     private string _wanLayer = "WAN";
-    private bool isMapInitialized = false;
+    private bool _isMapInitialized = false;
   
     public GvrKeyboard keyboardManager;
 
@@ -50,12 +50,12 @@ public class StateManager : MonoBehaviour {
 
     // Site marker code
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
-    private List<SitelinkMarker> currentSitelinkMarkers;
+    private List<SitelinkMarker> _currentSitelinkMarkers;
     private WanManager _wanManager;
 
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
-        currentSitelinkMarkers = new List<SitelinkMarker>();
+        _currentSitelinkMarkers = new List<SitelinkMarker>();
         _wanManager = gameObject.GetComponent<WanManager>();
 
         _dataManager = gameObject.GetComponent<SteelConnectDataManager>();
@@ -66,7 +66,7 @@ public class StateManager : MonoBehaviour {
         informationText.transform.parent.parent.gameObject.SetActive(false);
 
         flatMap.GetComponent<FlatMapInteraction>().map.OnInitialized += new System.Action(() => {
-            isMapInitialized = true;
+            _isMapInitialized = true;
         });
 
         StartCoroutine("UpdateEntitiesOnStartUp");
@@ -112,11 +112,11 @@ public class StateManager : MonoBehaviour {
 
     public void ClearSiteLinks()
     {
-        foreach (var entry in currentSitelinkMarkers)
+        foreach (var entry in _currentSitelinkMarkers)
         {
             Destroy(entry.gameObject);
         }
-        currentSitelinkMarkers.Clear();
+        _currentSitelinkMarkers.Clear();
     }
 
     public void ClearSiteMarkers()
@@ -174,9 +174,9 @@ public class StateManager : MonoBehaviour {
 
                         if (siteMarkers.ContainsKey(sitelink0.local_site) && siteMarkers.ContainsKey(sitelink0.remote_site)) {
                             if (earthSphere.activeSelf) {
-                                currentSitelinkMarkers.Add(earthSphere.GetComponent<GlobeSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
+                                _currentSitelinkMarkers.Add(earthSphere.GetComponent<GlobeSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
                             } else {
-                                currentSitelinkMarkers.Add(flatMap.GetComponent<FlatSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
+                                _currentSitelinkMarkers.Add(flatMap.GetComponent<FlatSiteCreation>().placeSitelinkMarker(sitelinkPair, currentSiteMarkers));
                             }
                         } else {
                             Debug.LogWarning($"Sitelink between {sitelink0.local_site} and {sitelink0.remote_site} can't be drawn because one or both sitemarkers are missing");
@@ -272,7 +272,7 @@ public class StateManager : MonoBehaviour {
     }
 
     IEnumerator ChangeMapAsync() {
-        while (!isMapInitialized) {
+        while (!_isMapInitialized) {
             yield return null;
         }
 
