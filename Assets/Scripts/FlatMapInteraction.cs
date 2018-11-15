@@ -84,7 +84,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         CullSiteMarkers();
     }
 
-    public void Recenter()
+    void Recenter()
     {
         Vector2d latLong = map.WorldToGeoPosition(new Vector3());
         map.UpdateMap(latLong,map.AbsoluteZoom);
