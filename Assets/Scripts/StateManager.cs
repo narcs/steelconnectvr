@@ -50,7 +50,7 @@ public class StateManager : MonoBehaviour {
 
     // Site marker code
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
-    private List<SitelinkMarker> _currentSitelinkMarkers;
+    public List<SitelinkMarker> _currentSitelinkMarkers;
     private WanManager _wanManager;
 
     void Start () {
