@@ -28,23 +28,19 @@ public class FlatSiteCreation : MonoBehaviour {
 	void Update () {
 		
 	}
-    
+
     public SiteMarker placeSiteMarker(Site site, LatLong latLong)
     {
+        Debug.Log($"FLAT MAP: Site {site.name} is at {latLong}");
         Vector3 sitePosition = map.GeoToWorldPosition(new Vector2d(latLong.latitude, latLong.longitude), false);
         //Vector3 sitePosition = new Vector3((float)sPosition.x, (float)sPosition.y, 0);
-        // We want the site marker's up to face outwards. If we just use Quaternion.LookRotation
-        // directly and just specify the forward vector, the marker's forward will face outwards.
-        // So we need to rotate it so its up faces forward first.
         Quaternion siteOrientation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        //Quaternion siteOrientation = Quaternion.LookRotation(sitePosition.normalized) * upToForward;
 
-        Debug.Log($"Site {site.id} is at world position {sitePosition}");
+        Debug.Log($"FLAT MAP: Site {site.id} is at world position {sitePosition}");
 
         GameObject newSiteMarkerObject = Instantiate(siteMarkerPrefab, sitePosition, siteOrientation, this.transform);
         SiteMarker newSiteMarker = newSiteMarkerObject.GetComponent<SiteMarker>();
         Vector3 translate = new Vector3(0.0f, this.transform.position.y);
-        Debug.Log(this.transform.eulerAngles);
         //newSiteMarker.transform.Translate(translate);
 
         newSiteMarker.transform.Rotate(this.transform.eulerAngles);

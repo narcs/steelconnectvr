@@ -10,7 +10,6 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public AbstractMap map;
     public StateManager statemanager;
-    public WanManager wanManager;
 
     public bool dragEnabled = true;
     private bool isCurrentlyDragging = false;
@@ -22,8 +21,9 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Vector2 previousTouch;
     private Vector3 translate;
     private bool _previousTouchState = false;
+    private Vector3 initTransform;
 
-    public float panFactor = 0.05f;
+    public float panFactor = 1f;
     private float velocityDecayFactor = 0.92f;
     private float zoomFactor = 1.0f;
 
@@ -36,6 +36,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         //previousOrientation = dominantController.Orientation * Vector3.forward;
         previousTouch = dominantController.TouchPos;
         translate = new Vector3();
+        initTransform = this.transform.position;
     }
 
     // Update is called once per frame
@@ -87,7 +88,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         Vector2d latLong = map.WorldToGeoPosition(new Vector3());
         map.UpdateMap(latLong,map.AbsoluteZoom);
-        Vector3 translate = new Vector3(0, -0.5f, 0);
+        Vector3 translate = new Vector3(0, initTransform.y, 0);
         translate -= this.transform.position;
         this.transform.Translate(translate);
 
@@ -158,11 +159,10 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         map.UpdateMap(geo, map.Zoom);
         ZoomIn();
-        statemanager.UpdateSites(false);
+        statemanager.UpdateEntities(false);
         // TODO: Fix RescaleSiteMarkers to work after UpdateSites
         // Currently broken because of async issues.
         //RescaleSiteMarkers();
-        wanManager.UpdateWans();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -788,8 +788,6 @@ MonoBehaviour:
   model: {fileID: 1263601196538664}
   initScale: {x: 0, y: 0, z: 0}
   explosion: {fileID: 1572305639615996}
-  explosionPrefab: {fileID: 1102286706066126, guid: 4890196960351a3488e25f78cc4b096e,
-    type: 2}
   explosionSound: {fileID: 8300000, guid: fdcd76f11c1d9b7448b963ae6cd4cd42, type: 3}
 --- !u!122 &122836733091370754
 Halo:
@@ -812,7 +810,7 @@ Halo:
   m_Color:
     serializedVersion: 2
     rgba: 4287072135
-  m_Size: 0.12
+  m_Size: 0.5
 --- !u!136 &136582773827888568
 CapsuleCollider:
   m_ObjectHideFlags: 1
