@@ -68,7 +68,7 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.clickTime - lastClick < 1)
+        if (globeDragEnabled && eventData.clickTime - lastClick < 1)
         {
             Vector3 pos = eventData.pointerPressRaycast.worldPosition;
             pos = Quaternion.Inverse(globeMap.transform.rotation) * pos;
