@@ -996,11 +996,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4867834046800562, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4867834046800562, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4867834046800562, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 2}
       propertyPath: m_LocalRotation.x
@@ -5751,7 +5751,7 @@ MonoBehaviour:
   statemanager: {fileID: 1407956135}
   wanManager: {fileID: 0}
   dragEnabled: 1
-  panFactor: 0.05
+  panFactor: 1
   xRange: 5
   zRange: 5
 --- !u!1001 &1964602097
