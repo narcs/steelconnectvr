@@ -273,7 +273,6 @@ public class StateManager : MonoBehaviour {
             yield return null;
         }
 
-        flatMap.GetComponent<FlatMapInteraction>().Recenter();
         UpdateEntities(false);
 
         yield return null;
