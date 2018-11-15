@@ -32,8 +32,8 @@ public class StateManager : MonoBehaviour {
     public GameObject destroyerObject;
     public GameObject explosionPrefab;
     public GameObject flatMap;
-
-	public GvrKeyboard keyboardManager;
+  
+    public GvrKeyboard keyboardManager;
 
     public StateManagerMode currentMode = StateManagerMode.Normal;
 
@@ -47,27 +47,30 @@ public class StateManager : MonoBehaviour {
     // Site marker code
     public Dictionary<SiteId, SiteMarker> currentSiteMarkers;
     private List<SitelinkMarker> currentSitelinkMarkers;
+    private WanManager _wanManager;
 
-    // Use this for initialization
     void Start () {
         currentSiteMarkers = new Dictionary<SiteId, SiteMarker>();
         currentSitelinkMarkers = new List<SitelinkMarker>();
+        _wanManager = gameObject.GetComponent<WanManager>();
 
-        // Instantiate and destroy explosion once to preload 
-        GameObject explosion = Instantiate(explosionPrefab);
-        Destroy(explosion);
-
-        _dataManager = GameObject.Find("State Manager").GetComponent<SteelConnectDataManager>();
+        _dataManager = gameObject.GetComponent<SteelConnectDataManager>();
 
         confirm.SetActive(false);
         createSiteWindow.SetActive(false);
         _informationTextMesh = informationText.GetComponent<TextMesh>();
         informationText.transform.parent.parent.gameObject.SetActive(false);
-	}
+
+        StartCoroutine("UpdateSitesOnStartUp");
+    }
 	
-	// Update is called once per frame
-	void Update () {
-	}
+    IEnumerator UpdateSitesOnStartUp() {
+        while (!_dataManager.IsInstantiated()) {
+            yield return null;
+        }
+        UpdateSitesForceRefresh();
+        yield return null;
+    }
 
     // Update Sites
     public void UpdateSitesForceRefresh() {
@@ -124,23 +127,18 @@ public class StateManager : MonoBehaviour {
     {
         ClearSiteMarkers();
         ClearSiteLinks();
-
+        _wanManager.DestroyWans();
+      
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {
                 foreach (Site site in sites) {
-                    if (site.coordinates.isValid)
-                    {
-                        if (earthSphere.activeSelf)
-                        {
+                    if (site.coordinates.isValid) {
+                        if (earthSphere.activeSelf) {
                             currentSiteMarkers.Add(site.id, earthSphere.GetComponent<GlobeSiteCreation>().placeSiteMarker(site, site.coordinates));
-                        }
-                        else
-                        {
+                        } else {
                             currentSiteMarkers.Add(site.id, flatMap.GetComponent<FlatSiteCreation>().placeSiteMarker(site, site.coordinates));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Debug.LogWarning($"Coordinates for site {site.id} are not valid, not adding site marker");
                     }
                 }
@@ -180,7 +178,10 @@ public class StateManager : MonoBehaviour {
                     }
                 }
             })
-            .Catch(err => Debug.LogError($"Error updating sites/sitelinks: {err.Message}\n{err.StackTrace}"));
+            .Then(() => {
+                _wanManager.UpdateWans();
+            })
+            .Catch(err => Debug.LogError($"Error updating entities: {err.Message}\n{err.StackTrace}"));
     }
 
     void SetLaserColorForMode(StateManagerMode mode) {
