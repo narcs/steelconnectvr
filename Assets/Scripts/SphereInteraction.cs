@@ -28,8 +28,9 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private float _velocityDecayFactor = 0.92f;
 
     private float _lastClick = 0.0f;
+    public float doubleClickSpeed = 1.0f; // The delay between clicks allowed for double clicking
 
-    public float sphereRadius = 1.0f;
+    public float sphereRadius = 1.0f; // This should match the radius of the globe, geocoding may not work if it does not
 
     void Start() {
         _dominantController = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
@@ -68,12 +69,12 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (globeDragEnabled && eventData.clickTime - _lastClick < 1)
+        if (globeDragEnabled && eventData.clickTime - _lastClick < doubleClickSpeed)
         {
             Vector3 pos = eventData.pointerPressRaycast.worldPosition;
             pos = Quaternion.Inverse(globeMap.transform.rotation) * pos;
 
-            Vector2d latlong = Conversions.GeoFromGlobePosition(pos, 1);
+            Vector2d latlong = Conversions.GeoFromGlobePosition(pos, sphereRadius);
 
             _lastClick = eventData.clickTime;
             stateManager.ChangeMap();
