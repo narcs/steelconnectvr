@@ -20,6 +20,7 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private int _lineLayerMask;
     private SteelConnect _steelConnect;
     private string _information;
+    private int _hideSitesLayer = 12;
 
     void Start () {
         _stateManager = GameObject.Find("State Manager").GetComponent<StateManager>();
@@ -81,15 +82,18 @@ public class UplinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                     SiteMarker siteMarker = site.GetComponent<SiteMarker>();
                     SiteMarker hitSiteMarker = hit.transform.parent.parent.GetComponent<SiteMarker>();
                     if (hitSiteMarker.site.id == siteMarker.site.id) {
-                        line.SetActive(true);
-                        line.transform.parent = transform;
-                        line.transform.position = midPoint;
-                        Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
-                        // Set X and Y localscale so cube appears to be a line
-                        line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
-                        line.transform.rotation = Quaternion.LookRotation(direction);
+                        if (hitSiteMarker.gameObject.layer != _hideSitesLayer && siteMarker.gameObject.layer != _hideSitesLayer)
+                        {
+                            line.SetActive(true);
+                            line.transform.parent = transform;
+                            line.transform.position = midPoint;
+                            Utilities.SetGlobalScale(line.transform, new Vector3(1, 1, distance)); // Any value for x and y. Will change soon 
+                                                                                                   // Set X and Y localscale so cube appears to be a line
+                            line.transform.localScale = new Vector3(uplinkLineThickness, uplinkLineThickness, line.transform.localScale.z);
+                            line.transform.rotation = Quaternion.LookRotation(direction);
 
-                        return;
+                            return;
+                        }
                     }
                 }
             }

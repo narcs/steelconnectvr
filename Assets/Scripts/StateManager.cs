@@ -32,8 +32,8 @@ public class StateManager : MonoBehaviour {
     public GameObject destroyerObject;
     public GameObject explosionPrefab;
     public GameObject flatMap;
-
-	public GvrKeyboard keyboardManager;
+  
+    public GvrKeyboard keyboardManager;
 
     public StateManagerMode currentMode = StateManagerMode.Normal;
 
@@ -102,16 +102,33 @@ public class StateManager : MonoBehaviour {
         createSiteWindow.GetComponent<CreateSiteWindow>().OnLeaveCreateSiteMode();
 	}
 
-    public void UpdateSites(bool forceRefresh) {
-        foreach (var entry in currentSiteMarkers) {
-            if (entry.Value) {
+    public void ClearSiteLinks()
+    {
+        foreach (var entry in currentSitelinkMarkers)
+        {
+            Destroy(entry.gameObject);
+        }
+        currentSitelinkMarkers.Clear();
+    }
+
+    public void ClearSiteMarkers()
+    {
+        foreach (var entry in currentSiteMarkers)
+        {
+            if (entry.Value)
+            {
                 Destroy(entry.Value.gameObject);
             }
         }
         currentSiteMarkers.Clear();
+    }
+
+    public void UpdateSites(bool forceRefresh)
+    {
+        ClearSiteMarkers();
+        ClearSiteLinks();
         _wanManager.DestroyWans();
-
-
+      
         var siteMarkersPromise = _dataManager.GetSites(forceRefresh)
             .Then(sites => {
                 foreach (Site site in sites) {
