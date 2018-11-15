@@ -23,7 +23,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Vector3 translate;
     private bool _previousTouchState = false;
 
-    public float panFactor = 0.05f;
+    public float panFactor = 1f;
     private float velocityDecayFactor = 0.92f;
     private float zoomFactor = 1.0f;
 
