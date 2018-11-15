@@ -28,7 +28,7 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private float _velocityDecayFactor = 0.92f;
 
     private float _lastClick = 0.0f;
-    public float doubleClickSpeed = 1.0f; // The delay between clicks allowed for double clicking
+    public float doubleClickSpeed = 0.5f; // The delay between clicks allowed for double clicking
 
     public float sphereRadius = 1.0f; // This should match the radius of the globe, geocoding may not work if it does not
 

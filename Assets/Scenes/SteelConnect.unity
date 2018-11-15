@@ -1185,6 +1185,7 @@ MonoBehaviour:
   globeMap: {fileID: 419999331}
   stateManager: {fileID: 1407956135}
   globeDragEnabled: 1
+  doubleClickSpeed: 0.3
   sphereRadius: 1
 --- !u!1 &299959701
 GameObject:
@@ -5751,8 +5752,11 @@ MonoBehaviour:
   statemanager: {fileID: 1407956135}
   dragEnabled: 1
   panFactor: 1
+  minZoom: 3
   xRange: 5
   zRange: 5
+  hiddenLayer: 12
+  siteLayer: 10
 --- !u!1001 &1964602097
 Prefab:
   m_ObjectHideFlags: 0
