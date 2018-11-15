@@ -3789,7 +3789,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Show/Hide Uplinks
+  m_Text: Show Uplinks
 --- !u!222 &1120853670
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4537,6 +4537,7 @@ MonoBehaviour:
   uplinkPrefab: {fileID: 1221943760286042, guid: ec8d81c2546505546b3217936092ed0b,
     type: 2}
   earthSphere: {fileID: 299656873}
+  showHideUplinksButtonText: {fileID: 1120853669}
 --- !u!4 &1407956134
 Transform:
   m_ObjectHideFlags: 0

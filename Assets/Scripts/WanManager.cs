@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 
 using RSG;
@@ -15,6 +16,7 @@ public class WanManager : MonoBehaviour {
     public GameObject uplinkPrefab;
     public GameObject earthSphere;
     public Dictionary<string, Uplink> uplinks = new Dictionary<string, Uplink>();
+    public Text showHideUplinksButtonText;
 
     private List<Wan> _wans = new List<Wan>();
     private StateManager _stateManager;
@@ -40,6 +42,7 @@ public class WanManager : MonoBehaviour {
 
     public void ShowHideUplinksToggle() {
         _showUplinks = !_showUplinks;
+        showHideUplinksButtonText.text = _showUplinks ? "Hide Uplinks" : "Show Uplinks";
         ShowHideUplinks();
     }
 
