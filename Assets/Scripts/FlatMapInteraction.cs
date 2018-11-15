@@ -139,7 +139,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         // Sitelink markers.
         foreach (var entry in statemanager._currentSitelinkMarkers) {
-            Vector3 pos = entry.transform.position;
+            Vector3 pos = entry.fromSiteMarker.transform.position;
 
             if (Mathf.Abs(pos.x) > xRange || Mathf.Abs(pos.z) > zRange) {
                 ChangeLayerRecursive(entry.gameObject, hiddenLayer);
