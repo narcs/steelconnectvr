@@ -175,6 +175,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        // If Zooming is too buggy comment out the below code except ZoomIn() function
         Vector2d geo = map.WorldToGeoPosition(eventData.pointerPressRaycast.worldPosition);
 
         map.UpdateMap(geo, map.Zoom);
