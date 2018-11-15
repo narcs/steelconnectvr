@@ -30,7 +30,6 @@ public class StateManager : MonoBehaviour {
     public GameObject currentObjectHover;
     public GameObject earthSphere;
     public GameObject destroyerObject;
-    public GameObject explosionPrefab;
     public GameObject flatMap;
   
     public GvrKeyboard keyboardManager;
@@ -61,20 +60,20 @@ public class StateManager : MonoBehaviour {
         _informationTextMesh = informationText.GetComponent<TextMesh>();
         informationText.transform.parent.parent.gameObject.SetActive(false);
 
-        StartCoroutine("UpdateSitesOnStartUp");
+        StartCoroutine("UpdateEntitiesOnStartUp");
     }
 	
-    IEnumerator UpdateSitesOnStartUp() {
+    IEnumerator UpdateEntitiesOnStartUp() {
         while (!_dataManager.IsInstantiated()) {
             yield return null;
         }
-        UpdateSitesForceRefresh();
+        UpdateEntitiesForceRefresh();
         yield return null;
     }
 
     // Update Sites
-    public void UpdateSitesForceRefresh() {
-        UpdateSites(true);
+    public void UpdateEntitiesForceRefresh() {
+        UpdateEntities(true);
     }
 
     public void SwitchToDeleteMode() {
@@ -123,7 +122,7 @@ public class StateManager : MonoBehaviour {
         currentSiteMarkers.Clear();
     }
 
-    public void UpdateSites(bool forceRefresh)
+    public void UpdateEntities(bool forceRefresh)
     {
         ClearSiteMarkers();
         ClearSiteLinks();
@@ -260,7 +259,7 @@ public class StateManager : MonoBehaviour {
         earthSphere.SetActive(!earthSphere.activeSelf);
         flatMap.SetActive(!flatMap.activeSelf);
 
-        UpdateSites(false);
+        UpdateEntities(false);
     }
     public void DisplayInformation(string entityInformationText) {
         _informationTextMesh.text = entityInformationText;

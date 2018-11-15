@@ -158,7 +158,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         map.UpdateMap(geo, map.Zoom);
         ZoomIn();
-        statemanager.UpdateSites(false);
+        statemanager.UpdateEntities(false);
         // TODO: Fix RescaleSiteMarkers to work after UpdateSites
         // Currently broken because of async issues.
         //RescaleSiteMarkers();

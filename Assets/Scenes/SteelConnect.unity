@@ -190,7 +190,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1407956135}
-        m_MethodName: UpdateSitesForceRefresh
+        m_MethodName: UpdateEntitiesForceRefresh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4563,8 +4563,6 @@ MonoBehaviour:
   currentObjectHover: {fileID: 0}
   earthSphere: {fileID: 299656873}
   destroyerObject: {fileID: 1678508867}
-  explosionPrefab: {fileID: 1102286706066126, guid: 4890196960351a3488e25f78cc4b096e,
-    type: 2}
   flatMap: {fileID: 1959436796}
   keyboardManager: {fileID: 1365256372}
   currentMode: 0
@@ -5742,6 +5740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   map: {fileID: 1959436799}
   statemanager: {fileID: 1407956135}
+  wanManager: {fileID: 0}
   dragEnabled: 1
   panFactor: 0.05
   xRange: 5
