@@ -28,6 +28,7 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private float velocityDecayFactor = 0.92f;
 
     private float lastClick = 0.0f;
+    public float doubleClickSpeed = 1.0f;
 
     public float sphereRadius = 1.0f;
 
@@ -68,12 +69,12 @@ public class SphereInteraction : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (globeDragEnabled && eventData.clickTime - lastClick < 1)
+        if (globeDragEnabled && eventData.clickTime - lastClick < doubleClickSpeed)
         {
             Vector3 pos = eventData.pointerPressRaycast.worldPosition;
             pos = Quaternion.Inverse(globeMap.transform.rotation) * pos;
 
-            Vector2d latlong = Conversions.GeoFromGlobePosition(pos, 1);
+            Vector2d latlong = Conversions.GeoFromGlobePosition(pos, sphereRadius);
 
             lastClick = eventData.clickTime;
             stateManager.ChangeMap();
