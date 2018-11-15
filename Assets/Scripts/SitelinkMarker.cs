@@ -93,26 +93,34 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         // it's a dummy marker for easy modification of the prefab), it won't try to draw itself
         // and spam the console with an error per frame.
         if (_fromSiteMarker != null && _toSiteMarker != null) {
-            _lineRenderer.positionCount = _numPoints;
             _lineRenderer.startColor = _lineColor;
             _lineRenderer.endColor = _lineColor;
             _lineRenderer.startWidth = _lineWidth;
             _lineRenderer.endWidth = _lineWidth;
 
-            // Update the line renderer.
-            for (int i = 0; i < _numPoints; i++) {
-                float progress = ((float)i) / (_numPoints - 1);
-                Vector3 result = Vector3.Slerp(
-                    _fromSiteMarker.gameObject.transform.position,
-                    _toSiteMarker.gameObject.transform.position,
-                    progress);
+            if (_globeRadius == 0.0f) {
+                // Signals this marker is on the flat map, not the globe.
+                _lineRenderer.positionCount = 2;
 
-                float radius = Vector3.Distance(_globePosition, result);
-                if (radius < _globeRadius) {
-                    result *= (_globeRadius / radius);
+                _lineRenderer.SetPosition(0, _fromSiteMarker.transform.position);
+                _lineRenderer.SetPosition(1, _toSiteMarker.transform.position);
+            } else {
+                _lineRenderer.positionCount = _numPoints;
+
+                for (int i = 0; i < _numPoints; i++) {
+                    float progress = ((float)i) / (_numPoints - 1);
+                    Vector3 result = Vector3.Slerp(
+                        _fromSiteMarker.gameObject.transform.position,
+                        _toSiteMarker.gameObject.transform.position,
+                        progress);
+
+                    float radius = Vector3.Distance(_globePosition, result);
+                    if (radius < _globeRadius) {
+                        result *= (_globeRadius / radius);
+                    }
+
+                    _lineRenderer.SetPosition(i, result);
                 }
-
-                _lineRenderer.SetPosition(i, result);
             }
         }
     }
@@ -124,38 +132,55 @@ public class SitelinkMarker : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
 
         if (_fromSiteMarker != null && _toSiteMarker != null) {
-            Vector3 lastPoint = Vector3.zero;
-            
-            for (int i = 0; i < _numPoints; i++) {
-                float progress = ((float)i) / (_numPoints - 1);
-                Vector3 result = Vector3.Slerp(
-                    _fromSiteMarker.gameObject.transform.position,
-                    _toSiteMarker.gameObject.transform.position,
-                    progress);
+            if (_globeRadius == 0.0f) {
+                GameObject colliderObject = new GameObject($"Collider");
+                colliderObject.transform.SetParent(transform);
 
-                float radius = Vector3.Distance(_globePosition, result);
-                if (radius < _globeRadius) {
-                    result *= (_globeRadius / radius);
+                CapsuleCollider col = colliderObject.AddComponent<CapsuleCollider>();
+
+                Vector3 start = _fromSiteMarker.transform.position;
+                Vector3 end = _toSiteMarker.transform.position;
+
+                col.radius = _lineWidth / 2;
+                col.height = (end - start).magnitude;
+                col.center = Vector3.zero;
+                col.direction = 2; // Aligned on Z.
+                colliderObject.transform.position = start + (end - start) / 2;
+                colliderObject.transform.LookAt(start);
+            } else {
+                Vector3 lastPoint = Vector3.zero;
+
+                for (int i = 0; i < _numPoints; i++) {
+                    float progress = ((float)i) / (_numPoints - 1);
+                    Vector3 result = Vector3.Slerp(
+                        _fromSiteMarker.gameObject.transform.position,
+                        _toSiteMarker.gameObject.transform.position,
+                        progress);
+
+                    float radius = Vector3.Distance(_globePosition, result);
+                    if (radius < _globeRadius) {
+                        result *= (_globeRadius / radius);
+                    }
+
+                    if (i > 0) {
+                        GameObject colliderObject = new GameObject($"Collider{i}");
+                        colliderObject.transform.SetParent(transform);
+
+                        CapsuleCollider col = colliderObject.AddComponent<CapsuleCollider>();
+
+                        Vector3 start = lastPoint;
+                        Vector3 end = result;
+
+                        col.radius = _lineWidth / 2;
+                        col.height = (end - start).magnitude;
+                        col.center = Vector3.zero;
+                        col.direction = 2; // Aligned on Z.
+                        colliderObject.transform.position = start + (end - start) / 2;
+                        colliderObject.transform.LookAt(start);
+                    }
+
+                    lastPoint = result;
                 }
-
-                if (i > 0) {
-                    GameObject colliderObject = new GameObject($"Collider{i}");
-                    colliderObject.transform.SetParent(transform);
-
-                    CapsuleCollider col = colliderObject.AddComponent<CapsuleCollider>();
-
-                    Vector3 start = lastPoint;
-                    Vector3 end = result;
-
-                    col.radius = _lineWidth / 2;
-                    col.height = (end - start).magnitude / 2;
-                    col.center = Vector3.zero;
-                    col.direction = 2; // Aligned on Z.
-                    colliderObject.transform.position = start + (end - start) / 2;
-                    colliderObject.transform.LookAt(start);
-                }
-
-                lastPoint = result;
             }
         }
     }

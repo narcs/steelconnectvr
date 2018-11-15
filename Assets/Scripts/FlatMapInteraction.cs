@@ -100,6 +100,10 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             entry.Value.transform.Translate(-translate);
         }
+
+        foreach (var entry in statemanager._currentSitelinkMarkers) {
+            entry.transform.Translate(-translate);
+        }
     }
 
     void RescaleSiteMarkers()
