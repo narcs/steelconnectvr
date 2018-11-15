@@ -122,6 +122,7 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void CullSiteMarkers()
     {
+        // Site markers.
         foreach (var entry in statemanager.currentSiteMarkers)
         {
             Vector3 pos = entry.Value.transform.position;
@@ -133,6 +134,17 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
             else
             {
                 ChangeLayerRecursive(entry.Value.gameObject, siteLayer);
+            }
+        }
+
+        // Sitelink markers.
+        foreach (var entry in statemanager._currentSitelinkMarkers) {
+            Vector3 pos = entry.transform.position;
+
+            if (Mathf.Abs(pos.x) > xRange || Mathf.Abs(pos.z) > zRange) {
+                ChangeLayerRecursive(entry.gameObject, hiddenLayer);
+            } else {
+                ChangeLayerRecursive(entry.gameObject, siteLayer);
             }
         }
     }
