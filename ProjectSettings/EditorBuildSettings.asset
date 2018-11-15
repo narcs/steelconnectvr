@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Globe_sites_experiment.unity
-    guid: 2c7fee7c7eeae6e409927cbeb5691db6
+    path: Assets/Scenes/SteelConnect.unity
+    guid: e9985f9b50e5b824c9d171ddf3e505a8
   m_configObjects: {}
