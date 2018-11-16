@@ -175,15 +175,17 @@ public class FlatMapInteraction : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // If Zooming is too buggy comment out the below code except ZoomIn() function
-        Vector2d geo = map.WorldToGeoPosition(eventData.pointerPressRaycast.worldPosition);
+        Vector2d geo = map.WorldToGeoPosition(eventData.pointerPressRaycast.worldPosition); // Get raycast hit position
 
-        map.UpdateMap(geo, map.Zoom);
-        ZoomIn();
-        statemanager.UpdateEntities(false);
-        // TODO: Fix RescaleSiteMarkers to work after UpdateSites
-        // Currently broken because of async issues.
-        //RescaleSiteMarkers();
+        map.UpdateMap(geo, map.Zoom); // Change map centre
+        ZoomIn(); // Zoom map in
+
+        // Update each siteMarker's position
+        foreach (var entry in statemanager.currentSiteMarkers) {
+            Vector2d latLong = new Vector2d(entry.Value.site.coordinates.latitude, entry.Value.site.coordinates.longitude);
+            entry.Value.transform.position = map.GeoToWorldPosition(latLong, false);
+        }
+        RescaleSiteMarkers(); // Scale size of siteMarker models
     }
 
     public void OnPointerEnter(PointerEventData eventData)
