@@ -54,17 +54,17 @@ public class WanManager : MonoBehaviour {
         uplinks.Clear();
     }
 
-    public void UpdateWans() {
+    public void UpdateWans(bool forceRefresh) {
         panel.SetActive(true);
         DestroyWans();
         // Get WANs from SteelConnect API
-        _dataManager.GetWans(true)
+        _dataManager.GetWans(forceRefresh)
             .Then(wans => wans.ForEach(wan => {
                 _wans.Add(wan);
             }))
             .Then(() =>
                 // Get uplinks from SteelConnect API
-                _dataManager.GetUplinks(true)
+                _dataManager.GetUplinks(forceRefresh)
                     .Then(uplinks => uplinks.ForEach(uplink => {
                         this.uplinks[uplink.id] = uplink;
                     })))
