@@ -187,7 +187,7 @@ public class StateManager : MonoBehaviour {
                 }
             })
             .Then(() => {
-                _wanManager.UpdateWans();
+                _wanManager.UpdateWans(forceRefresh);
             })
             .Catch(err => Debug.LogError($"Error updating entities: {err.Message}\n{err.StackTrace}"));
     }
