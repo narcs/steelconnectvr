@@ -87,10 +87,14 @@ The VR keyboard only appears when running on Android. When running on PC, use ke
 * Panning may cause sites to be out of sync with the map
   * This seems to occur when you try to pan in different directions too quickly in succession. 
 * Zooming is erratic, may change the map size
-  *This is due to how mapbox handles zooming, and tiles
+  * This is due to how mapbox handles zooming, and tiles
 * Position clicked to centre zoom on may not be the exact centre.
-  *Due to mapbox tiles/zooming methods and geocoding possibly being slightly off.
-* Create Site doesn't really work with flat map - keyboard clips through map and other objects
+  * Due to mapbox tiles/zooming methods and geocoding possibly being slightly off.
+* Creating sites doesn't really work with flat map - keyboard clips through map and other objects
+* When panning the map too far so that it snaps back once you let go of the touchpad, sites don’t snap back with the map, causing them to drift out of place.
+* When panning the map too far that it snaps back once you let of the touchpad, the map can get misaligned so that you cannot pan back to a position you once were able to.
+  * The fix for both of the above is to restart the app (full restart by opening overview mode and swiping the app away, not just going to home screen and reopening the app).
+
 
 ## To Do
 * Make WAN `Panel` object `Rect Transform` Width size dynamic and based on number of WANs.
