@@ -17,6 +17,7 @@ The app uses <a href="https://support.google.com/daydream/answer/7184597?hl=en">
 Touchpad click used for:
 * Pressing buttons
 * Click and hold on WANs to create uplinks
+* Double click globe to transition to flat map centered on that position
 
 Swipe used for:
 * Log window history scrolling
